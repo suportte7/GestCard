@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="GestCard">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <meta name="theme-color" content="#f59e0b">
+    <meta name="theme-color" content="#0f172a">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f59e0b' rx='20'/%3E%3Ctext x='50' y='65' font-size='45' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3ECC%3C/text%3E%3C/svg%3E">
     
@@ -790,7 +790,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.1'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.2'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     const DB_NOME = 'ControlCard_Multi_DB'; 
@@ -809,7 +809,13 @@
         const t = TEMAS.find(x => x.id === id) || TEMAS[0]; temaAtual = t.id;
         document.documentElement.setAttribute('data-theme', t.id); document.documentElement.setAttribute('data-tone', t.tom);
         try { localStorage.setItem('cc_tema', t.id); } catch (e) {}
+        atualizarCorBarras();
         return t;
+    }
+    // As barras de cima (status) e de baixo (navegação) do Android usam a cor do tema; no iPhone a cor é do sistema
+    function atualizarCorBarras() {
+        try { const cor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); if (!cor) return;
+            let m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement('meta'); m.setAttribute('name', 'theme-color'); document.head.appendChild(m); } m.setAttribute('content', cor); } catch (e) {}
     }
     aplicarTema(temaAtual);
 
@@ -1768,7 +1774,7 @@
                 }).join('');
                 subHtml += `<div class="sub-tree-card" id="${idP}_pags" style="border-color: var(--success);"><div class="sub-tree-header" style="color: var(--success);" onclick="document.getElementById('${idP}_pags').classList.toggle('open')"><span>💰 Pagamentos / Abatimentos</span><span>- ${brl(sumP)}</span></div><div class="sub-tree-body">${pagHtml}</div></div>`;
             }
-            html += `<div class="tree-card${quitado ? ' quitado' : ''}" id="${idP}"><div class="tree-header" onclick="document.getElementById('${idP}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(p)}</div><span>${p}</span></div><span style="color: ${quitado ? 'var(--success)' : 'var(--danger)'}">${textoSaldo(saldo, sumD)}</span></div><div class="tree-body">${subHtml}</div></div>`;
+            html += `<div class="tree-card${quitado ? ' quitado' : ''}" id="${idP}"><div class="tree-header" onclick="document.getElementById('${idP}').classList.toggle('open')"><div class="tree-person-info">👤&nbsp;<span>${p}</span></div><span style="color: ${quitado ? 'var(--success)' : 'var(--danger)'}">${textoSaldo(saldo, sumD)}</span></div><div class="tree-body">${subHtml}</div></div>`;
         });
         return html;
     }
