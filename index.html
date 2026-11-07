@@ -241,6 +241,17 @@
         .sub-tree-body .t-desc strong { line-height: 1.15; }
         .sub-tree-body .t-desc span { margin-top: 0; line-height: 1.15; }
         .sub-tree-body .cat-badge { padding-top: 0; padding-bottom: 0; line-height: 1.25; margin-top: 0; margin-bottom: 0; vertical-align: middle; }
+        /* Visão: ainda mais compacta (pessoas, cartões e faturas) */
+        .tree-card { margin-bottom: 2px; }
+        .tree-header { padding: 2px 10px; font-size: 0.82rem; }
+        .tree-body { padding: 0 6px 4px; }
+        .tree-person-info { gap: 6px; }
+        .sub-tree-card { margin-top: 2px; }
+        .sub-tree-header { padding: 2px 8px; }
+        .sub-tree-body { padding: 0 6px; }
+        .sub-tree-body .t-row { padding: 1px 4px; }
+        .sub-tree-body .t-desc strong { line-height: 1.1; }
+        .sub-tree-body .t-desc span { font-size: 0.66rem; line-height: 1.1; }
         .dock { justify-content: space-around; }
         .tree-card.quitado { opacity: 0.78; }
         @keyframes girar { to { transform: rotate(360deg); } }
@@ -790,7 +801,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.3'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.4'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     const DB_NOME = 'ControlCard_Multi_DB'; 
