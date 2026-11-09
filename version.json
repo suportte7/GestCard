@@ -1,7 +1,8 @@
 {
-  "versao": "1.4",
-  "data": "2026-11-06",
+  "versao": "1.1",
+  "data": "2026-11-08",
   "notas": [
-    "Visão: pessoas, cartões e lançamentos ainda mais compactos (linhas mais juntas e letras um pouco menores nos detalhes)."
+    "Acordos: \"Prazo sem juros = 0\" agora vale 0 (antes virava 30 sem avisar).",
+    "Na janela do acordo: regras de juros editáveis (prazo, período, acréscimo, tipo; uma parcela ou todas em aberto) e a conta explicada passo a passo."
   ]
 }
