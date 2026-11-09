@@ -1,8 +1,8 @@
 {
-  "versao": "1.1",
+  "versao": "1.2",
   "data": "2026-11-08",
   "notas": [
-    "Acordos: \"Prazo sem juros = 0\" agora vale 0 (antes virava 30 sem avisar).",
-    "Na janela do acordo: regras de juros editáveis (prazo, período, acréscimo, tipo; uma parcela ou todas em aberto) e a conta explicada passo a passo."
+    "Avisos de acordo: agora usam o vencimento original (mesmo depois de o acordo passar de mês), não avisam acordo já pago e avisam também os VENCIDOS em aberto, com o valor com juros.",
+    "A busca por valor no Extrato acha o valor com juros (e o principal); a exportação CSV e a lista de repasse mostram o valor devido com juros."
   ]
 }
