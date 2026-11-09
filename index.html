@@ -822,7 +822,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.1'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.2'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1972,8 +1972,8 @@
     
     function casaBusca(x, busca) {
         if (!busca) return true;
-        const v = Number(x.valor) || 0;
-        const txt = [x.desc, x.pessoa, x.cartao, x.categoria, v.toFixed(2), v.toFixed(2).replace('.', ',')].join(' ').toLowerCase();
+        const v = Number(x.valor) || 0, va = Number(getValorAjustadoEmprestimo(x)) || 0; // acha tanto o principal quanto o valor com juros
+        const txt = [x.desc, x.pessoa, x.cartao, x.categoria, v.toFixed(2), v.toFixed(2).replace('.', ','), va.toFixed(2), va.toFixed(2).replace('.', ',')].join(' ').toLowerCase();
         return busca.split(/\s+/).every(t => txt.includes(t));
     }
 
@@ -2488,13 +2488,15 @@
     function acordosAVencer(agora, diasAntes) {
         const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate()); const out = [];
         db.despesas.forEach(d => {
-            if (!d.isEmprestimo || !d.dataRef) return;
-            const [a, m] = d.dataRef.split('-').map(Number); const dia = d.dataCompra ? parseInt(d.dataCompra.split('-')[2]) : 10;
+            if (!d.isEmprestimo || d.pagoEm) return; // acordo já pago: sem aviso
+            const ref = d.dataRefOrig || d.dataRef; if (!ref) return; // vencimento ORIGINAL (a parcela pode ter passado de mês enquanto não é paga)
+            const [a, m] = ref.split('-').map(Number); const dia = d.dataCompra ? parseInt(d.dataCompra.split('-')[2]) : 10;
             const venc = new Date(a, m - 1, Math.min(dia || 10, ultimoDiaMes(a, m - 1)));
             const dias = Math.round((venc - hoje) / 86400000);
             if (dias >= 0 && dias <= diasAntes) out.push({ d, dias });
+            else if (dias < 0 && ref >= '2026-09') out.push({ d, dias }); // vencido e ainda em aberto (de set/26 em diante)
         });
-        return out.sort((x, y) => x.dias - y.dias);
+        return out.sort((x, y) => x.dias - y.dias); // os mais atrasados primeiro
     }
     // Calcula o que avisar hoje (função pura, sem horário nem "já enviado")
     function pushCalcular(cfg, agora, opts) {
@@ -2522,9 +2524,10 @@
             const lista = acordosAVencer(agora, diasAntes);
             lista.slice(0, 6).forEach(({ d, dias }) => {
                 const m = (d.desc || '').match(/\((\d+)\/(\d+)\)\s*$/); const base = (d.desc || 'Acordo').replace(/\s*\(\d+\/\d+\)\s*$/, '').trim();
-                out.acordos.push(`💲 ${base}${m ? ' ' + m[1] + '/' + m[2] : ''} (${d.pessoa}): ${dias === 0 ? 'VENCE HOJE' : dias === 1 ? 'vence amanhã' : 'vence em ' + dias + ' dias'} — ${brl(getValorAjustadoEmprestimo(d))}`);
+                const quando = dias < 0 ? `VENCIDO há ${-dias} dia${dias === -1 ? '' : 's'}` : (dias === 0 ? 'VENCE HOJE' : dias === 1 ? 'vence amanhã' : 'vence em ' + dias + ' dias');
+                out.acordos.push(`💲 ${base}${m ? ' ' + m[1] + '/' + m[2] : ''} (${d.pessoa}): ${quando} — ${brl(getValorAjustadoEmprestimo(d))}${dias < 0 && d.jurosRegra ? ' (com juros)' : ''}`);
             });
-            if (lista.length > 6) out.acordos.push(`…e mais ${lista.length - 6} acordo(s) a vencer.`);
+            if (lista.length > 6) out.acordos.push(`…e mais ${lista.length - 6} acordo(s) vencido(s) ou a vencer.`);
         }
         return out;
     }
@@ -2660,7 +2663,7 @@
 
     function baixarExcelUsuario() {
         let csv = "DATA_REFERENCIA;TIPO;DESCRICAO;PESSOA;CARTAO;VALOR\n";
-        obterDespesasPermitidas().forEach(d => csv += `${d.dataRef};DESPESA;${d.desc};${d.pessoa};${d.cartao};${d.valor.toFixed(2).replace('.',',')}\n`);
+        obterDespesasPermitidas().forEach(d => csv += `${d.dataRef};DESPESA;${d.desc};${d.pessoa};${d.cartao};${getValorAjustadoEmprestimo(d).toFixed(2).replace('.',',')}\n`);
         obterPagamentosPermitidos().forEach(p => csv += `${p.dataRef || ''};RECEBIDO;Abatimento;${p.pessoa};-;${p.valor.toFixed(2).replace('.',',')}\n`);
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob(["\uFEFF"+csv], { type: 'text/csv;charset=utf-8;' }));
         a.download = `Relatorio_${currentUser.nome.replace(/[^a-zA-Z0-9]/g, '')}_${new Date().toISOString().substring(0,10)}.csv`; a.click(); toast("Excel gerado!");
@@ -2755,7 +2758,7 @@
     function renderizarListaTransferencia() {
         transSelecionados.clear(); const de = document.getElementById('transf-de').value;
         let html = ''; db.despesas.filter(d => d.pessoa === de).forEach(d => {
-            html += `<div class="check-item" id="tr-item-${d.id}" onclick="toggleTransfSel(${d.id})"><span class="material-icons-outlined check-mark" style="color: transparent; border: 2px solid var(--text-light); border-radius: 6px; width: 18px; height: 18px; display:flex; align-items:center; justify-content:center;">check</span><div class="t-desc"><strong style="font-size:0.85rem;">${d.desc}</strong><span>${d.cartao || '💲 Acordo'} • Ref: ${formatarMesAno(d.dataRef)}</span></div><div class="t-val">${brl(d.valor)}</div></div>`;
+            html += `<div class="check-item" id="tr-item-${d.id}" onclick="toggleTransfSel(${d.id})"><span class="material-icons-outlined check-mark" style="color: transparent; border: 2px solid var(--text-light); border-radius: 6px; width: 18px; height: 18px; display:flex; align-items:center; justify-content:center;">check</span><div class="t-desc"><strong style="font-size:0.85rem;">${d.desc}</strong><span>${d.cartao || '💲 Acordo'} • Ref: ${formatarMesAno(d.dataRef)}</span></div><div class="t-val">${brl(getValorAjustadoEmprestimo(d))}</div></div>`;
         });
         document.getElementById('lista-transferencia-container').innerHTML = html || '<p style="color:var(--text-light); font-size:0.8rem;">Nenhuma dívida para transferir.</p>';
     }
