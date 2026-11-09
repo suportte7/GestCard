@@ -255,6 +255,14 @@
         .dock { justify-content: space-around; }
         .tree-card.quitado { opacity: 0.78; }
         @keyframes girar { to { transform: rotate(360deg); } }
+        /* gráfico discreto de categorias */
+        #grafico-categorias { margin: 8px 6px 0; }
+        .gc-titulo { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); opacity: 0.7; font-weight: 700; margin: 6px 0 3px; }
+        .gc-linha { display: flex; align-items: center; gap: 8px; height: 14px; font-size: 0.62rem; color: var(--text-light); }
+        .gc-nome { flex: 0 0 34%; max-width: 34%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .gc-trilho { flex: 1; height: 4px; border-radius: 3px; background: var(--border); overflow: hidden; }
+        .gc-barra { display: block; height: 100%; border-radius: 3px; background: var(--primary); opacity: 0.7; }
+        .gc-pct { flex: 0 0 30px; text-align: right; font-variant-numeric: tabular-nums; }
         .fat-sub { font-size: 0.68rem; color: var(--text-light); font-weight: 600; line-height: 1.3; }
         .dash-tab-btn { padding-left: 4px; padding-right: 4px; }
         .cloud-status.sem-acesso { color: var(--primary); }
@@ -503,6 +511,18 @@
 
         <div id="box-edit-acordo" style="display:none; padding:10px; border:1px dashed var(--primary); border-radius:10px; margin-bottom:12px;">
             <div id="edit-acordo-status" style="font-size:0.78rem; line-height:1.4; margin-bottom:8px;"></div>
+            <details id="edit-j-box" style="margin-bottom:10px;">
+                <summary style="font-size:0.72rem; font-weight:700; color:var(--primary); cursor:pointer;">⚙️ Regras de juros deste acordo</summary>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;">
+                    <div class="form-group" style="margin-bottom:0;"><label>Prazo sem juros (dias)</label><input type="number" id="edit-j-dias" class="form-input" style="padding:9px;" min="0"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Depois, a cada (dias)</label><input type="number" id="edit-j-ciclo" class="form-input" style="padding:9px;" min="1"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Acréscimo a cada período</label><input type="number" id="edit-j-valor" class="form-input" style="padding:9px;" step="0.01" min="0"></div>
+                    <div class="form-group" style="margin-bottom:0;"><label>Tipo</label><select id="edit-j-tipo" class="form-input up-text" style="padding:9px;"><option value="val">VALOR FIXO (R$)</option><option value="perc">PORCENTAGEM (%)</option></select></div>
+                </div>
+                <label style="display:flex; align-items:center; gap:6px; font-size:0.72rem; margin:8px 0;"><input type="checkbox" id="edit-j-todas" checked style="width:18px; height:18px; accent-color: var(--primary);"> Aplicar a todas as parcelas em aberto deste acordo</label>
+                <button class="btn btn-outline" style="padding:10px;" onclick="salvarJurosAcordo()">SALVAR REGRAS DE JUROS</button>
+                <p class="helper" style="margin-top:6px;">Prazo 0 = os juros começam logo depois do vencimento. Deixe o acréscimo vazio para tirar os juros.</p>
+            </details>
             <div id="edit-acordo-linha-pagar" style="display:flex; gap:10px; align-items:flex-end; margin-bottom:8px;">
                 <div class="form-group" style="margin-bottom:0; flex:1;"><label>PAGO EM</label><input type="date" id="edit-acordo-data" class="form-input" style="padding:9px;"></div>
                 <label style="display:flex; align-items:center; gap:6px; font-size:0.72rem; flex:1;"><input type="checkbox" id="edit-acordo-recebimento" checked style="width:18px; height:18px; accent-color: var(--primary);"> Lançar o recebimento</label>
@@ -525,7 +545,7 @@
                     <span id="cloud-status-icon" class="material-icons-outlined cloud-status sem-nuvem" title="Nuvem não configurada" onclick="sincronizarManual(false, true)">cloud_off</span>
                 </span>
             </div>
-            <div style="font-size: 0.65rem; color: var(--text-light); margin-left: 34px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">PERFIL DE ACESSO: <span id="header-user-name" style="color:var(--primary);">...</span></div>
+            <div style="font-size: 0.65rem; color: var(--text-light); margin-left: 34px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">PERFIL: <span id="header-user-name" style="color:var(--primary);">...</span></div>
             <h2 id="page-title">Visão Geral</h2>
             <p id="page-subtitle">Acompanhe quem deve e faturas abertas</p>
         </div>
@@ -552,6 +572,7 @@
                 </div>
                 <div id="lista-arvore-saldos"></div>
             </div>
+            <div id="grafico-categorias" style="display:none;"></div>
         </div>
 
         <!-- TELA 2: CALENDÁRIO -->
@@ -801,10 +822,22 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.4'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.1'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
-    const DB_NOME = 'ControlCard_Multi_DB'; 
+    // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
+    (function migrarNomeAntigo() {
+        try {
+            Object.keys(localStorage).forEach(k => {
+                const novo = k.indexOf('cc_') === 0 ? 'gc_' + k.substring(3) : (k.indexOf('ControlCard') >= 0 ? k.split('ControlCard').join('GestCard') : null);
+                if (!novo || novo === k || localStorage.getItem(novo) !== null) return;
+                const v = localStorage.getItem(k); if (v === null) return;
+                localStorage.removeItem(k); try { localStorage.setItem(novo, v); } catch (e) { localStorage.setItem(k, v); } // se não couber, volta como estava
+            });
+        } catch (e) {}
+    })();
+    // se, por falta de espaço, o banco principal não pôde ser copiado, continua usando o nome antigo (nada se perde)
+    const DB_NOME = (localStorage.getItem('GestCard_Multi_DB') === null && localStorage.getItem('ControlCard_Multi_DB') !== null) ? 'ControlCard_Multi_DB' : 'GestCard_Multi_DB';
     
     // Core de Temas
     const TEMAS = [
@@ -815,11 +848,11 @@
         { id: 'grafite', nome: 'Grafite', tom: 'escuro' }, { id: 'vinho', nome: 'Vinho', tom: 'escuro' }, { id: 'petroleo', nome: 'Petróleo', tom: 'escuro' }, { id: 'solar', nome: 'Solar', tom: 'claro' }, { id: 'sakura', nome: 'Sakura', tom: 'claro' }
     ];
     const temas = TEMAS.map(t => t.id);
-    let temaAtual = localStorage.getItem('cc_tema'); if (!temas.includes(temaAtual)) temaAtual = 'midnight';
+    let temaAtual = localStorage.getItem('gc_tema'); if (!temas.includes(temaAtual)) temaAtual = 'midnight';
     function aplicarTema(id) {
         const t = TEMAS.find(x => x.id === id) || TEMAS[0]; temaAtual = t.id;
         document.documentElement.setAttribute('data-theme', t.id); document.documentElement.setAttribute('data-tone', t.tom);
-        try { localStorage.setItem('cc_tema', t.id); } catch (e) {}
+        try { localStorage.setItem('gc_tema', t.id); } catch (e) {}
         atualizarCorBarras();
         return t;
     }
@@ -882,16 +915,16 @@
     let db = vincularDataset(normalizarDataset(novoDataset())); // banco vazio até alguém entrar
     function gravarRoot() { localStorage.setItem(DB_NOME, JSON.stringify(ROOT)); }
     if (migrouParaV4) { try { gravarRoot(); } catch (e) {} }
-    function chavePendente() { return 'cc_pendente_envio_' + (typeof currentUser !== 'undefined' && currentUser ? currentUser.id : ''); }
+    function chavePendente() { return 'gc_pendente_envio_' + (typeof currentUser !== 'undefined' && currentUser ? currentUser.id : ''); }
     // URL da nuvem: 1) a salva pelo administrador neste aparelho; 2) a do arquivo config.json do servidor (subido UMA vez; as atualizações do app nunca o substituem); 3) a constante do index
-    let urlConfigServidor = localStorage.getItem('cc_url_config') || '', statusConfigServidor = 'pendente'; // 'ok' | 'ausente' | 'pendente'
-    function urlNuvem() { return (localStorage.getItem('cc_drive_webhook') || urlConfigServidor || URL_NUVEM_APP || '').trim(); }
+    let urlConfigServidor = localStorage.getItem('gc_url_config') || '', statusConfigServidor = 'pendente'; // 'ok' | 'ausente' | 'pendente'
+    function urlNuvem() { return (localStorage.getItem('gc_drive_webhook') || urlConfigServidor || URL_NUVEM_APP || '').trim(); }
     async function carregarConfigNuvem() {
         try {
             const r = await fetch('config.json?t=' + Date.now(), { cache: 'no-store' });
             if (!r.ok) throw new Error('sem config');
             const c = await r.json(); const u = c && typeof c.urlNuvem === 'string' ? c.urlNuvem.trim() : '';
-            if (/^https:\/\/script\.google\.com\//.test(u)) { urlConfigServidor = u; try { localStorage.setItem('cc_url_config', u); } catch (e) {} statusConfigServidor = 'ok'; }
+            if (/^https:\/\/script\.google\.com\//.test(u)) { urlConfigServidor = u; try { localStorage.setItem('gc_url_config', u); } catch (e) {} statusConfigServidor = 'ok'; }
             else statusConfigServidor = navigator.onLine ? 'ausente' : 'pendente';
         } catch (e) { statusConfigServidor = navigator.onLine ? 'ausente' : 'pendente'; }
         carregarWebhook();
@@ -899,9 +932,9 @@
     const promessaConfig = carregarConfigNuvem();
     // Quem configurou a URL por usuário (versão 4.0) passa a usar a URL única
     function migrarWebhookGlobal() {
-        if (localStorage.getItem('cc_drive_webhook')) return;
+        if (localStorage.getItem('gc_drive_webhook')) return;
         const ordem = ROOT.usuarios.filter(u => u.role === 'admin').concat(ROOT.usuarios);
-        for (const u of ordem) { const w = localStorage.getItem('cc_drive_webhook_' + u.id); if (w) { localStorage.setItem('cc_drive_webhook', w); return; } }
+        for (const u of ordem) { const w = localStorage.getItem('gc_drive_webhook_' + u.id); if (w) { localStorage.setItem('gc_drive_webhook', w); return; } }
     }
     migrarWebhookGlobal();
     // Troca o banco do usuário logado (restauração, importação, nuvem) mantendo ROOT e db sincronizados
@@ -971,7 +1004,7 @@
 
     /* ================= LOGIN SEGURO (PRIVACIDADE MÁXIMA) ================= */
     window.onload = () => {
-        let savedSession = localStorage.getItem('cc_logged_user') || sessionStorage.getItem('cc_logged_user');
+        let savedSession = localStorage.getItem('gc_logged_user') || sessionStorage.getItem('gc_logged_user');
         if (savedSession && db.usuarios) {
             let u = db.usuarios.find(x => x.id === savedSession);
             if(u && u.ativo) { executarLoginReal(u); return; }
@@ -1059,8 +1092,8 @@
     function executarLoginReal(user, manter) {
         currentUser = user; abrirBancoDoUsuario(user);
         // manter === true: lembra neste aparelho; false: só até fechar o app; undefined: não muda (sessão restaurada)
-        if (manter === true) { localStorage.setItem('cc_logged_user', user.id); sessionStorage.removeItem('cc_logged_user'); }
-        else if (manter === false) { sessionStorage.setItem('cc_logged_user', user.id); localStorage.removeItem('cc_logged_user'); }
+        if (manter === true) { localStorage.setItem('gc_logged_user', user.id); sessionStorage.removeItem('gc_logged_user'); }
+        else if (manter === false) { sessionStorage.setItem('gc_logged_user', user.id); localStorage.removeItem('gc_logged_user'); }
         document.getElementById('tela-lock').style.display = 'none';
         let wrap = document.getElementById('app-wrapper');
         wrap.style.display = 'block'; setTimeout(()=> wrap.style.opacity = '1', 50);
@@ -1081,7 +1114,7 @@
     }
 
     function fazerLogout() { 
-        sessionStorage.removeItem('cc_logged_user'); localStorage.removeItem('cc_logged_user');
+        sessionStorage.removeItem('gc_logged_user'); localStorage.removeItem('gc_logged_user');
         esconderBloqueio(); currentUser = null;
         document.getElementById('app-wrapper').style.opacity = '0'; 
         setTimeout(()=> renderizarTelaLogin(), 300); 
@@ -1312,27 +1345,27 @@
 
     /* ================= SYNC NUVEM ================= */
     function carregarWebhook() {
-        const el = document.getElementById('drive-webhook'); const local = localStorage.getItem('cc_drive_webhook') || ''; if (el) el.value = local;
+        const el = document.getElementById('drive-webhook'); const local = localStorage.getItem('gc_drive_webhook') || ''; if (el) el.value = local;
         const st = document.getElementById('status-config-nuvem'); if (!st) return;
         if (statusConfigServidor === 'ok') st.textContent = '✅ config.json encontrado no servidor' + (local && local !== urlConfigServidor ? ', mas a URL dele é DIFERENTE da salva neste aparelho (aqui vale a deste aparelho; os outros usam a do servidor).' : ': todos os aparelhos usam essa URL.');
         else if (statusConfigServidor === 'ausente') st.textContent = '⚠️ config.json NÃO encontrado no servidor: os outros aparelhos ainda não têm a URL. Toque em BAIXAR config.json e suba o arquivo UMA vez, na mesma pasta do index.html.';
         else st.textContent = 'Conferindo o servidor...';
     }
     function baixarConfigNuvem() {
-        const u = (localStorage.getItem('cc_drive_webhook') || urlNuvem() || '').trim();
+        const u = (localStorage.getItem('gc_drive_webhook') || urlNuvem() || '').trim();
         if (!u) return toast('Cole primeiro a URL do script do Google no campo acima.', 'erro');
         baixarJson({ urlNuvem: u }, 'config.json'); toast('config.json baixado. Suba esse arquivo na mesma pasta do index.html (uma vez só).');
     }
-    function salvarWebhook() { localStorage.setItem('cc_drive_webhook', document.getElementById('drive-webhook').value.trim()); carregarWebhook(); toast("URL da nuvem salva!"); sincronizarManual(false, false); }
+    function salvarWebhook() { localStorage.setItem('gc_drive_webhook', document.getElementById('drive-webhook').value.trim()); carregarWebhook(); toast("URL da nuvem salva!"); sincronizarManual(false, false); }
     
     // Nuvem única (do administrador): cada usuário envia e baixa só a SUA aba; o script confere nome + PIN
     /* ================= SINCRONIZAÇÃO SEGURA (celular, PC e nuvem sempre iguais) =================
        1) Aparelho novo BAIXA antes de qualquer envio.  2) Nunca troca dados por um banco vazio.
        3) Cada gravação na nuvem tem um número (revisão): se outro aparelho gravou antes, os dois lados são COMBINADOS item a item (nada se perde).
        4) Antes de qualquer troca grande o app guarda um ponto de restauração.
-       Os controles ficam FORA do banco do usuário (chaves cc_rev_, cc_baixou_, cc_sync_, cc_base_): a estrutura dos dados não muda. */
+       Os controles ficam FORA do banco do usuário (chaves gc_rev_, gc_baixou_, gc_sync_, gc_base_): a estrutura dos dados não muda. */
     let alteracoes = 0, syncEmCurso = false, syncRepetir = null;
-    const chRev = () => 'cc_rev_' + currentUser.id, chBaixou = () => 'cc_baixou_' + currentUser.id, chSync = () => 'cc_sync_' + currentUser.id, chBase = () => 'cc_base_' + currentUser.id, chForcar = () => 'cc_forcar_' + currentUser.id;
+    const chRev = () => 'gc_rev_' + currentUser.id, chBaixou = () => 'gc_baixou_' + currentUser.id, chSync = () => 'gc_sync_' + currentUser.id, chBase = () => 'gc_base_' + currentUser.id, chForcar = () => 'gc_forcar_' + currentUser.id;
     function estadoNuvem(nome, texto, dica) { const icon = document.getElementById('cloud-status-icon'); if (!icon) return; icon.innerText = texto; icon.classList.remove('synced', 'offline', 'sem-nuvem', 'sem-acesso'); if (nome) icon.classList.add(nome); icon.title = dica || ''; }
     const temMovimento = ds => !!(ds && (((ds.despesas || []).length) || ((ds.pagamentos || []).length)));
     const temConteudo = ds => temMovimento(ds) || !!(ds && (ds.cartoes || []).length);
@@ -1658,20 +1691,38 @@
         if (n) salvarDB(); return n;
     }
     function manutencaoDiaria() {
-        if (!currentUser) return; const hoje = pushHoje(new Date()); if (localStorage.getItem('cc_manut_' + currentUser.id) === hoje) return;
-        localStorage.setItem('cc_manut_' + currentUser.id, hoje); const n = rolarAcordosEmAberto();
+        if (!currentUser) return; const hoje = pushHoje(new Date()); if (localStorage.getItem('gc_manut_' + currentUser.id) === hoje) return;
+        localStorage.setItem('gc_manut_' + currentUser.id, hoje); const n = rolarAcordosEmAberto();
         if (n) { atualizarTelaAtual(); toast(`↻ ${n} parcela(s) de acordo em aberto passaram para este mês.`); sincronizarManual(true); }
     }
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') manutencaoDiaria(); });
     // Janela de edição: marcar o acordo como pago (os juros param na data do pagamento) e, se quiser, já lançar o recebimento
+    // A conta dos juros, passo a passo (para conferir de cabeça)
+    function detalheJuros(d) {
+        const r = d.jurosRegra, j = jurosEmprestimo(d), un = r.tipo === 'val' ? brl(r.valor) : r.valor + '% da parcela';
+        const quando = j.dias < 0 ? `ainda não venceu (vence ${fmtDM(j.venc)})` : `venceu em ${fmtDM(j.venc)}: ${j.dias} dia(s) ${d.pagoEm ? 'até o pagamento' : 'até hoje'}`;
+        return `${quando} · prazo sem juros ${parseInt(r.tolerancia) || 0} dia(s) · ${j.ciclos} período(s) completo(s) de ${r.ciclo} dias × ${un} = ${brl(j.acc)}`;
+    }
     function prepararBoxAcordo(id, tipo) {
         const box = document.getElementById('box-edit-acordo'); if (!box) return;
         const d = tipo === 'desp' ? db.despesas.find(x => x.id === id) : null;
         if (!d || !d.isEmprestimo) { box.style.display = 'none'; return; }
         box.style.display = 'block'; const total = getValorAjustadoEmprestimo(d), juros = total - d.valor, g = x => document.getElementById(x), fmt = iso => iso.split('-').reverse().join('/');
-        const comJuros = !!d.jurosRegra, parte = comJuros ? ` (principal ${brl(d.valor)} + juros ${brl(juros)})` : '', info = comJuros ? jurosEmprestimo(d) : null;
-        if (d.pagoEm) { g('edit-acordo-status').innerHTML = `✔ <strong>Pago em ${fmt(d.pagoEm)}.</strong> Valor final ${brl(total)}${parte}.${comJuros ? ' Os juros pararam nessa data.' : ''}`; g('edit-acordo-linha-pagar').style.display = 'none'; g('btn-acordo-pagar').style.display = 'none'; g('btn-acordo-desfazer').style.display = 'block'; }
-        else { g('edit-acordo-status').innerHTML = `<strong>Em aberto.</strong> Hoje: ${brl(total)}${parte}.` + (comJuros && info.proximo ? ` Próximo acréscimo: +${brl(info.unit)} em ${fmtDM(info.proximo)}.` : '') + ' A parcela passa de um mês para o outro até ser paga.' + (d.dataRefOrig && d.dataRefOrig !== d.dataRef ? ` Venceu em ${formatarMesAno(d.dataRefOrig)}.` : ''); g('edit-acordo-linha-pagar').style.display = 'flex'; g('btn-acordo-pagar').style.display = 'block'; g('btn-acordo-desfazer').style.display = 'none'; g('edit-acordo-data').value = getLocalToday(); }
+        const comJuros = !!d.jurosRegra, parte = comJuros ? ` (principal ${brl(d.valor)} + juros ${brl(juros)})` : '', info = comJuros ? jurosEmprestimo(d) : null, r = d.jurosRegra || {};
+        g('edit-j-dias').value = comJuros ? (parseInt(r.tolerancia) || 0) : 0; g('edit-j-ciclo').value = comJuros ? (r.ciclo || 7) : 7; g('edit-j-valor').value = comJuros ? r.valor : ''; g('edit-j-tipo').value = comJuros ? (r.tipo || 'val') : 'val'; g('edit-j-todas').checked = true;
+        const conta = comJuros ? `<br><span style="color:var(--text-light);">${detalheJuros(d)}</span>` : '';
+        if (d.pagoEm) { g('edit-acordo-status').innerHTML = `✔ <strong>Pago em ${fmt(d.pagoEm)}.</strong> Valor final ${brl(total)}${parte}.${comJuros ? ' Os juros pararam nessa data.' : ''}${conta}`; g('edit-acordo-linha-pagar').style.display = 'none'; g('btn-acordo-pagar').style.display = 'none'; g('btn-acordo-desfazer').style.display = 'block'; }
+        else { g('edit-acordo-status').innerHTML = `<strong>Em aberto.</strong> Hoje: ${brl(total)}${parte}.` + (comJuros && info.proximo ? ` Próximo acréscimo: +${brl(info.unit)} em ${fmtDM(info.proximo)}.` : '') + ' A parcela passa de um mês para o outro até ser paga.' + (d.dataRefOrig && d.dataRefOrig !== d.dataRef ? ` Venceu em ${formatarMesAno(d.dataRefOrig)}.` : '') + conta; g('edit-acordo-linha-pagar').style.display = 'flex'; g('btn-acordo-pagar').style.display = 'block'; g('btn-acordo-desfazer').style.display = 'none'; g('edit-acordo-data').value = getLocalToday(); }
+    }
+    // Corrige as regras de juros de um acordo que já existe (uma parcela ou todas as que ainda estão em aberto)
+    function salvarJurosAcordo() {
+        const g = x => document.getElementById(x), id = parseInt(g('edit-id').value), d = db.despesas.find(x => x.id === id); if (!d || !d.isEmprestimo) return;
+        const v = parseFloat(g('edit-j-valor').value) || 0, dias = parseInt(g('edit-j-dias').value), ciclo = parseInt(g('edit-j-ciclo').value); let regra = null;
+        if (v > 0) { if (!(ciclo > 0)) return toast('Informe de quantos em quantos dias o acréscimo se repete.', 'erro'); regra = { tolerancia: (isNaN(dias) || dias < 0) ? 0 : dias, ciclo, tipo: g('edit-j-tipo').value, valor: v }; }
+        const alvo = g('edit-j-todas').checked && d.emprestimoId ? db.despesas.filter(x => x.emprestimoId === d.emprestimoId && !x.pagoEm) : [d];
+        alvo.forEach(x => { x.jurosRegra = regra ? Object.assign({}, regra) : null; });
+        salvarDB(); atualizarTelaAtual(); prepararBoxAcordo(id, 'desp'); sincronizarManual(true);
+        toast(regra ? `✅ Regras de juros salvas em ${alvo.length} parcela(s).` : `Juros removidos de ${alvo.length} parcela(s).`);
     }
     function marcarAcordoPago() {
         const id = parseInt(document.getElementById('edit-id').value), d = db.despesas.find(x => x.id === id); if (!d) return;
@@ -1727,6 +1778,20 @@
         let pessoasUnicas = [...new Set(despesas.map(d=>d.pessoa).concat(pags.map(p=>p.pessoa)))].filter(Boolean);
         let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : visaoDashboardAtual === 'fatura' ? construirFaturas() : construirArvoreCartoes(despesas);
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
+        renderizarGraficoCategorias(despesas);
+    }
+    // Gráfico bem discreto: uma barra fina por categoria com o percentual de cada uma no período escolhido (as maiores primeiro)
+    function renderizarGraficoCategorias(despesas) {
+        const box = document.getElementById('grafico-categorias'); if (!box) return;
+        const esconder = () => { box.style.display = 'none'; box.innerHTML = ''; };
+        if (visaoDashboardAtual === 'fatura') return esconder(); // faturas não seguem o filtro de período
+        const soma = {}; let total = 0;
+        despesas.forEach(d => { const v = getValorAjustadoEmprestimo(d); if (!(v > 0)) return; const c = d.categoria || 'Sem categoria'; soma[c] = (soma[c] || 0) + v; total += v; });
+        let itens = Object.entries(soma).sort((a, b) => b[1] - a[1]); if (!itens.length || total <= 0) return esconder();
+        if (itens.length > 8) itens = itens.slice(0, 7).concat([['Outras', itens.slice(7).reduce((t, x) => t + x[1], 0)]]);
+        const pct = v => v / total * 100, rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%';
+        box.style.display = 'block';
+        box.innerHTML = '<div class="gc-titulo">Categorias</div>' + itens.map(([c, v]) => `<div class="gc-linha" title="${escHtml(c)}: ${brl(v)}"><span class="gc-nome">${escHtml(c)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${Math.max(2, pct(v)).toFixed(1)}%"></span></span><span class="gc-pct">${rotulo(pct(v))}</span></div>`).join('');
     }
     
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
@@ -2144,7 +2209,8 @@
         let dtReal = document.getElementById('emp-data').value; let dtRef = document.getElementById('emp-data-ref').value;
         
         let jV = parseFloat(document.getElementById('emp-juros-valor').value)||0;
-        let jRegra = jV > 0 ? { tolerancia: parseInt(document.getElementById('emp-juros-dias').value)||30, ciclo: parseInt(document.getElementById('emp-juros-ciclo').value)||7, tipo: document.getElementById('emp-juros-tipo').value, valor: jV } : null;
+        let jDias = parseInt(document.getElementById('emp-juros-dias').value), jCiclo = parseInt(document.getElementById('emp-juros-ciclo').value); // prazo 0 vale 0 (sem prazo)
+        let jRegra = jV > 0 ? { tolerancia: (isNaN(jDias) || jDias < 0) ? 0 : jDias, ciclo: jCiclo > 0 ? jCiclo : 7, tipo: document.getElementById('emp-juros-tipo').value, valor: jV } : null;
 
         if(!p || isNaN(v) || v<=0 || !dtReal || !dtRef) return toast('Preencha pessoa, valor e datas.', 'erro');
         let tr = []; let idB = Date.now();
@@ -2375,7 +2441,7 @@
             db.despesas.forEach(d => { if (d.cartao === orig) d.cartao = nome; });
             db.cartoesInativos = (db.cartoesInativos || []).map(x => x === orig ? nome : x);
             cartoesSelCal = cartoesSelCal.map(x => x === orig ? nome : x); cartoesSelExt = cartoesSelExt.map(x => x === orig ? nome : x);
-            const cfg = pushCfg(currentUser); if (Array.isArray(cfg.listaCartoes)) { cfg.listaCartoes = cfg.listaCartoes.map(x => x === orig ? nome : x); localStorage.setItem('cc_push_cfg_' + currentUser.id, JSON.stringify(cfg)); }
+            const cfg = pushCfg(currentUser); if (Array.isArray(cfg.listaCartoes)) { cfg.listaCartoes = cfg.listaCartoes.map(x => x === orig ? nome : x); localStorage.setItem('gc_push_cfg_' + currentUser.id, JSON.stringify(cfg)); }
         }
         c.nome = nome; c.fechamento = f; c.vencimento = v; c.melhorDia = m; c.conferido = true;
         salvarDB(); fecharModais(); carregarSelectsGerais(); atualizarTelaAtual(); sincronizarManual(true); toast('Cartão atualizado!');
@@ -2404,7 +2470,7 @@
     /* ================= AVISOS (PUSH) COM O APP ABERTO — cada usuário configura o seu ================= */
     const PUSH_PADRAO = { ativo: true, compras: true, comprasHora: '21:00', soSeNaoLancou: true, cartoes: true, acordos: true, cartoesHora: '09:00', diasAntes: 3, melhorDia: true, listaCartoes: null, bloqueio: '5' };
     const pushPad = n => String(n).padStart(2, '0');
-    function pushCfg(user) { try { return Object.assign({}, PUSH_PADRAO, JSON.parse(localStorage.getItem('cc_push_cfg_' + user.id) || '{}')); } catch (e) { return Object.assign({}, PUSH_PADRAO); } }
+    function pushCfg(user) { try { return Object.assign({}, PUSH_PADRAO, JSON.parse(localStorage.getItem('gc_push_cfg_' + user.id) || '{}')); } catch (e) { return Object.assign({}, PUSH_PADRAO); } }
     function pushHoje(agora) { return `${agora.getFullYear()}-${pushPad(agora.getMonth() + 1)}-${pushPad(agora.getDate())}`; } // data LOCAL (não UTC)
     function ultimoDiaMes(ano, mes0) { return new Date(ano, mes0 + 1, 0).getDate(); }
     // Dias até o próximo "dia X" do mês (hoje = 0); meses curtos usam o último dia
@@ -2488,7 +2554,7 @@
         const podeNotificar = ('Notification' in window) && Notification.permission === 'granted';
         if (document.visibilityState !== 'visible' && !podeNotificar) return; // sem como mostrar: espera o app voltar para a tela
         const agora = agoraTeste || new Date(); const hoje = pushHoje(agora); const hm = pushPad(agora.getHours()) + ':' + pushPad(agora.getMinutes());
-        const marca = t => 'cc_push_' + t + '_' + currentUser.id; const secoes = [];
+        const marca = t => 'gc_push_' + t + '_' + currentUser.id; const secoes = [];
         if (cfg.compras && hm >= cfg.comprasHora && localStorage.getItem(marca('compras')) !== hoje) {
             localStorage.setItem(marca('compras'), hoje);
             const r = pushCalcular(Object.assign({}, cfg, { cartoes: false }), agora);
@@ -2538,7 +2604,7 @@
             listaCartoes: marcados('.aj-cartao'), bloqueio: g('aj-bloqueio').value || PUSH_PADRAO.bloqueio };
     }
     function salvarAjuste() {
-        const cfg = lerFormAjuste(); localStorage.setItem('cc_push_cfg_' + currentUser.id, JSON.stringify(cfg));
+        const cfg = lerFormAjuste(); localStorage.setItem('gc_push_cfg_' + currentUser.id, JSON.stringify(cfg));
         toast('Ajuste salvo!');
         if (cfg.ativo && 'Notification' in window && Notification.permission === 'default') pedirPermissaoAvisos();
     }
@@ -2555,10 +2621,10 @@
     let bloqPin = '', bloqErros = 0, bloqTimer = null;
     function bloqueado() { const el = document.getElementById('tela-bloqueio'); return !!el && el.style.display === 'flex'; }
     function limiteBloqueioMs() { const v = pushCfg(currentUser).bloqueio; if (v === 'nunca') return null; const m = parseFloat(v); return isNaN(m) ? 300000 : m * 60000; }
-    function marcarUso() { if (currentUser) localStorage.setItem('cc_ultimo_uso_' + currentUser.id, String(Date.now())); }
+    function marcarUso() { if (currentUser) localStorage.setItem('gc_ultimo_uso_' + currentUser.id, String(Date.now())); }
     function precisaBloquear() {
         if (!currentUser) return false; const lim = limiteBloqueioMs(); if (lim === null) return false;
-        const ult = parseInt(localStorage.getItem('cc_ultimo_uso_' + currentUser.id)); if (!ult) return false;
+        const ult = parseInt(localStorage.getItem('gc_ultimo_uso_' + currentUser.id)); if (!ult) return false;
         return (Date.now() - ult) >= lim;
     }
     function desenharPontos() { document.querySelectorAll('#bloq-dots span').forEach((p, i) => p.classList.toggle('on', i < bloqPin.length)); }
@@ -2790,10 +2856,34 @@
 
     /* ================= VERSÕES DOS DADOS (pontos de restauração) ================= */
     const SNAP_MAX = 15;
-    function snapAbrir() {
+    let snapMigrado = null;
+    function snapMigrarAntigo() { // copia os pontos de restauração do banco antigo (controlcard_versoes) para o novo (gestcard_versoes), uma vez
+        if (snapMigrado) return snapMigrado;
+        snapMigrado = new Promise(fim => {
+            try {
+                if (!window.indexedDB || localStorage.getItem('gc_snap_migrado') === '1') return fim();
+                const feito = () => { try { localStorage.setItem('gc_snap_migrado', '1'); } catch (e) {} fim(); };
+                const rq = indexedDB.open('controlcard_versoes'); let criou = false;
+                rq.onupgradeneeded = () => { criou = true; }; rq.onerror = () => fim();
+                rq.onsuccess = () => { const velho = rq.result;
+                    if (criou || !velho.objectStoreNames.contains('dados') || !velho.objectStoreNames.contains('meta')) { velho.close(); indexedDB.deleteDatabase('controlcard_versoes'); return feito(); }
+                    const t = velho.transaction(['dados', 'meta'], 'readonly'), rd = t.objectStore('dados').getAll(), rm = t.objectStore('meta').getAll();
+                    t.onerror = () => { velho.close(); fim(); };
+                    t.oncomplete = () => { velho.close(); const rn = indexedDB.open('gestcard_versoes', 1);
+                        rn.onupgradeneeded = () => { const d = rn.result; d.createObjectStore('dados', { keyPath: 'id', autoIncrement: true }); d.createObjectStore('meta', { keyPath: 'id' }).createIndex('user', 'userId'); };
+                        rn.onerror = () => fim();
+                        rn.onsuccess = () => { const nd = rn.result, tx = nd.transaction(['dados', 'meta'], 'readwrite'); rd.result.forEach(x => tx.objectStore('dados').put(x)); rm.result.forEach(x => tx.objectStore('meta').put(x));
+                            tx.oncomplete = () => { nd.close(); indexedDB.deleteDatabase('controlcard_versoes'); feito(); }; tx.onerror = () => { nd.close(); fim(); }; }; };
+                };
+            } catch (e) { fim(); }
+        });
+        return snapMigrado;
+    }
+    async function snapAbrir() {
+        await snapMigrarAntigo();
         return new Promise((ok, falha) => {
             if (!window.indexedDB) return falha(new Error('sem IndexedDB'));
-            const r = indexedDB.open('controlcard_versoes', 1);
+            const r = indexedDB.open('gestcard_versoes', 1);
             r.onupgradeneeded = () => { const d = r.result; d.createObjectStore('dados', { keyPath: 'id', autoIncrement: true }); d.createObjectStore('meta', { keyPath: 'id' }).createIndex('user', 'userId'); };
             r.onsuccess = () => ok(r.result); r.onerror = () => falha(r.error);
         });
@@ -2804,7 +2894,7 @@
         if (!currentUser) return false;
         const uid = currentUser.id; const dados = JSON.stringify(db); // captura o estado AGORA, antes de qualquer troca
         const meta = { userId: uid, ts: Date.now(), motivo, qtdDesp: db.despesas.length, qtdPag: db.pagamentos.length };
-        localStorage.setItem('cc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('cc_snap_sig_' + uid, String(dados.length)); // marca já, para dois gatilhos seguidos não criarem pontos repetidos
+        localStorage.setItem('gc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('gc_snap_sig_' + uid, String(dados.length)); // marca já, para dois gatilhos seguidos não criarem pontos repetidos
         try {
             const bd = await snapAbrir(); const tx = bd.transaction(['dados', 'meta'], 'readwrite');
             const fim = new Promise((ok, falha) => { tx.oncomplete = ok; tx.onerror = () => falha(tx.error); tx.onabort = () => falha(tx.error); });
@@ -2812,17 +2902,17 @@
             const ids = await snapReq(tx.objectStore('meta').index('user').getAllKeys(uid)); // da mais antiga para a mais nova
             ids.slice(0, Math.max(0, ids.length - SNAP_MAX)).forEach(k => { tx.objectStore('dados').delete(k); tx.objectStore('meta').delete(k); });
             await fim; bd.close();
-            localStorage.setItem('cc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('cc_snap_sig_' + uid, String(dados.length));
+            localStorage.setItem('gc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('gc_snap_sig_' + uid, String(dados.length));
             return true;
         } catch (e) { return false; }
     }
     function snapshotDiario() { // 1 por dia, só se os dados mudaram desde o último ponto
         if (!currentUser) return; const uid = currentUser.id, hoje = pushHoje(new Date());
-        if (localStorage.getItem('cc_snap_dia_' + uid) === hoje) return; localStorage.setItem('cc_snap_dia_' + uid, hoje);
-        if (localStorage.getItem('cc_snap_sig_' + uid) === String(JSON.stringify(db).length)) return; criarSnapshot('Diário');
+        if (localStorage.getItem('gc_snap_dia_' + uid) === hoje) return; localStorage.setItem('gc_snap_dia_' + uid, hoje);
+        if (localStorage.getItem('gc_snap_sig_' + uid) === String(JSON.stringify(db).length)) return; criarSnapshot('Diário');
     }
     function snapshotPorTempo() { // a cada 1 hora de uso com alterações
-        if (!currentUser) return; const ult = parseInt(localStorage.getItem('cc_snap_ts_' + currentUser.id)) || 0;
+        if (!currentUser) return; const ult = parseInt(localStorage.getItem('gc_snap_ts_' + currentUser.id)) || 0;
         if (Date.now() - ult >= 3600000) criarSnapshot('Automático (1 h)');
     }
     async function listarSnapshots() { const bd = await snapAbrir(); const l = await snapReq(bd.transaction('meta').objectStore('meta').index('user').getAll(currentUser.id)); bd.close(); return l.sort((a, b) => b.ts - a.ts); }
@@ -2849,7 +2939,7 @@
     let telaAtualId = 'dashboard', recargaPendente = false, ultimoInfoVersao = null, ultimaChecagemMs = 0;
     const TITULOS_TELA = { dashboard: 'Visão Geral', calendario: 'Calendário', extrato: 'Extrato', config: 'Ajuste' };
     function restaurarTelaDepoisDeAtualizar() {
-        let t = null; try { t = sessionStorage.getItem('cc_tela_retorno'); sessionStorage.removeItem('cc_tela_retorno'); } catch (e) {}
+        let t = null; try { t = sessionStorage.getItem('gc_tela_retorno'); sessionStorage.removeItem('gc_tela_retorno'); } catch (e) {}
         const id = TITULOS_TELA[t] ? t : 'dashboard'; mudarTela(id, TITULOS_TELA[id]);
     }
     function versaoMaior(a, b) { const x = String(a).split('.').map(n => parseInt(n) || 0), y = String(b).split('.').map(n => parseInt(n) || 0); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; }
@@ -2857,7 +2947,7 @@
     // Recarrega com um esmaecer rápido, volta para a mesma tela e só faz isso quando não há nada sendo digitado
     function recarregarSuave() {
         recargaPendente = true; if (!podeRecarregarAgora()) return; recargaPendente = false;
-        try { sessionStorage.setItem('cc_tela_retorno', telaAtualId); } catch (e) {}
+        try { sessionStorage.setItem('gc_tela_retorno', telaAtualId); } catch (e) {}
         document.body.style.transition = 'opacity .25s'; document.body.style.opacity = '0';
         setTimeout(() => location.reload(), 280);
     }
@@ -2865,18 +2955,18 @@
         if (!navigator.onLine) { if (manual) toast('Sem internet.', 'erro'); return; }
         try {
             const r = await fetch('version.json?t=' + Date.now(), { cache: 'no-store' }); const v = await r.json();
-            ultimaChecagemMs = Date.now(); localStorage.setItem('cc_ultima_verificacao', String(ultimaChecagemMs)); ultimoInfoVersao = v; atualizarCardVersao();
+            ultimaChecagemMs = Date.now(); localStorage.setItem('gc_ultima_verificacao', String(ultimaChecagemMs)); ultimoInfoVersao = v; atualizarCardVersao();
             if (navigator.serviceWorker && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(reg => reg && reg.update()).catch(() => {});
             if (v && v.versao && versaoMaior(v.versao, APP_VERSION)) {
-                if (sessionStorage.getItem('cc_upd_tentou') === String(v.versao)) { if (manual) toast(`A versão ${v.versao} ainda não chegou a este endereço. Tente de novo em instantes.`, 'erro'); return; }
-                sessionStorage.setItem('cc_upd_tentou', String(v.versao)); recarregarSuave();
+                if (sessionStorage.getItem('gc_upd_tentou') === String(v.versao)) { if (manual) toast(`A versão ${v.versao} ainda não chegou a este endereço. Tente de novo em instantes.`, 'erro'); return; }
+                sessionStorage.setItem('gc_upd_tentou', String(v.versao)); recarregarSuave();
             } else if (manual) toast('Você já está na versão mais recente (v' + APP_VERSION + ').');
         } catch (e) { if (manual) toast('Não consegui verificar agora.', 'erro'); }
     }
     function atualizarCardVersao() {
         const g = id => document.getElementById(id); if (!g('ver-instalada')) return;
         g('ver-instalada').textContent = 'v' + APP_VERSION;
-        const ult = parseInt(localStorage.getItem('cc_ultima_verificacao')); g('ver-ultima').textContent = ult ? fmtSnap(ult) : '—';
+        const ult = parseInt(localStorage.getItem('gc_ultima_verificacao')); g('ver-ultima').textContent = ult ? fmtSnap(ult) : '—';
         const v = ultimoInfoVersao; g('ver-notas').innerHTML = v && Array.isArray(v.notas) && v.notas.length ? '<strong>Novidades da v' + escHtml(v.versao) + ':</strong><br>' + v.notas.map(n => '• ' + escHtml(n)).join('<br>') : '';
     }
     document.getElementById('v-badge').textContent = 'v' + APP_VERSION;
@@ -3037,17 +3127,17 @@
     }
 
     /* ================= BACKUP NO GOOGLE DRIVE: automático, com status ================= */
-    function backupHoras() { const v = localStorage.getItem('cc_bkp_horas_' + currentUser.id); return v === null ? 12 : parseInt(v) || 0; } // 0 = desligado
-    function salvarBackupHoras() { localStorage.setItem('cc_bkp_horas_' + currentUser.id, document.getElementById('bkp-horas').value); atualizarStatusBackup(); toast('Backup automático ajustado.'); }
+    function backupHoras() { const v = localStorage.getItem('gc_bkp_horas_' + currentUser.id); return v === null ? 12 : parseInt(v) || 0; } // 0 = desligado
+    function salvarBackupHoras() { localStorage.setItem('gc_bkp_horas_' + currentUser.id, document.getElementById('bkp-horas').value); atualizarStatusBackup(); toast('Backup automático ajustado.'); }
     function registrarResultadoBackup(bk, avisar) {
         if (!currentUser || !bk) return; const id = currentUser.id;
-        if (bk.ok) { localStorage.setItem('cc_bkp_ult_' + id, JSON.stringify({ ts: Date.now(), arquivo: bk.arquivo, pasta: bk.pasta })); localStorage.removeItem('cc_bkp_erro_' + id); if (avisar) toast('✅ Backup salvo no Drive: ' + bk.arquivo); }
-        else if (bk.ok === false) { localStorage.setItem('cc_bkp_erro_' + id, bk.erro || 'erro'); if (avisar) toast('O backup no Drive falhou: ' + (bk.erro || 'erro') + '. Peça ao administrador para rodar "autorizar" no Google.', 'erro'); }
+        if (bk.ok) { localStorage.setItem('gc_bkp_ult_' + id, JSON.stringify({ ts: Date.now(), arquivo: bk.arquivo, pasta: bk.pasta })); localStorage.removeItem('gc_bkp_erro_' + id); if (avisar) toast('✅ Backup salvo no Drive: ' + bk.arquivo); }
+        else if (bk.ok === false) { localStorage.setItem('gc_bkp_erro_' + id, bk.erro || 'erro'); if (avisar) toast('O backup no Drive falhou: ' + (bk.erro || 'erro') + '. Peça ao administrador para rodar "autorizar" no Google.', 'erro'); }
         atualizarStatusBackup();
     }
     function atualizarStatusBackup() {
-        const el = document.getElementById('status-backup'); if (!el || !currentUser) return; const id = currentUser.id; let u = null; try { u = JSON.parse(localStorage.getItem('cc_bkp_ult_' + id)); } catch (e) {}
-        const erro = localStorage.getItem('cc_bkp_erro_' + id), sel = document.getElementById('bkp-horas'); if (sel) sel.value = String(backupHoras());
+        const el = document.getElementById('status-backup'); if (!el || !currentUser) return; const id = currentUser.id; let u = null; try { u = JSON.parse(localStorage.getItem('gc_bkp_ult_' + id)); } catch (e) {}
+        const erro = localStorage.getItem('gc_bkp_erro_' + id), sel = document.getElementById('bkp-horas'); if (sel) sel.value = String(backupHoras());
         if (!urlNuvem()) { el.textContent = 'A nuvem ainda não foi configurada: sem backup no Drive.'; return; }
         el.innerHTML = (u ? `✅ Último backup no Drive: <strong>${fmtSnap(u.ts)}</strong> (${escHtml(u.pasta)}/${escHtml(u.arquivo)}).` : 'Nenhum backup no Drive feito por este aparelho ainda.') + (erro ? `<br><span style="color:var(--danger);">⚠️ O último backup falhou: ${escHtml(erro)}. Peça ao administrador para rodar "autorizar" no Google.</span>` : '');
     }
@@ -3067,9 +3157,9 @@
     }
     function backupAutomatico() { // a cada X horas (padrão 12), sozinho; no máximo 1 tentativa por hora
         if (!currentUser || !urlNuvem() || !navigator.onLine || bloqueado()) return; const h = backupHoras(); if (!h) return; const id = currentUser.id; let ult = 0;
-        try { ult = (JSON.parse(localStorage.getItem('cc_bkp_ult_' + id)) || {}).ts || 0; } catch (e) {}
-        const tent = parseInt(localStorage.getItem('cc_bkp_tent_' + id)) || 0;
-        if (Date.now() - ult >= h * 3600000 && Date.now() - tent >= 3600000) { localStorage.setItem('cc_bkp_tent_' + id, String(Date.now())); fazerBackupAgora(false); }
+        try { ult = (JSON.parse(localStorage.getItem('gc_bkp_ult_' + id)) || {}).ts || 0; } catch (e) {}
+        const tent = parseInt(localStorage.getItem('gc_bkp_tent_' + id)) || 0;
+        if (Date.now() - ult >= h * 3600000 && Date.now() - tent >= 3600000) { localStorage.setItem('gc_bkp_tent_' + id, String(Date.now())); fazerBackupAgora(false); }
     }
     async function adminBackupTodosAgora() {
         if (!urlNuvem() || !navigator.onLine) return toast('Sem nuvem ou sem internet.', 'erro');
