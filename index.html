@@ -2061,9 +2061,9 @@
         let t = sD.reduce((a,b)=>a+getValorAjustadoEmprestimo(b),0) - sP.reduce((a,b)=>a+b.valor,0);
 
         let txt = `📄 *Resumo de Fatura*\n👤 *${p}*\n\n`;
-        if(sD.length > 0){ txt += `🛒 *Cobranças:*\n`; sD.forEach((d,i) => txt += `${i+1}. ${d.desc} - ${brl(getValorAjustadoEmprestimo(d))}\n`); }
+        if(sD.length > 0){ txt += `🛒 *Cmmpas/Despesas:*\n`; sD.forEach((d,i) => txt += `${i+1}. ${d.desc} - ${brl(getValorAjustadoEmprestimo(d))}\n`); }
         if(sP.length > 0){ txt += `\n💰 *Abatimentos / Recebidos:*\n`; sP.forEach((pg,i) => txt += `${i+1}. ${pg.desc||'Recebimento'} - ${brl(pg.valor)}\n`); }
-        txt += t > 0.01 ? `\n💳 *TOTAL A PAGAR: ${brl(t)}*` : (t < -0.01 ? `\n✅ *Crédito de ${brl(-t)}*` : `\n✅ *Quitado*`);
+        txt += t > 0.01 ? `\n💳 *TOTAL GERAL: ${brl(t)}*` : (t < -0.01 ? `\n✅ *Crédito de ${brl(-t)}*` : `\n✅ *Quitado*`);
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
