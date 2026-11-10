@@ -1,8 +1,10 @@
 {
-  "versao": "1.2",
+  "versao": "1.3",
   "data": "2026-11-08",
   "notas": [
-    "Avisos de acordo: agora usam o vencimento original (mesmo depois de o acordo passar de mês), não avisam acordo já pago e avisam também os VENCIDOS em aberto, com o valor com juros.",
-    "A busca por valor no Extrato acha o valor com juros (e o principal); a exportação CSV e a lista de repasse mostram o valor devido com juros."
+    "Acordos: o vencimento é o dia da Data Inicial (antes, acordos de antes de set/26 usavam um \"dia 10\" fixo) e o prazo de 30 dias conta como 1 mês (14/08 → 14/09). Ex.: 14/08, R$ 450, +R$ 30 a cada 7 dias → hoje 7 períodos = R$ 660.",
+    "O formulário e a janela do acordo mostram as datas: vencimento, juros a partir de, 1º acréscimo e o resultado de hoje.",
+    "O mês do 1º vencimento acompanha a data digitada no formulário do acordo.",
+    "Todo acordo com juros em aberto passa de mês até a quitação (mesmo de antes de set/26)."
   ]
 }
