@@ -1,10 +1,8 @@
 {
-  "versao": "1.3",
+  "versao": "1.4",
   "data": "2026-11-08",
   "notas": [
-    "Acordos: o vencimento é o dia da Data Inicial (antes, acordos de antes de set/26 usavam um \"dia 10\" fixo) e o prazo de 30 dias conta como 1 mês (14/08 → 14/09). Ex.: 14/08, R$ 450, +R$ 30 a cada 7 dias → hoje 7 períodos = R$ 660.",
-    "O formulário e a janela do acordo mostram as datas: vencimento, juros a partir de, 1º acréscimo e o resultado de hoje.",
-    "O mês do 1º vencimento acompanha a data digitada no formulário do acordo.",
-    "Todo acordo com juros em aberto passa de mês até a quitação (mesmo de antes de set/26)."
+    "Visão por pessoa e por cartão: novo alternador \"Lançamentos | Categorias\". Em Categorias cada pessoa/cartão mostra onde gasta, com barra fina, percentual e valor, e dentro de cada categoria os lançamentos (com o cartão ou a pessoa).",
+    "Subcategoria opcional no lançamento e na edição (com sugestões das que você já usou); a categoria só ganha um nível a mais quando tem subcategorias."
   ]
 }
