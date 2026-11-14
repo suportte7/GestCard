@@ -262,15 +262,14 @@
         .gc-nome { flex: 0 0 34%; max-width: 34%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .gc-trilho { flex: 1; height: 4px; border-radius: 3px; background: var(--border); overflow: hidden; }
         .gc-barra { display: block; height: 100%; border-radius: 3px; background: var(--primary); opacity: 0.7; }
+        .gc-topo { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 2px; }
+        .gc-topo .gc-titulo { margin: 0; }
+        .gc-escopo { background: transparent; border: none; color: var(--text-light); font-size: 0.62rem; font-weight: 700; padding: 0; max-width: 55%; text-align-last: right; }
+        .gc-grupo.tem-sub > .gc-linha { cursor: pointer; }
+        .gc-grupo.tem-sub .gc-nome::after { content: ' ▸'; opacity: 0.5; } .gc-grupo.tem-sub.aberto .gc-nome::after { content: ' ▾'; }
+        .gc-subs { display: none; padding: 1px 0 3px 12px; } .gc-grupo.aberto .gc-subs { display: block; }
+        .gc-subs .gc-linha { height: 12px; font-size: 0.58rem; } .gc-subs .gc-barra { opacity: 0.45; }
         .gc-pct { flex: 0 0 30px; text-align: right; font-variant-numeric: tabular-nums; }
-        /* categorias na árvore */
-        .cat-pct { font-size: 0.6rem; color: var(--text-light); font-weight: 700; margin-right: 6px; }
-        .cat-minibar { height: 2px; background: var(--border); margin: 0 8px 2px; border-radius: 2px; overflow: hidden; }
-        .cat-minibar span { display: block; height: 100%; background: var(--primary); opacity: 0.7; }
-        .sub2-card { margin: 2px 0 2px 6px; border-left: 2px solid var(--border); }
-        .sub2-header { display: flex; justify-content: space-between; align-items: center; padding: 2px 6px; font-size: 0.7rem; font-weight: 700; color: var(--text-light); cursor: pointer; }
-        .sub2-body { display: none; padding-left: 2px; } .sub2-card.open .sub2-body { display: block; }
-        .dash-tabs-mini { margin: 0 0 6px; } .dash-tabs-mini .dash-tab-btn { font-size: 0.62rem; padding: 4px 6px; }
         .fat-sub { font-size: 0.68rem; color: var(--text-light); font-weight: 600; line-height: 1.3; }
         .dash-tab-btn { padding-left: 4px; padding-right: 4px; }
         .cloud-status.sem-acesso { color: var(--primary); }
@@ -580,7 +579,6 @@
                     <button class="dash-tab-btn" id="btn-visao-cartao" onclick="alternarVisaoDash('cartao')">💳 POR CARTÃO</button>
                     <button class="dash-tab-btn" id="btn-visao-fatura" onclick="alternarVisaoDash('fatura')">🧾 FATURAS</button>
                 </div>
-                <div class="dash-tabs dash-tabs-mini" id="dash-detalhe"><button class="dash-tab-btn active" id="det-lanc" onclick="mudarDetalheDash('lanc')">📄 LANÇAMENTOS</button><button class="dash-tab-btn" id="det-cat" onclick="mudarDetalheDash('cat')">🏷 CATEGORIAS</button></div>
                 <div id="lista-arvore-saldos"></div>
             </div>
             <div id="grafico-categorias" style="display:none;"></div>
@@ -833,7 +831,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.4'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.5'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1756,7 +1754,7 @@
     }
 
     function formatarInfoItem(d, isPag = false) {
-        let cat = (d.categoria) ? `<div class="cat-badge">${d.categoria}${d.subcategoria ? " › " + escHtml(d.subcategoria) : ""}</div>` : '';
+        let cat = (d.categoria) ? `<div class="cat-badge">${d.categoria}</div>` : '';
         let badgeP = ''; let descLimp = d.desc || 'Recebimento';
         if (d.isAssinatura) badgeP = `<div class="parc-badge" style="background: #3b82f6;">🔁 MENSAL</div>`;
         else if (d.isEmprestimo) badgeP = `<div class="parc-badge" style="background: var(--primary); color: #000;">💲</div>`;
@@ -1795,20 +1793,34 @@
         let pessoasUnicas = [...new Set(despesas.map(d=>d.pessoa).concat(pags.map(p=>p.pessoa)))].filter(Boolean);
         let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : visaoDashboardAtual === 'fatura' ? construirFaturas() : construirArvoreCartoes(despesas);
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
-        renderizarGraficoCategorias(despesas); sincronizarBotoesDetalhe();
+        renderizarGraficoCategorias(despesas);
     }
-    // Gráfico bem discreto: uma barra fina por categoria com o percentual de cada uma no período escolhido (as maiores primeiro)
+    // Gráfico bem discreto: uma barra fina por categoria com o percentual de cada uma no período escolhido (as maiores primeiro).
+    // Canto direito: escolher Todos, uma PESSOA ou um CARTÃO para ver onde cada um gasta. Tocar numa categoria abre as subcategorias (se houver).
+    let escopoCat = '';
+    function mudarEscopoCat(v) { escopoCat = v; atualizarSaldos(); }
     function renderizarGraficoCategorias(despesas) {
         const box = document.getElementById('grafico-categorias'); if (!box) return;
         const esconder = () => { box.style.display = 'none'; box.innerHTML = ''; };
         if (visaoDashboardAtual === 'fatura') return esconder(); // faturas não seguem o filtro de período
-        const soma = {}; let total = 0;
-        despesas.forEach(d => { const v = getValorAjustadoEmprestimo(d); if (!(v > 0)) return; const c = d.categoria || 'Sem categoria'; soma[c] = (soma[c] || 0) + v; total += v; });
-        let itens = Object.entries(soma).sort((a, b) => b[1] - a[1]); if (!itens.length || total <= 0) return esconder();
-        if (itens.length > 8) itens = itens.slice(0, 7).concat([['Outras', itens.slice(7).reduce((t, x) => t + x[1], 0)]]);
-        const pct = v => v / total * 100, rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%';
+        const cartaoDe = d => d.cartao || '💲 Acordo', temValor = d => getValorAjustadoEmprestimo(d) > 0, uteis = despesas.filter(temValor);
+        if (!uteis.length) return esconder();
+        const pessoas = [...new Set(uteis.map(d => d.pessoa))].sort(), cartoes = [...new Set(uteis.map(cartaoDe))].sort();
+        if (escopoCat && !(escopoCat.startsWith('p:') ? pessoas.includes(escopoCat.slice(2)) : cartoes.includes(escopoCat.slice(2)))) escopoCat = ''; // a pessoa/cartão escolhido não tem lançamentos neste período
+        const base = uteis.filter(d => !escopoCat || (escopoCat.startsWith('p:') ? d.pessoa === escopoCat.slice(2) : cartaoDe(d) === escopoCat.slice(2)));
+        const seletor = `<select class="gc-escopo" onchange="mudarEscopoCat(this.value)"><option value="">Todos</option><optgroup label="Pessoas">${pessoas.map(p => `<option value="p:${escHtml(p)}"${escopoCat === 'p:' + p ? ' selected' : ''}>👤 ${escHtml(p)}</option>`).join('')}</optgroup><optgroup label="Cartões">${cartoes.map(c => `<option value="c:${escHtml(c)}"${escopoCat === 'c:' + c ? ' selected' : ''}>💳 ${escHtml(c)}</option>`).join('')}</optgroup></select>`;
+        const soma = {}; let total = 0; base.forEach(d => { const v = getValorAjustadoEmprestimo(d), c = d.categoria || 'Sem categoria'; (soma[c] = soma[c] || []).push(d); total += v; });
+        let itens = Object.keys(soma).map(c => [c, soma[c], somaDesp(soma[c])]).sort((a, b) => b[2] - a[2]);
+        if (itens.length > 8) itens = itens.slice(0, 7).concat([['Outras', itens.slice(7).flatMap(x => x[1]), itens.slice(7).reduce((t, x) => t + x[2], 0)]]);
+        const rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%', largura = p => Math.max(2, p).toFixed(1) + '%';
+        const linha = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${largura(v / tot * 100)}"></span></span><span class="gc-pct">${rotulo(v / tot * 100)}</span></div>`;
         box.style.display = 'block';
-        box.innerHTML = '<div class="gc-titulo">Categorias</div>' + itens.map(([c, v]) => `<div class="gc-linha" title="${escHtml(c)}: ${brl(v)}"><span class="gc-nome">${escHtml(c)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${Math.max(2, pct(v)).toFixed(1)}%"></span></span><span class="gc-pct">${rotulo(pct(v))}</span></div>`).join('');
+        box.innerHTML = `<div class="gc-topo"><span class="gc-titulo">Categorias</span>${seletor}</div>` + itens.map(([c, ds, v]) => {
+            const subs = {}; ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
+            const chaves = Object.keys(subs), semSub = ds.filter(d => !(d.subcategoria || '').trim()), temSub = chaves.length > 0 && c !== 'Outras';
+            const corpo = temSub ? chaves.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linha('↳ ' + k, sv, v, c + ' › ' + k)).join('') : '';
+            return `<div class="gc-grupo${temSub ? ' tem-sub' : ''}">${temSub ? '<div onclick="this.parentElement.classList.toggle(\'aberto\')">' : '<div>'}${linha(c, v, total, c)}</div>${temSub ? `<div class="gc-subs">${corpo}</div>` : ''}</div>`;
+        }).join('');
     }
     
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
@@ -1842,9 +1854,9 @@
     // Quem ainda deve mostra o saldo; quem já pagou (verde) mostra o valor lançado com o ✔ (e o crédito, se pagou a mais)
     function textoSaldo(saldo, lancado) { return saldo > 0.01 ? brl(saldo) : '✔ ' + brl(lancado || 0) + (saldo < -0.01 ? ' (crédito ' + brl(-saldo) + ')' : ''); }
     const somaDesp = lista => lista.reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0);
-    function linhaDespesaArvore(d, extra) {
-        const i = formatarInfoItem(d, false), v = getValorAjustadoEmprestimo(d), ex = extra === 'cartao' ? ` · 💳 ${escHtml(d.cartao || 'Acordo')}` : (extra === 'pessoa' ? ` · 👤 ${escHtml(d.pessoa)}` : '');
-        return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${i.descLimp} ${i.badgeP} ${i.compIcon}</strong><span>📅 ${i.textData} | Ref: ${formatarMesAno(d.dataRef)}${ex} ${i.cat}</span></div><div class="t-val desp">${brl(v)}</div></div>`;
+    function linhaDespesaArvore(d) {
+        const i = formatarInfoItem(d, false), v = getValorAjustadoEmprestimo(d);
+        return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${i.descLimp} ${i.badgeP} ${i.compIcon}</strong><span>📅 ${i.textData} | Ref: ${formatarMesAno(d.dataRef)} ${i.cat}</span></div><div class="t-val desp">${brl(v)}</div></div>`;
     }
 
     function construirArvorePessoas(pessoasUnicas, despesas, pags) {
@@ -1856,7 +1868,7 @@
             const grupos = [...new Set(dp.map(d => d.cartao || '💲 ACORDOS / DINHEIRO'))].filter(Boolean).map(c => {
                 const dc = dp.filter(d => (d.cartao || '💲 ACORDOS / DINHEIRO') === c).sort(porDataVirtual); return { c, dc, sumC: somaDesp(dc) };
             }).sort((x, y) => (y.sumC - x.sumC) || x.c.localeCompare(y.c));
-            if (detalheDash === 'cat') subHtml += blocoCategorias(dp, idP, 'cartao'); else grupos.forEach(({ c, dc, sumC }) => {
+            grupos.forEach(({ c, dc, sumC }) => {
                 const idC = idP + '_' + Math.random().toString(36).substr(2, 9);
                 subHtml += `<div class="sub-tree-card" id="${idC}"><div class="sub-tree-header" onclick="document.getElementById('${idC}').classList.toggle('open')"><span>${c.includes('💲') ? c : '💳 ' + c}</span><span style="color: var(--text);">${brl(sumC)}</span></div><div class="sub-tree-body">${dc.map(linhaDespesaArvore).join('')}</div></div>`;
             });
@@ -1880,7 +1892,7 @@
             const idC = 'c_' + Math.random().toString(36).substr(2, 9); let subHtml = '';
             const pessoas = [...new Set(dc.map(d => d.pessoa))].map(p => { const dp = dc.filter(d => d.pessoa === p).sort(porDataVirtual); return { p, dp, sumP: somaDesp(dp) }; })
                 .sort((x, y) => (y.sumP - x.sumP) || x.p.localeCompare(y.p));
-            if (detalheDash === 'cat') subHtml += blocoCategorias(dc, idC, 'pessoa'); else pessoas.forEach(({ p, dp, sumP }) => {
+            pessoas.forEach(({ p, dp, sumP }) => {
                 const idP = idC + '_' + Math.random().toString(36).substr(2, 9);
                 subHtml += `<div class="sub-tree-card" id="${idP}"><div class="sub-tree-header" onclick="document.getElementById('${idP}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(p)}</div><span>${p}</span></div><span style="color: var(--text);">${brl(sumP)}</span></div><div class="sub-tree-body">${dp.map(linhaDespesaArvore).join('')}</div></div>`;
             });
@@ -3131,7 +3143,7 @@
         return html;
     }
 
-    /* ================= CATEGORIAS E SUBCATEGORIA (opcional) NA ÁRVORE ================= */
+    /* ================= SUBCATEGORIA (opcional) ================= */
     // Sugestões: as subcategorias que você já usou (na categoria escolhida); a lista não fica guardada em lugar nenhum, vem dos próprios lançamentos
     function subcategoriasDe(cat) {
         const mapa = new Map(); (db.despesas || []).forEach(d => { const s = (d.subcategoria || '').trim(); if (!s || (cat && d.categoria !== cat)) return; const k = s.toLowerCase(); if (!mapa.has(k)) mapa.set(k, s); });
@@ -3140,27 +3152,6 @@
     function atualizarListaSubcat(cat) { const dl = document.getElementById('dl-subcategorias'); if (dl) dl.innerHTML = subcategoriasDe(cat).map(s => `<option value="${escHtml(s)}">`).join(''); }
     function canonSub(cat, texto) { // mesma subcategoria com maiúsculas/minúsculas diferentes vira uma só (usa a grafia que já existe)
         const t = String(texto || '').replace(/\s+/g, ' ').trim(); if (!t) return ''; const ja = subcategoriasDe(cat).find(x => x.toLowerCase() === t.toLowerCase()); return ja || t;
-    }
-    let detalheDash = localStorage.getItem('gc_detalhe_dash') === 'cat' ? 'cat' : 'lanc';
-    function mudarDetalheDash(m) { detalheDash = m === 'cat' ? 'cat' : 'lanc'; try { localStorage.setItem('gc_detalhe_dash', detalheDash); } catch (e) {} atualizarSaldos(); }
-    function sincronizarBotoesDetalhe() {
-        const box = document.getElementById('dash-detalhe'); if (!box) return; box.style.display = visaoDashboardAtual === 'fatura' ? 'none' : '';
-        document.getElementById('det-lanc').classList.toggle('active', detalheDash === 'lanc'); document.getElementById('det-cat').classList.toggle('active', detalheDash === 'cat');
-    }
-    const pctTxt = p => p < 1 ? '<1%' : Math.round(p) + '%';
-    // Categorias (da maior para a menor) com barra fina e percentual; se houver subcategorias, mais um nível (as sem subcategoria por último)
-    function blocoCategorias(itens, idBase, extra) {
-        const total = somaDesp(itens) || 1, porCat = {}; itens.forEach(d => { const c = d.categoria || 'Sem categoria'; (porCat[c] = porCat[c] || []).push(d); });
-        return Object.keys(porCat).map(c => ({ c, its: porCat[c], soma: somaDesp(porCat[c]) })).sort((a, b) => (b.soma - a.soma) || a.c.localeCompare(b.c)).map(({ c, its, soma }) => {
-            const id = idBase + '_k' + Math.random().toString(36).substr(2, 7), pct = soma / total * 100, subs = {};
-            its.forEach(d => { const k = (d.subcategoria || '').trim(); (subs[k] = subs[k] || []).push(d); });
-            const corpo = !Object.keys(subs).some(k => k) ? its.slice().sort(porDataVirtual).map(d => linhaDespesaArvore(d, extra)).join('')
-                : Object.keys(subs).map(k => ({ k, ds: subs[k], s: somaDesp(subs[k]) })).sort((a, b) => ((a.k ? 0 : 1) - (b.k ? 0 : 1)) || (b.s - a.s) || a.k.localeCompare(b.k)).map(({ k, ds, s }) => {
-                    const id2 = id + '_s' + Math.random().toString(36).substr(2, 5);
-                    return `<div class="sub2-card" id="${id2}"><div class="sub2-header" onclick="document.getElementById('${id2}').classList.toggle('open')"><span>↳ ${k ? escHtml(k) : 'Sem subcategoria'}</span><span><small class="cat-pct">${pctTxt(s / soma * 100)}</small>${brl(s)}</span></div><div class="sub2-body">${ds.slice().sort(porDataVirtual).map(d => linhaDespesaArvore(d, extra)).join('')}</div></div>`;
-                }).join('');
-            return `<div class="sub-tree-card" id="${id}"><div class="sub-tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><span>${escHtml(c)}</span><span style="color: var(--text);"><small class="cat-pct">${pctTxt(pct)}</small>${brl(soma)}</span></div><div class="cat-minibar"><span style="width:${Math.max(2, pct).toFixed(1)}%"></span></div><div class="sub-tree-body">${corpo}</div></div>`;
-        }).join('');
     }
 
     /* ================= PAPEL DO ADMINISTRADOR (confirmado pela nuvem) ================= */
