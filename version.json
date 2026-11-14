@@ -1,8 +1,9 @@
 {
-  "versao": "1.4",
+  "versao": "1.5",
   "data": "2026-11-08",
   "notas": [
-    "Visão por pessoa e por cartão: novo alternador \"Lançamentos | Categorias\". Em Categorias cada pessoa/cartão mostra onde gasta, com barra fina, percentual e valor, e dentro de cada categoria os lançamentos (com o cartão ou a pessoa).",
-    "Subcategoria opcional no lançamento e na edição (com sugestões das que você já usou); a categoria só ganha um nível a mais quando tem subcategorias."
+    "A lista da Visão voltou a ser exatamente como era (por pessoa e por cartão).",
+    "O gráfico de categorias de baixo ganhou um seletor discreto (Todos, uma pessoa ou um cartão) para ver onde cada um gasta; tocar numa categoria abre as subcategorias.",
+    "Subcategoria opcional no lançamento e na edição, com sugestões das que você já usou."
   ]
 }
