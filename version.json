@@ -5,6 +5,7 @@
     "GestCard 1.1 — correção da conciliação entre as visões Por Cartão e Por Fatura.",
     "A visão Por Fatura agora usa o mesmo filtro de período da visão Por Cartão e apresenta todas as faturas com lançamentos no período, incluindo pagas, antigas e futuras.",
     "O total da conciliação considera os mesmos lançamentos e valores da visão Por Cartão; marcar uma fatura como paga altera somente o status, não o total das compras.",
-    "Mantidos os lançamentos, parcelamentos, pagamentos, acordos, cadastros, cartões, sincronização e demais funções da versão anterior."
+    "Mantidos os lançamentos, parcelamentos, pagamentos, acordos, cadastros, cartões, sincronização e demais funções da versão anterior.",
+    "Restaurados na tela Visão > Faturas os alertas operacionais independentes do filtro histórico (vencimentos nos próximos 30 dias e faturas vencidas em aberto), além dos dias de fechamento, virada/melhor dia e vencimento de cada cartão."
   ]
 }
