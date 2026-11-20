@@ -3155,16 +3155,30 @@
         }).sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome));
 
         const totalGeral = gruposCartao.reduce((s, c) => s + c.total, 0);
+        // Alertas operacionais preservados e independentes do filtro histórico da Visão:
+        // a conciliação usa o período selecionado; os avisos continuam olhando as faturas em aberto atuais.
+        let em30 = 0, vencido = 0;
+        const despesasAlertas = obterDespesasPermitidas();
+        const cartoesAlertas = (db.cartoes || []).filter(c => typeof c === 'object' && !(db.cartoesInativos || []).includes(c.nome) && diaValido(c.fechamento) && diaValido(c.vencimento));
+        cartoesAlertas.forEach(c => faturasDoCartao(c, hoje, despesasAlertas).forEach(f => {
+            if (f.vencida) vencido += f.total;
+            else if (diasEntre(f.venc, hoje) <= 30) em30 += f.total;
+        }));
         let html = `<div style="padding:4px 6px 10px; margin-bottom:6px; border-bottom:1px solid var(--border);">
             <div style="font-size:0.72rem; color:var(--text-light);">CONCILIAÇÃO DAS FATURAS · mesmo período da visão por cartão</div>
             <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:3px;"><strong style="font-size:0.82rem;">Total dos cartões no período</strong><strong style="font-size:1rem; color:var(--text);">${brl(totalGeral)}</strong></div>
             <div class="fat-sub" style="margin-top:4px;">Inclui faturas pagas, em aberto, antigas e futuras que pertencem ao período selecionado. O status de pagamento não altera a soma.</div>
+            <div style="display:flex; justify-content:space-between; gap:8px; margin-top:7px; font-size:0.72rem;"><span>Vencem nos próximos 30 dias</span><strong>${brl(em30)}</strong></div>
+            ${vencido > 0.005 ? `<div style="display:flex; justify-content:space-between; gap:8px; margin-top:3px; font-size:0.72rem; color:var(--danger);"><span>⚠ Vencidas e ainda em aberto</span><strong>${brl(vencido)}</strong></div>` : ''}
         </div>`;
 
         if (!gruposCartao.length) html += '<p class="helper" style="text-align:center;">Sem lançamentos de cartão no período selecionado.</p>';
 
         gruposCartao.forEach(({ nome, faturas, total }) => {
             const id = 'fat_' + rnd();
+            const cfgDias = c && diaValido(c.fechamento) && diaValido(c.vencimento)
+                ? `Fecha dia ${diaValido(c.fechamento)} · Vira / melhor dia dia ${cartaoMelhorDia(c)} · Vence dia ${diaValido(c.vencimento)}`
+                : 'Configure fechamento e vencimento para exibir os alertas do cartão';
             const corpo = faturas.map(f => {
                 const porPessoa = [...new Set(f.itens.map(d => d.pessoa))].filter(Boolean).map(p => {
                     const its = f.itens.filter(d => d.pessoa === p).sort(porDataVirtual);
@@ -3181,7 +3195,7 @@
                     : `<button class="gc-chip" data-n="${escHtml(nome)}" data-r="${f.ref}" onclick="marcarFaturaPaga(this.dataset.n, this.dataset.r)">✔ marcar paga</button>`;
                 return `<div style="padding:7px 4px 3px; font-size:0.73rem; display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800;"><span>Fatura ${formatarMesAno(f.ref)} ${status}</span><span style="white-space:nowrap;">${brl(f.total)} ${acao}</span></div><div class="fat-sub" style="padding:0 4px 4px;">${detalheData}</div>${sub}`;
             }).join('');
-            html += `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💳</div><span>${escHtml(nome)}</span></div><span style="color:var(--danger);">${brl(total)}</span></div><div class="tree-body">${corpo}</div></div>`;
+            html += `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💳</div><div style="min-width:0;"><span>${escHtml(nome)}</span><div class="fat-sub">${cfgDias}</div></div></div><span style="color:var(--danger);">${brl(total)}</span></div><div class="tree-body">${corpo}</div></div>`;
         });
 
         // Os acordos continuam aparecendo como alertas separados; eles não entram
