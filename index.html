@@ -328,6 +328,35 @@
         .gc-evo-col.atual .gc-evo-mes { color: var(--primary); }
         .gc-evo-tag { font-size: 0.48rem; font-weight: 700; color: var(--text-light); opacity: 0.8; text-transform: uppercase; }
         .gc-evo-detalhe { margin-top: 6px; padding: 6px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.65rem; color: var(--text-light); display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
+    
+        /* ===== Aba Dedicada Gráficos (v1.3) ===== */
+        #tela-graficos { padding-bottom: 16px; }
+        .graf-filtros-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; margin-bottom: 8px; }
+        .graf-secao-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+        .graf-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+        .graf-titulo { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); }
+        .graf-sub { font-size: 0.62rem; color: var(--text-light); font-weight: 700; }
+        .graf-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+        .graf-kpi { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
+        .graf-kpi span { display: block; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; color: var(--text-light); letter-spacing: 0.03em; }
+        .graf-kpi strong { display: block; font-size: 0.82rem; font-weight: 900; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .graf-lim-row { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); }
+        .graf-lim-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .graf-lim-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 800; margin-bottom: 3px; }
+        .graf-lim-trilho { height: 7px; border-radius: 999px; background: var(--border); overflow: hidden; }
+        .graf-lim-barra { height: 100%; border-radius: 999px; background: var(--primary); transition: width 0.25s ease; }
+        .graf-lim-barra.alerta { background: #f59e0b; }
+        .graf-lim-barra.estouro { background: var(--danger); }
+        .graf-lim-meta { display: flex; justify-content: space-between; font-size: 0.58rem; color: var(--text-light); margin-top: 2px; font-variant-numeric: tabular-nums; }
+        .graf-pessoa-bloco { border-top: 1px dashed var(--border); padding-top: 7px; margin-top: 7px; }
+        .graf-pessoa-bloco:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+        .graf-pessoa-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 0.72rem; font-weight: 800; margin-bottom: 4px; }
+        .graf-pessoa-vals { font-size: 0.62rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .graf-dupla-barra { display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--border); gap: 1px; }
+        .graf-barra-cob { background: var(--danger); height: 100%; }
+        .graf-barra-rec { background: var(--success); height: 100%; }
+        .graf-vazio { font-size: 0.68rem; color: var(--text-light); text-align: center; padding: 10px 6px; }
+
     </style>
 </head>
 <body>
@@ -398,8 +427,9 @@
     <!-- DOCK COM 5 ÍCONES (CADASTROS E AJUSTES SUPER VISÍVEL) -->
     <div class="dock-wrapper">
         <div class="dock" id="dock">
-            <div class="dock-item" id="icon-dashboard" onclick="mudarTela('dashboard','Visão Geral')"><span class="material-icons-outlined">space_dashboard</span></div>
-            <div class="dock-item" id="icon-calendario" onclick="mudarTela('calendario','Calendário')"><span class="material-icons-outlined">event_note</span></div>
+            <div class="dock-item" id="icon-dashboard" onclick="mudarTela('dashboard','Visão Geral')" title="Visão Geral"><span class="material-icons-outlined">space_dashboard</span></div>
+            <div class="dock-item" id="icon-graficos" onclick="mudarTela('graficos','Gráficos')" title="Gráficos"><span class="material-icons-outlined">bar_chart</span></div>
+            <div class="dock-item" id="icon-calendario" onclick="mudarTela('calendario','Calendário')" title="Calendário"><span class="material-icons-outlined">event_note</span></div>
             <button class="dock-main" onclick="abrirModalLancamento()"><span class="material-icons-outlined">add</span></button>
             <div class="dock-item" id="icon-extrato" onclick="mudarTela('extrato','Cobranças e Extrato')"><span class="material-icons-outlined">receipt_long</span></div>
         </div>
@@ -632,7 +662,11 @@
                 </div>
                 <div id="lista-arvore-saldos"></div>
             </div>
-            <div id="grafico-categorias" style="display:none;"></div>
+        </div>
+
+        <!-- TELA 1B: GRÁFICOS -->
+        <div id="tela-graficos" class="tela" style="display: none;">
+            <div id="graf-conteudo-principal"></div>
         </div>
 
         <!-- TELA 2: CALENDÁRIO -->
@@ -882,7 +916,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.2'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.3'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1690,6 +1724,7 @@
         document.getElementById('btn-ajuste').classList.toggle('ativo', id === 'config');
         
         if(id === 'dashboard') atualizarSaldos();
+        if(id === 'graficos') renderizarTelaGraficos();
         if(id === 'calendario') renderizarCalendario();
         if(id === 'extrato') renderizarExtrato();
         if(id === 'config') { renderizarListaParcelamentos(); renderizarListaTransferencia(); carregarAjusteForm(); carregarPerfilForm(); carregarSnapshotsLista(); atualizarCardVersao(); if (ehAdminEfetivo()) carregarConfigAdmin(); atualizarStatusBackup(); atualizarStatusDados(); }
@@ -1844,8 +1879,7 @@
         let pessoasUnicas = [...new Set(despesas.map(d=>d.pessoa).concat(pags.map(p=>p.pessoa)))].filter(Boolean);
         let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : construirArvoreCartoes(despesas);
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
-        renderizarGraficoCategorias(despesas);
-    }
+        }
     // Gráfico analítico interativo (v1.2):
     // - Sincronizado com a aba ativa (POR PESSOA prioriza filtro de pessoas + "Só Meus"; POR CARTÃO prioriza filtro de cartões).
     // - Alterna entre Distribuição por Categorias (com detalhamento por subcategoria e por pessoa/cartão) e Evolução de 6 Meses (3 anteriores + atual + 2 futuros).
@@ -1987,11 +2021,263 @@
         </div>`;
     }
     
+    
+    /* ================= ABA DEDICADA GRÁFICOS (v1.4) ================= */
+    let grafMesProjSel = null, grafMesEvoSel = null, grafCatAberta = null;
+
+    function selecionarMesProjGraf(ym) { grafMesProjSel = ym; renderizarTelaGraficos(); }
+    function selecionarMesEvoGraf(ym) { grafMesEvoSel = ym; renderizarTelaGraficos(); }
+    function alternarDrillCatGraf(el, cat) {
+        const grupo = el.parentElement;
+        const abriu = !grupo.classList.contains('aberto');
+        grupo.classList.toggle('aberto', abriu);
+        grafCatAberta = abriu ? cat : null;
+    }
+
+    function renderizarTelaGraficos() {
+        const tela = document.getElementById('tela-graficos');
+        const mainBox = document.getElementById('graf-conteudo-principal');
+        if (!tela || !mainBox) return;
+
+        const todasDesp = obterDespesasPermitidas().filter(d => getValorAjustadoEmprestimo(d) > 0);
+        const todosPag = obterPagamentosPermitidos().filter(p => (Number(p.valor) || 0) > 0);
+        const cartaoDe = d => d.cartao || '💲 Acordo';
+
+        const despFiltradasGlobal = todasDesp;
+        const pagFiltradosGlobal = todosPag;
+
+        const selDashId = document.getElementById('dash-filtro-global') ? 'dash-filtro-global' : null;
+        const range = selDashId ? getFiltroRange(selDashId, 'dash-dt-ini', 'dash-dt-fim') : null;
+        const despPeriodo = despFiltradasGlobal.filter(d => dentroDoPeriodo(d, range));
+        const pagPeriodo = pagFiltradosGlobal.filter(p => dentroDoPeriodo(p, range));
+
+        const totCobPeriodo = somaDesp(despPeriodo);
+        const totRecPeriodo = pagPeriodo.reduce((s, p) => s + (Number(p.valor) || 0), 0);
+        const saldoPeriodo = totCobPeriodo - totRecPeriodo;
+
+        const hj = new Date();
+        const mesAtual = `${hj.getFullYear()}-${pushPad(hj.getMonth() + 1)}`;
+        const fmtCurto = ym => {
+            const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+            const [a, m] = ym.split('-').map(Number);
+            return `${nomes[(m || 1) - 1]}/${String(a).slice(-2)}`;
+        };
+        const fmtK = v => v >= 1000 ? 'R$' + (v / 1000).toFixed(1).replace('.', ',') + 'k' : (v > 0 ? 'R$' + Math.round(v) : 'R$0');
+        const rotuloPct = p => p < 1 ? '<1%' : Math.round(p) + '%';
+        const larguraPct = p => Math.max(2, p).toFixed(1) + '%';
+        const linhaBarra = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${larguraPct(tot > 0 ? v / tot * 100 : 0)}"></span></span><span class="gc-pct">${rotuloPct(tot > 0 ? v / tot * 100 : 0)}</span><span class="gc-val">${brl(v)}</span></div>`;
+
+        // 1. Projeção de faturas futuras (6 meses à frente: mês atual + 5 próximos meses)
+        const mesesFuturos = [0, 1, 2, 3, 4, 5].map(k => mesMais(mesAtual, k));
+        if (!grafMesProjSel || !mesesFuturos.includes(grafMesProjSel)) grafMesProjSel = mesAtual;
+        const serieProj = mesesFuturos.map(ym => {
+            const dsMes = despFiltradasGlobal.filter(d => d.dataRef === ym);
+            const totalMes = somaDesp(dsMes);
+            const parcMes = dsMes.filter(d => /\(\d+\/\d+\)/.test(String(d.desc || '')) || d.isEmprestimo).reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0);
+            const porCart = {};
+            dsMes.forEach(d => { const c = cartaoDe(d); porCart[c] = (porCart[c] || 0) + getValorAjustadoEmprestimo(d); });
+            const topCart = Object.entries(porCart).sort((a, b) => b[1] - a[1])[0];
+            return { ym, total: totalMes, parc: parcMes, qtd: dsMes.length, topCart };
+        });
+        const maxProj = Math.max(1, ...serieProj.map(s => s.total));
+        const totProj6m = serieProj.reduce((s, x) => s + x.total, 0);
+        const selProj = serieProj.find(s => s.ym === grafMesProjSel) || serieProj[0];
+
+        const projColsHtml = serieProj.map(s => {
+            const hPct = s.total > 0 ? Math.max(6, Math.round((s.total / maxProj) * 100)) : 4;
+            const cls = ['gc-evo-col', s.ym === mesAtual ? 'atual' : 'futuro', s.ym === grafMesProjSel ? 'sel' : ''].filter(Boolean).join(' ');
+            const tag = s.ym === mesAtual ? 'Atual' : 'Prev.';
+            return `<div class="${cls}" onclick="selecionarMesProjGraf('${s.ym}')" title="${formatarMesAno(s.ym)}: ${brl(s.total)}">
+                <span class="gc-evo-val">${fmtK(s.total)}</span>
+                <div class="gc-evo-bar-wrap"><div class="gc-evo-bar" style="height:${hPct}%"></div></div>
+                <span class="gc-evo-mes">${fmtCurto(s.ym)}</span>
+                <span class="gc-evo-tag">${tag}</span>
+            </div>`;
+        }).join('');
+
+        const blocoProjecao = `
+            <div class="graf-secao-card">
+                <div class="graf-topo">
+                    <span class="graf-titulo">📅 Projeção de Faturas Futuras (6 Meses)</span>
+                    <span class="graf-sub">Total previsto: <strong>${brl(totProj6m)}</strong></span>
+                </div>
+                <div class="gc-evo-grid">${projColsHtml}</div>
+                <div class="gc-evo-detalhe">
+                    <div><strong style="color:var(--text);">${formatarMesAno(selProj.ym)}</strong> · ${selProj.qtd} lanç. · <strong style="color:var(--primary);">${brl(selProj.total)}</strong></div>
+                    <div>${selProj.qtd ? `Parcelas/Acordos: <strong>${brl(selProj.parc)}</strong>${selProj.topCart ? ` · Principal: <strong>${escHtml(selProj.topCart[0])}</strong> (${brl(selProj.topCart[1])})` : ''}` : 'Sem faturas projetadas neste mês'}</div>
+                </div>
+            </div>`;
+
+        // 2. Uso de limite por cartão (no período selecionado ou geral se tiver limite configurado)
+        const cartoesObjs = (db.cartoes || []).filter(c => {
+            const nomeC = c.nome || c;
+            const inativos = db.cartoesInativos || [];
+            return !inativos.includes(nomeC);
+        });
+        const limitesHtml = cartoesObjs.length ? cartoesObjs.map(c => {
+            const nomeC = c.nome || c;
+            const limite = Number(c.limite) || 0;
+            // Considera despesas abertas/do período ou total do cartão se não houver período restrito
+            const gastoRef = despPeriodo.filter(d => d.cartao === nomeC);
+            const gastoGeral = despFiltradasGlobal.filter(d => d.cartao === nomeC);
+            const gasto = gastoRef.length > 0 || range ? somaDesp(gastoRef) : somaDesp(gastoGeral);
+            const pct = limite > 0 ? (gasto / limite) * 100 : 0;
+            const barCls = pct >= 95 ? 'estouro' : (pct >= 75 ? 'alerta' : '');
+            const disp = limite > 0 ? (limite - gasto) : 0;
+            return `<div class="graf-lim-row">
+                <div class="graf-lim-head"><span>💳 ${escHtml(nomeC)}</span><span>${limite > 0 ? `${Math.round(pct)}%` : 'Sem limite'}</span></div>
+                <div class="graf-lim-trilho"><div class="graf-lim-barra ${barCls}" style="width:${limite > 0 ? Math.min(100, Math.max(2, pct)).toFixed(1) : 0}%"></div></div>
+                <div class="graf-lim-meta">
+                    <span>Usado: <strong>${brl(gasto)}</strong></span>
+                    <span>${limite > 0 ? (disp >= 0 ? `Disponível: <strong>${brl(disp)}</strong> de ${brl(limite)}` : `Acima do limite em <strong>${brl(Math.abs(disp))}</strong>`) : 'Configure o limite em Ajuste › Cartões'}</span>
+                </div>
+            </div>`;
+        }).join('') : '<div class="graf-vazio">Nenhum cartão ativo encontrado para o filtro atual.</div>';
+
+        const blocoLimites = `
+            <div class="graf-secao-card">
+                <div class="graf-topo">
+                    <span class="graf-titulo">💳 Uso de Limite por Cartão</span>
+                    <span class="graf-sub">${range ? 'No período filtrado' : 'Acumulado'}</span>
+                </div>
+                ${limitesHtml}
+            </div>`;
+
+        // 3. Gastos por categoria (com drilldown por subcategoria e pessoa/cartão)
+        const somaCat = {};
+        let totalCat = 0;
+        despPeriodo.forEach(d => {
+            const cat = d.categoria || 'Sem categoria';
+            (somaCat[cat] = somaCat[cat] || []).push(d);
+            totalCat += getValorAjustadoEmprestimo(d);
+        });
+        let itensCat = Object.keys(somaCat).map(c => [c, somaCat[c], somaDesp(somaCat[c])]).sort((a, b) => b[2] - a[2]);
+        if (itensCat.length > 8) {
+            itensCat = itensCat.slice(0, 7).concat([['Outras', itensCat.slice(7).flatMap(x => x[1]), itensCat.slice(7).reduce((t, x) => t + x[2], 0)]]);
+        }
+
+        const catListaHtml = itensCat.length ? itensCat.map(([c, ds, v]) => {
+            const subs = {};
+            ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
+            const chavesSub = Object.keys(subs);
+            const semSub = ds.filter(d => !(d.subcategoria || '').trim());
+            const subsHtml = chavesSub.length > 0
+                ? `<div class="gc-drill-sec">Subcategorias</div>` + chavesSub.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linhaBarra('↳ ' + k, sv, v, c + ' › ' + k)).join('')
+                : '';
+            const porPessoaCat = {};
+            ds.forEach(d => { const k = '👤 ' + (d.pessoa || 'Sem pessoa'); porPessoaCat[k] = (porPessoaCat[k] || 0) + getValorAjustadoEmprestimo(d); });
+            const pessoaCatHtml = `<div class="gc-drill-sec">Por Responsável</div>` + Object.entries(porPessoaCat).sort((a, b) => b[1] - a[1]).map(([k, pv]) => linhaBarra(k, pv, v, c + ' · ' + k)).join('');
+            const aberta = grafCatAberta === c;
+            return `<div class="gc-grupo tem-sub${aberta ? ' aberto' : ''}"><div data-cat="${escHtml(c)}" onclick="alternarDrillCatGraf(this, this.dataset.cat)">${linhaBarra(c, v, totalCat, c)}</div><div class="gc-drill">${subsHtml}${pessoaCatHtml}</div></div>`;
+        }).join('') : '<div class="graf-vazio">Sem despesas por categoria no período selecionado.</div>';
+
+        const blocoCategorias = `
+            <div class="graf-secao-card">
+                <div class="graf-topo">
+                    <span class="graf-titulo">📊 Gastos por Categoria</span>
+                    <span class="graf-sub">Toque para detalhar · <strong>${brl(totalCat)}</strong></span>
+                </div>
+                ${catListaHtml}
+            </div>`;
+
+        // 4. Divisão de despesas por responsável (Cobrado × Recebido × Saldo)
+        const pessoasResumo = [...new Set(despPeriodo.map(d => d.pessoa).concat(pagPeriodo.map(p => p.pessoa)))]
+            .filter(Boolean)
+            .map(p => {
+                const cob = somaDesp(despPeriodo.filter(d => d.pessoa === p));
+                const rec = pagPeriodo.filter(pg => pg.pessoa === p).reduce((s, pg) => s + (Number(pg.valor) || 0), 0);
+                return { pessoa: p, cob, rec, diff: cob - rec };
+            })
+            .sort((a, b) => b.diff - a.diff || b.cob - a.cob);
+
+        const maxPessoa = Math.max(1, ...pessoasResumo.map(x => Math.max(x.cob, x.rec)));
+        const pessoasHtml = pessoasResumo.length ? pessoasResumo.map(item => {
+            const pCob = Math.min(100, (item.cob / maxPessoa) * 100);
+            const pRec = Math.min(100, (item.rec / maxPessoa) * 100);
+            const stTxt = item.diff > 0.01 ? `Deve ${brl(item.diff)}` : (item.diff < -0.01 ? `Crédito ${brl(Math.abs(item.diff))}` : 'Quitado');
+            const stCor = item.diff > 0.01 ? 'var(--danger)' : 'var(--success)';
+            return `<div class="graf-pessoa-bloco">
+                <div class="graf-pessoa-topo">
+                    <span>👤 ${escHtml(item.pessoa)}</span>
+                    <span class="graf-pessoa-vals" style="color:${stCor};">${stTxt}</span>
+                </div>
+                <div class="graf-dupla-barra" title="Cobrado: ${brl(item.cob)} | Recebido: ${brl(item.rec)}">
+                    <div class="graf-barra-cob" style="width:${pCob.toFixed(1)}%"></div>
+                    <div class="graf-barra-rec" style="width:${pRec.toFixed(1)}%"></div>
+                </div>
+                <div class="graf-lim-meta">
+                    <span>Cobrado: <strong>${brl(item.cob)}</strong></span>
+                    <span>Recebido: <strong>${brl(item.rec)}</strong></span>
+                </div>
+            </div>`;
+        }).join('') : '<div class="graf-vazio">Sem movimentação por responsável no período.</div>';
+
+        const blocoResponsaveis = `
+            <div class="graf-secao-card">
+                <div class="graf-topo">
+                    <span class="graf-titulo">👥 Divisão de Despesas por Responsável</span>
+                    <span class="graf-sub">Cobrado × Recebido</span>
+                </div>
+                ${pessoasHtml}
+            </div>`;
+
+        // 5. Evolução mensal dos últimos 6 meses (3 anteriores + atual + 2 futuros)
+        const mesesEvo = [-3, -2, -1, 0, 1, 2].map(k => mesMais(mesAtual, k));
+        if (!grafMesEvoSel || !mesesEvo.includes(grafMesEvoSel)) grafMesEvoSel = mesAtual;
+        const serieEvo = mesesEvo.map(ym => {
+            const dsMes = despFiltradasGlobal.filter(d => d.dataRef === ym);
+            const totalMes = somaDesp(dsMes);
+            const recMes = pagFiltradosGlobal.filter(p => p.dataRef === ym).reduce((s, p) => s + (Number(p.valor) || 0), 0);
+            const porCatM = {};
+            dsMes.forEach(d => { const c = d.categoria || 'Sem categoria'; porCatM[c] = (porCatM[c] || 0) + getValorAjustadoEmprestimo(d); });
+            const topCat = Object.entries(porCatM).sort((a, b) => b[1] - a[1])[0];
+            return { ym, total: totalMes, rec: recMes, qtd: dsMes.length, topCat };
+        });
+        const maxEvo = Math.max(1, ...serieEvo.map(s => s.total));
+        const totEvo6m = serieEvo.reduce((s, x) => s + x.total, 0);
+        const selEvo = serieEvo.find(s => s.ym === grafMesEvoSel) || serieEvo[3];
+
+        const evoColsHtml = serieEvo.map(s => {
+            const hPct = s.total > 0 ? Math.max(6, Math.round((s.total / maxEvo) * 100)) : 4;
+            const cls = ['gc-evo-col', s.ym === mesAtual ? 'atual' : (s.ym > mesAtual ? 'futuro' : ''), s.ym === grafMesEvoSel ? 'sel' : ''].filter(Boolean).join(' ');
+            const tag = s.ym === mesAtual ? 'Atual' : (s.ym > mesAtual ? 'Prev.' : '');
+            return `<div class="${cls}" onclick="selecionarMesEvoGraf('${s.ym}')" title="${formatarMesAno(s.ym)}: ${brl(s.total)}">
+                <span class="gc-evo-val">${fmtK(s.total)}</span>
+                <div class="gc-evo-bar-wrap"><div class="gc-evo-bar" style="height:${hPct}%"></div></div>
+                <span class="gc-evo-mes">${fmtCurto(s.ym)}</span>
+                <span class="gc-evo-tag">${tag || '&nbsp;'}</span>
+            </div>`;
+        }).join('');
+
+        const blocoEvolucao = `
+            <div class="graf-secao-card">
+                <div class="graf-topo">
+                    <span class="graf-titulo">📈 Evolução Mensal (Últimos 6 Meses)</span>
+                    <span class="graf-sub">Janela 6m: <strong>${brl(totEvo6m)}</strong></span>
+                </div>
+                <div class="gc-evo-grid">${evoColsHtml}</div>
+                <div class="gc-evo-detalhe">
+                    <div><strong style="color:var(--text);">${formatarMesAno(selEvo.ym)}</strong> · ${selEvo.qtd} lanç. · Cobrado: <strong style="color:var(--primary);">${brl(selEvo.total)}</strong></div>
+                    <div>Recebido: <strong>${brl(selEvo.rec)}</strong>${selEvo.topCat ? ` · Maior cat.: <strong>${escHtml(selEvo.topCat[0])}</strong> (${brl(selEvo.topCat[1])})` : ''}</div>
+                </div>
+            </div>`;
+
+        const resumoTopo = `
+            <div class="graf-kpis">
+                <div class="graf-kpi"><span>Cobrado</span><strong style="color:var(--danger);">${brl(totCobPeriodo)}</strong></div>
+                <div class="graf-kpi"><span>Recebido</span><strong style="color:var(--success);">${brl(totRecPeriodo)}</strong></div>
+                <div class="graf-kpi"><span>Diferença</span><strong style="color:${saldoPeriodo > 0 ? 'var(--danger)' : 'var(--success)'};">${brl(Math.abs(saldoPeriodo))}</strong></div>
+            </div>`;
+
+        mainBox.innerHTML = resumoTopo + blocoProjecao + blocoLimites + blocoCategorias + blocoResponsaveis + blocoEvolucao;
+    }
+
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
     function atualizarTelaAtual() {
         if (typeof currentUser === 'undefined' || !currentUser) return;
         const aberta = id => { const el = document.getElementById('tela-' + id); return !!el && el.style.display === 'block'; };
         if (aberta('dashboard')) atualizarSaldos();
+        if (aberta('graficos')) renderizarTelaGraficos();
         if (aberta('calendario')) { fecharDetalheDia(); renderizarCalendario(); }
         if (aberta('extrato')) renderizarExtrato();
         if (aberta('config')) { renderizarListaParcelamentos(); renderizarListaTransferencia(); }
@@ -3258,7 +3544,7 @@
 
     /* ================= ATUALIZAÇÃO AUTOMÁTICA DO APP ================= */
     let telaAtualId = 'dashboard', recargaPendente = false, ultimoInfoVersao = null, ultimaChecagemMs = 0;
-    const TITULOS_TELA = { dashboard: 'Visão Geral', calendario: 'Calendário', extrato: 'Extrato', config: 'Ajuste' };
+    const TITULOS_TELA = { dashboard: 'Visão Geral', graficos: 'Gráficos', calendario: 'Calendário', extrato: 'Extrato', config: 'Ajuste' };
     function restaurarTelaDepoisDeAtualizar() {
         let t = null; try { t = sessionStorage.getItem('gc_tela_retorno'); sessionStorage.removeItem('gc_tela_retorno'); } catch (e) {}
         const id = TITULOS_TELA[t] ? t : 'dashboard'; mudarTela(id, TITULOS_TELA[id]);
