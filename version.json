@@ -1,12 +1,10 @@
 {
-  "versao": "1.0",
-  "data": "2026-11-08",
+  "versao": "1.1",
+  "data": "2026-11-20",
   "notas": [
-    "GestCard 1.0 — versão consolidada.",
-    "Dados iguais no celular, no PC e na nuvem (aparelho novo baixa antes de enviar, nunca troca por banco vazio, combina quando dois aparelhos mexem), com restauração de backups do Drive dentro do app.",
-    "Acordos: vencimento no dia da data, prazo sem juros em meses (30 dias = 1 mês), juros por período completo, passam de mês até serem pagos; quitação pelo recebimento.",
-    "Faturas: o acordo é tratado como um cartão; fatura vencida e em aberto continua aparecendo até ser marcada como paga.",
-    "Visão: gráfico de categorias com filtros de pessoas e cartões (vários ao mesmo tempo), percentual e valor, e subcategorias opcionais.",
-    "Recebidos, filtros com mês seguinte, aviso de cartão que já virou, 20 temas e barra do celular que acompanha o tema."
+    "GestCard 1.1 — correção da conciliação entre as visões Por Cartão e Por Fatura.",
+    "A visão Por Fatura agora usa o mesmo filtro de período da visão Por Cartão e apresenta todas as faturas com lançamentos no período, incluindo pagas, antigas e futuras.",
+    "O total da conciliação considera os mesmos lançamentos e valores da visão Por Cartão; marcar uma fatura como paga altera somente o status, não o total das compras.",
+    "Mantidos os lançamentos, parcelamentos, pagamentos, acordos, cadastros, cartões, sincronização e demais funções da versão anterior."
   ]
 }
