@@ -1,11 +1,9 @@
 {
-  "versao": "1.1",
+  "versao": "1.2",
   "data": "2026-11-20",
   "notas": [
-    "GestCard 1.1 — correção da conciliação entre as visões Por Cartão e Por Fatura.",
-    "A visão Por Fatura agora usa o mesmo filtro de período da visão Por Cartão e apresenta todas as faturas com lançamentos no período, incluindo pagas, antigas e futuras.",
-    "O total da conciliação considera os mesmos lançamentos e valores da visão Por Cartão; marcar uma fatura como paga altera somente o status, não o total das compras.",
-    "Mantidos os lançamentos, parcelamentos, pagamentos, acordos, cadastros, cartões, sincronização e demais funções da versão anterior.",
-    "Restaurados na tela Visão > Faturas os alertas operacionais independentes do filtro histórico (vencimentos nos próximos 30 dias e faturas vencidas em aberto), além dos dias de fechamento, virada/melhor dia e vencimento de cada cartão."
+    "GestCard 1.2 — unificação das abas Por Cartão e Faturas e gráfico analítico interativo na Visão Geral.",
+    "Aba única Por Cartão: reúne os lançamentos por cartão com os ciclos de fechamento/melhor dia/vencimento, alertas operacionais (vencimentos nos próximos 30 dias e faturas vencidas em aberto), marcação de fatura paga/em aberto e acordos em aberto.",
+    "Gráfico analítico interativo na Visão Geral: sincronizado com a aba ativa (Por Pessoa ou Por Cartão), com filtros rápidos incluindo 'Só Meus', detalhamento por subcategoria e pessoa/cartão ao tocar na categoria, e alternância entre Distribuição por Categorias e Evolução de 6 Meses (3 anteriores, atual e 2 futuros)."
   ]
 }
