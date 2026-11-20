@@ -284,6 +284,50 @@
         .ext-grupo { display: flex; align-items: center; gap: 8px; padding: 6px 4px 4px; margin-top: 8px; border-bottom: 1px solid var(--border); font-size: 0.8rem; font-weight: 800; }
         .ext-grupo.quitado { opacity: 0.8; }
         .ext-grupo .ext-grupo-nome { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* ===== Visão Unificada Por Cartão & Faturas (v1.2) ===== */
+        .fat-resumo-box { padding: 4px 4px 10px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+        .fat-alerta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+        .fat-alerta-pill { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; gap: 2px; }
+        .fat-alerta-pill span { font-size: 0.62rem; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+        .fat-alerta-pill strong { font-size: 0.85rem; color: var(--text); font-variant-numeric: tabular-nums; }
+        .fat-alerta-pill.perigo { border-color: rgba(239, 68, 68, 0.45); background: rgba(239, 68, 68, 0.08); }
+        .fat-alerta-pill.perigo span, .fat-alerta-pill.perigo strong { color: var(--danger); }
+        .fat-fatura-bloco { border-top: 1px dashed var(--border); padding-top: 6px; margin-top: 6px; }
+        .fat-fatura-bloco:first-child { border-top: none; padding-top: 2px; margin-top: 2px; }
+        .fat-btn-status { font-size: 0.62rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-light); cursor: pointer; font-family: inherit; }
+        .fat-btn-status.marcar { border-color: var(--success); color: var(--success); }
+        .fat-badge-vencida { display: inline-block; font-size: 0.58rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; background: rgba(239, 68, 68, 0.14); color: var(--danger); margin-left: 4px; vertical-align: middle; }
+
+        /* ===== Gráfico Analítico Interativo (v1.2) ===== */
+        #grafico-categorias { margin: 8px 0 0; }
+        .gc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; }
+        .gc-mode-tabs { display: inline-flex; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 2px; gap: 2px; }
+        .gc-mode-btn { border: none; background: transparent; color: var(--text-light); font-size: 0.58rem; font-weight: 800; padding: 3px 7px; border-radius: 6px; cursor: pointer; font-family: inherit; text-transform: uppercase; letter-spacing: 0.03em; }
+        .gc-mode-btn.active { background: var(--primary); color: var(--bg); }
+        [data-tone="claro"] .gc-mode-btn.active, [data-theme="nubank"] .gc-mode-btn.active, [data-theme="ocean"] .gc-mode-btn.active { color: #fff; }
+        .gc-chip.meu { border-style: dashed; }
+        .gc-chip.on.meu { border-style: solid; }
+        .gc-reset-link { background: none; border: none; color: var(--primary); font-size: 0.58rem; font-weight: 800; cursor: pointer; padding: 0 4px; font-family: inherit; text-transform: uppercase; }
+        .gc-drill { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; margin: 3px 0 6px; }
+        .gc-grupo.aberto .gc-drill { display: block; animation: fadeIn 0.15s ease; }
+        .gc-drill-sec { font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); margin: 5px 0 2px; }
+        .gc-drill-sec:first-child { margin-top: 0; }
+        .gc-drill .gc-linha { height: 13px; font-size: 0.59rem; }
+        .gc-drill .gc-barra { opacity: 0.55; }
+        .gc-evo-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; align-items: end; height: 112px; padding: 14px 2px 2px; margin-top: 4px; }
+        .gc-evo-col { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; cursor: pointer; user-select: none; }
+        .gc-evo-val { font-size: 0.53rem; font-weight: 800; color: var(--text-light); margin-bottom: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+        .gc-evo-bar-wrap { width: 100%; max-width: 32px; flex: 1; display: flex; align-items: flex-end; justify-content: center; }
+        .gc-evo-bar { width: 100%; border-radius: 6px 6px 3px 3px; background: var(--primary); opacity: 0.48; transition: height 0.25s ease, opacity 0.2s; min-height: 4px; }
+        .gc-evo-col.atual .gc-evo-bar { opacity: 0.95; }
+        .gc-evo-col.futuro .gc-evo-bar { opacity: 0.35; border: 1px dashed var(--primary); background: color-mix(in srgb, var(--primary) 30%, transparent); }
+        .gc-evo-col.sel .gc-evo-bar { opacity: 1; outline: 2px solid var(--text); outline-offset: 1px; }
+        .gc-evo-col.sel .gc-evo-val, .gc-evo-col.atual .gc-evo-val { color: var(--text); }
+        .gc-evo-mes { font-size: 0.58rem; font-weight: 800; color: var(--text-light); margin-top: 4px; text-transform: uppercase; }
+        .gc-evo-col.atual .gc-evo-mes { color: var(--primary); }
+        .gc-evo-tag { font-size: 0.48rem; font-weight: 700; color: var(--text-light); opacity: 0.8; text-transform: uppercase; }
+        .gc-evo-detalhe { margin-top: 6px; padding: 6px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.65rem; color: var(--text-light); display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -585,7 +629,6 @@
                 <div class="dash-tabs">
                     <button class="dash-tab-btn active" id="btn-visao-pessoa" onclick="alternarVisaoDash('pessoa')">👤 POR PESSOA</button>
                     <button class="dash-tab-btn" id="btn-visao-cartao" onclick="alternarVisaoDash('cartao')">💳 POR CARTÃO</button>
-                    <button class="dash-tab-btn" id="btn-visao-fatura" onclick="alternarVisaoDash('fatura')">🧾 FATURAS</button>
                 </div>
                 <div id="lista-arvore-saldos"></div>
             </div>
@@ -839,7 +882,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.1'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.2'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1799,39 +1842,149 @@
         document.getElementById('metric-saldo').style.color = saldo > 0 ? 'var(--danger)' : 'var(--success)';
 
         let pessoasUnicas = [...new Set(despesas.map(d=>d.pessoa).concat(pags.map(p=>p.pessoa)))].filter(Boolean);
-        let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : visaoDashboardAtual === 'fatura' ? construirFaturas(despesas) : construirArvoreCartoes(despesas);
+        let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : construirArvoreCartoes(despesas);
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
         renderizarGraficoCategorias(despesas);
     }
-    // Gráfico bem discreto: uma barra fina por categoria com o percentual E o valor de cada uma no período escolhido (as maiores primeiro).
-    // Filtros: PESSOAS e CARTÕES (o acordo conta como um cartão), com mais de uma escolha; os dois juntos. Tocar numa categoria abre as subcategorias.
+    // Gráfico analítico interativo (v1.2):
+    // - Sincronizado com a aba ativa (POR PESSOA prioriza filtro de pessoas + "Só Meus"; POR CARTÃO prioriza filtro de cartões).
+    // - Alterna entre Distribuição por Categorias (com detalhamento por subcategoria e por pessoa/cartão) e Evolução de 6 Meses (3 anteriores + atual + 2 futuros).
     let catPessoas = new Set(), catCartoes = new Set();
+    let graficoModo = 'categorias'; // 'categorias' | 'evolucao'
+    let graficoMesSel = null;
+    let graficoCatAberta = null;
     function alternarFiltroCat(tipo, nome) { const S = tipo === 'p' ? catPessoas : catCartoes; if (!nome) S.clear(); else if (S.has(nome)) S.delete(nome); else S.add(nome); atualizarSaldos(); }
+    function alternarSoMeusGrafico(nomeMeu) {
+        if (!nomeMeu) return;
+        if (catPessoas.size === 1 && catPessoas.has(nomeMeu)) catPessoas.clear();
+        else { catPessoas.clear(); catPessoas.add(nomeMeu); }
+        atualizarSaldos();
+    }
+    function limparFiltrosGrafico() { catPessoas.clear(); catCartoes.clear(); atualizarSaldos(); }
+    function alternarModoGrafico(modo) { graficoModo = modo === 'evolucao' ? 'evolucao' : 'categorias'; atualizarSaldos(); }
+    function selecionarMesGrafico(ym) { graficoMesSel = ym; atualizarSaldos(); }
+    function alternarDrillCategoria(el, cat) {
+        const grupo = el.parentElement;
+        const abriu = !grupo.classList.contains('aberto');
+        grupo.classList.toggle('aberto', abriu);
+        graficoCatAberta = abriu ? cat : null;
+    }
     function renderizarGraficoCategorias(despesas) {
         const box = document.getElementById('grafico-categorias'); if (!box) return;
         const esconder = () => { box.style.display = 'none'; box.innerHTML = ''; };
-        if (visaoDashboardAtual === 'fatura') return esconder(); // gráfico de categorias permanece oculto na visão de faturas
-        const cartaoDe = d => d.cartao || '💲 Acordo', uteis = despesas.filter(d => getValorAjustadoEmprestimo(d) > 0);
-        if (!uteis.length) return esconder();
-        const pessoas = [...new Set(uteis.map(d => d.pessoa))].sort(), cartoes = [...new Set(uteis.map(cartaoDe))].sort();
-        [...catPessoas].forEach(p => { if (!pessoas.includes(p)) catPessoas.delete(p); }); [...catCartoes].forEach(c => { if (!cartoes.includes(c)) catCartoes.delete(c); }); // some o que não existe neste período
-        if (pessoas.every(p => catPessoas.has(p))) catPessoas.clear(); if (cartoes.every(c => catCartoes.has(c))) catCartoes.clear(); // todos marcados = todos
-        const base = uteis.filter(d => (!catPessoas.size || catPessoas.has(d.pessoa)) && (!catCartoes.size || catCartoes.has(cartaoDe(d))));
-        const chip = (tipo, nome, rotulo, on) => `<button type="button" class="gc-chip${on ? ' on' : ''}" data-n="${escHtml(nome)}" onclick="alternarFiltroCat('${tipo}', this.dataset.n)">${escHtml(rotulo)}</button>`;
-        const chips = (tipo, titulo, todos, lista, S) => `<div class="gc-chips"><span class="gc-rot">${titulo}</span>${chip(tipo, '', todos, !S.size)}${lista.map(n => chip(tipo, n, (tipo === 'p' ? '👤 ' : (n === '💲 Acordo' ? '' : '💳 ')) + n, S.has(n))).join('')}</div>`;
-        const soma = {}; let total = 0; base.forEach(d => { const c = d.categoria || 'Sem categoria'; (soma[c] = soma[c] || []).push(d); total += getValorAjustadoEmprestimo(d); });
+        const cartaoDe = d => d.cartao || '💲 Acordo';
+        const todasUteis = obterDespesasPermitidas().filter(d => getValorAjustadoEmprestimo(d) > 0);
+        const uteis = despesas.filter(d => getValorAjustadoEmprestimo(d) > 0);
+        const poolChips = graficoModo === 'evolucao' ? todasUteis : uteis;
+        if (!poolChips.length) return esconder();
+
+        const pessoas = [...new Set(poolChips.map(d => d.pessoa))].filter(Boolean).sort();
+        const cartoes = [...new Set(poolChips.map(cartaoDe))].filter(Boolean).sort();
+        [...catPessoas].forEach(p => { if (!pessoas.includes(p)) catPessoas.delete(p); });
+        [...catCartoes].forEach(c => { if (!cartoes.includes(c)) catCartoes.delete(c); });
+        if (pessoas.length > 1 && pessoas.every(p => catPessoas.has(p))) catPessoas.clear();
+        if (cartoes.length > 1 && cartoes.every(c => catCartoes.has(c))) catCartoes.clear();
+
+        const nomeUserNorm = currentUser && currentUser.nome ? String(currentUser.nome).trim().toUpperCase() : '';
+        const meuNomeMatch = nomeUserNorm ? pessoas.find(p => String(p).trim().toUpperCase() === nomeUserNorm) : null;
+        const soMeuAtivo = !!(meuNomeMatch && catPessoas.size === 1 && catPessoas.has(meuNomeMatch));
+
+        const chip = (tipo, nome, rotulo, on, extraCls = '') => `<button type="button" class="gc-chip${on ? ' on' : ''}${extraCls ? ' ' + extraCls : ''}" data-n="${escHtml(nome)}" onclick="alternarFiltroCat('${tipo}', this.dataset.n)">${escHtml(rotulo)}</button>`;
+        const chipSoMeu = meuNomeMatch
+            ? `<button type="button" class="gc-chip meu${soMeuAtivo ? ' on' : ''}" data-m="${escHtml(meuNomeMatch)}" onclick="alternarSoMeusGrafico(this.dataset.m)">⭐ Só Meus</button>`
+            : '';
+        const rowPessoas = `<div class="gc-chips"><span class="gc-rot">Pessoas</span>${chip('p', '', 'Todas', !catPessoas.size)}${chipSoMeu}${pessoas.map(n => chip('p', n, '👤 ' + n, catPessoas.has(n))).join('')}</div>`;
+        const rowCartoes = `<div class="gc-chips"><span class="gc-rot">Cartões</span>${chip('c', '', 'Todos', !catCartoes.size)}${cartoes.map(n => chip('c', n, (n === '💲 Acordo' ? '' : '💳 ') + n, catCartoes.has(n))).join('')}</div>`;
+        const filtrosHtml = visaoDashboardAtual === 'cartao' ? (rowCartoes + rowPessoas) : (rowPessoas + rowCartoes);
+
+        const temFiltroAtivo = catPessoas.size > 0 || catCartoes.size > 0;
+        const resetBtn = temFiltroAtivo ? `<button type="button" class="gc-reset-link" onclick="limparFiltrosGrafico()">Limpar</button>` : '';
+        const modeSwitch = `<div class="gc-mode-tabs">
+            <button type="button" class="gc-mode-btn${graficoModo === 'categorias' ? ' active' : ''}" onclick="alternarModoGrafico('categorias')">📊 Categorias</button>
+            <button type="button" class="gc-mode-btn${graficoModo === 'evolucao' ? ' active' : ''}" onclick="alternarModoGrafico('evolucao')">📈 6 Meses</button>
+        </div>`;
+
+        const filtraDim = d => (!catPessoas.size || catPessoas.has(d.pessoa)) && (!catCartoes.size || catCartoes.has(cartaoDe(d)));
+        const rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%', largura = p => Math.max(2, p).toFixed(1) + '%';
+        const linha = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${largura(tot > 0 ? v / tot * 100 : 0)}"></span></span><span class="gc-pct">${rotulo(tot > 0 ? v / tot * 100 : 0)}</span><span class="gc-val">${brl(v)}</span></div>`;
+
+        if (graficoModo === 'evolucao') {
+            const hj = new Date();
+            const mesAtual = `${hj.getFullYear()}-${pushPad(hj.getMonth() + 1)}`;
+            const meses = [-3, -2, -1, 0, 1, 2].map(k => mesMais(mesAtual, k));
+            if (!graficoMesSel || !meses.includes(graficoMesSel)) graficoMesSel = mesAtual;
+            const baseEvo = todasUteis.filter(filtraDim);
+            const series = meses.map(ym => {
+                const dsMes = baseEvo.filter(d => d.dataRef === ym);
+                const totalMes = somaDesp(dsMes);
+                const parcMes = dsMes.filter(d => /\(\d+\/\d+\)/.test(String(d.desc || '')) || d.isEmprestimo).reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0);
+                const porCat = {};
+                dsMes.forEach(d => { const c = d.categoria || 'Sem categoria'; porCat[c] = (porCat[c] || 0) + getValorAjustadoEmprestimo(d); });
+                const topCat = Object.entries(porCat).sort((a, b) => b[1] - a[1])[0];
+                return { ym, total: totalMes, parc: parcMes, avista: Math.max(0, totalMes - parcMes), qtd: dsMes.length, topCat };
+            });
+            const maxVal = Math.max(1, ...series.map(s => s.total));
+            const total6m = series.reduce((s, x) => s + x.total, 0);
+            const selObj = series.find(s => s.ym === graficoMesSel) || series[3];
+            const fmtCurto = ym => {
+                const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+                const [a, m] = ym.split('-').map(Number);
+                return `${nomes[(m || 1) - 1]}/${String(a).slice(-2)}`;
+            };
+            const fmtK = v => v >= 1000 ? 'R$' + (v / 1000).toFixed(1).replace('.', ',') + 'k' : (v > 0 ? 'R$' + Math.round(v) : 'R$0');
+
+            const colsHtml = series.map(s => {
+                const hPct = s.total > 0 ? Math.max(6, Math.round((s.total / maxVal) * 100)) : 4;
+                const cls = ['gc-evo-col', s.ym === mesAtual ? 'atual' : '', s.ym > mesAtual ? 'futuro' : '', s.ym === graficoMesSel ? 'sel' : ''].filter(Boolean).join(' ');
+                const tag = s.ym === mesAtual ? 'Atual' : (s.ym > mesAtual ? 'Prev.' : '');
+                return `<div class="${cls}" onclick="selecionarMesGrafico('${s.ym}')" title="${formatarMesAno(s.ym)}: ${brl(s.total)}">
+                    <span class="gc-evo-val">${fmtK(s.total)}</span>
+                    <div class="gc-evo-bar-wrap"><div class="gc-evo-bar" style="height:${hPct}%"></div></div>
+                    <span class="gc-evo-mes">${fmtCurto(s.ym)}</span>
+                    <span class="gc-evo-tag">${tag || '&nbsp;'}</span>
+                </div>`;
+            }).join('');
+
+            const detHtml = `<div class="gc-evo-detalhe">
+                <div><strong style="color:var(--text);">${formatarMesAno(selObj.ym)}</strong> · ${selObj.qtd} lanç. · <strong style="color:var(--primary);">${brl(selObj.total)}</strong></div>
+                <div>${selObj.qtd ? `Parcelas/Acordos: <strong>${brl(selObj.parc)}</strong> · Maior: <strong>${escHtml(selObj.topCat[0])}</strong> (${brl(selObj.topCat[1])})` : 'Sem lançamentos neste mês'}</div>
+            </div>`;
+
+            box.style.display = 'block';
+            box.innerHTML = `<div class="gc-card">
+                <div class="gc-topo"><span class="gc-titulo">Evolução 6 Meses ${resetBtn}</span><div style="display:flex; align-items:center; gap:6px;"><span class="gc-total">${brl(total6m)}</span>${modeSwitch}</div></div>
+                ${filtrosHtml}
+                <div class="gc-evo-grid">${colsHtml}</div>
+                ${detHtml}
+            </div>`;
+            return;
+        }
+
+        const base = uteis.filter(filtraDim);
+        const soma = {}; let total = 0;
+        base.forEach(d => { const c = d.categoria || 'Sem categoria'; (soma[c] = soma[c] || []).push(d); total += getValorAjustadoEmprestimo(d); });
         let itens = Object.keys(soma).map(c => [c, soma[c], somaDesp(soma[c])]).sort((a, b) => b[2] - a[2]);
         if (itens.length > 8) itens = itens.slice(0, 7).concat([['Outras', itens.slice(7).flatMap(x => x[1]), itens.slice(7).reduce((t, x) => t + x[2], 0)]]);
-        const rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%', largura = p => Math.max(2, p).toFixed(1) + '%';
-        const linha = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${largura(v / tot * 100)}"></span></span><span class="gc-pct">${rotulo(v / tot * 100)}</span><span class="gc-val">${brl(v)}</span></div>`;
+
+        const eixoCruzadoTitulo = visaoDashboardAtual === 'cartao' ? 'Por Pessoa nesta categoria' : 'Por Cartão / Acordo nesta categoria';
+        const eixoCruzadoKey = d => visaoDashboardAtual === 'cartao' ? ('👤 ' + (d.pessoa || 'Sem pessoa')) : (d.cartao ? '💳 ' + d.cartao : '💲 Acordo');
+
         box.style.display = 'block';
-        box.innerHTML = `<div class="gc-topo"><span class="gc-titulo">Categorias</span><span class="gc-total">${brl(total)}</span></div>${chips('p', 'Pessoas', 'Todas', pessoas, catPessoas)}${chips('c', 'Cartões', 'Todos', cartoes, catCartoes)}`
-            + (itens.length ? itens.map(([c, ds, v]) => {
+        box.innerHTML = `<div class="gc-card">
+            <div class="gc-topo"><span class="gc-titulo">Categorias · toque para detalhar ${resetBtn}</span><div style="display:flex; align-items:center; gap:6px;"><span class="gc-total">${brl(total)}</span>${modeSwitch}</div></div>
+            ${filtrosHtml}
+            ${itens.length ? itens.map(([c, ds, v]) => {
                 const subs = {}; ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
-                const chaves = Object.keys(subs), semSub = ds.filter(d => !(d.subcategoria || '').trim()), temSub = chaves.length > 0 && c !== 'Outras';
-                const corpo = temSub ? chaves.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linha('↳ ' + k, sv, v, c + ' › ' + k)).join('') : '';
-                return `<div class="gc-grupo${temSub ? ' tem-sub' : ''}">${temSub ? '<div onclick="this.parentElement.classList.toggle(\'aberto\')">' : '<div>'}${linha(c, v, total, c)}</div>${temSub ? `<div class="gc-subs">${corpo}</div>` : ''}</div>`;
-            }).join('') : '<div class="gc-linha"><span class="gc-nome" style="flex:1">Nada neste filtro.</span></div>');
+                const chaves = Object.keys(subs), semSub = ds.filter(d => !(d.subcategoria || '').trim());
+                const subsHtml = chaves.length > 0
+                    ? `<div class="gc-drill-sec">Subcategorias</div>` + chaves.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linha('↳ ' + k, sv, v, c + ' › ' + k)).join('')
+                    : '';
+                const cruzado = {}; ds.forEach(d => { const k = eixoCruzadoKey(d); cruzado[k] = (cruzado[k] || 0) + getValorAjustadoEmprestimo(d); });
+                const cruzadoHtml = `<div class="gc-drill-sec">${eixoCruzadoTitulo}</div>` + Object.entries(cruzado).sort((a, b) => b[1] - a[1]).map(([k, cv]) => linha(k, cv, v, c + ' · ' + k)).join('');
+                const aberta = graficoCatAberta === c;
+                return `<div class="gc-grupo tem-sub${aberta ? ' aberto' : ''}"><div data-cat="${escHtml(c)}" onclick="alternarDrillCategoria(this, this.dataset.cat)">${linha(c, v, total, c)}</div><div class="gc-drill">${subsHtml}${cruzadoHtml}</div></div>`;
+            }).join('') : '<div class="gc-linha"><span class="gc-nome" style="flex:1">Nada neste filtro.</span></div>'}
+        </div>`;
     }
     
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
@@ -1844,7 +1997,14 @@
         if (aberta('config')) { renderizarListaParcelamentos(); renderizarListaTransferencia(); }
     }
 
-    function alternarVisaoDash(modo) { visaoDashboardAtual = modo; document.getElementById('btn-visao-pessoa').classList.toggle('active', modo === 'pessoa'); document.getElementById('btn-visao-cartao').classList.toggle('active', modo === 'cartao'); document.getElementById('btn-visao-fatura').classList.toggle('active', modo === 'fatura'); atualizarSaldos(); }
+    function alternarVisaoDash(modo) {
+        visaoDashboardAtual = (modo === 'cartao' || modo === 'fatura') ? 'cartao' : 'pessoa';
+        const bP = document.getElementById('btn-visao-pessoa');
+        const bC = document.getElementById('btn-visao-cartao');
+        if (bP) bP.classList.toggle('active', visaoDashboardAtual === 'pessoa');
+        if (bC) bC.classList.toggle('active', visaoDashboardAtual === 'cartao');
+        atualizarSaldos();
+    }
 
     /* ===== Ordenação das listas: quem ainda deve vem primeiro (maior dívida no topo); quem já pagou (verde) desce ===== */
     // Ordem cronológica pela MESMA data que aparece na linha (como num extrato de cartão)
@@ -1896,19 +2056,133 @@
     }
 
     function construirArvoreCartoes(despesas) {
-        let html = '';
-        const cartoes = [...new Set(despesas.map(d => d.cartao))].filter(Boolean).map(c => { const dc = despesas.filter(d => d.cartao === c); return { c, dc, sumC: somaDesp(dc) }; })
-            .filter(x => x.sumC > 0).sort((x, y) => (y.sumC - x.sumC) || x.c.localeCompare(y.c));
-        cartoes.forEach(({ c, dc, sumC }) => {
-            const idC = 'c_' + Math.random().toString(36).substr(2, 9); let subHtml = '';
-            const pessoas = [...new Set(dc.map(d => d.pessoa))].map(p => { const dp = dc.filter(d => d.pessoa === p).sort(porDataVirtual); return { p, dp, sumP: somaDesp(dp) }; })
-                .sort((x, y) => (y.sumP - x.sumP) || x.p.localeCompare(y.p));
-            pessoas.forEach(({ p, dp, sumP }) => {
-                const idP = idC + '_' + Math.random().toString(36).substr(2, 9);
-                subHtml += `<div class="sub-tree-card" id="${idP}"><div class="sub-tree-header" onclick="document.getElementById('${idP}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(p)}</div><span>${p}</span></div><span style="color: var(--text);">${brl(sumP)}</span></div><div class="sub-tree-body">${dp.map(linhaDespesaArvore).join('')}</div></div>`;
+        // Visão Unificada POR CARTÃO + FATURAS (v1.2):
+        // Conciliação exata no período selecionado + ciclos de fechamento/melhor dia/vencimento,
+        // alertas operacionais (próximos 30 dias e vencidas em aberto), status PAGA/EM ABERTO e acordos em aberto.
+        const hoje0 = new Date(), hoje = new Date(hoje0.getFullYear(), hoje0.getMonth(), hoje0.getDate());
+        const rnd = () => Math.random().toString(36).substr(2, 8);
+        const gruposCartao = [...new Set(despesas.map(d => d.cartao).filter(Boolean))].map(nome => {
+            const itensCartao = despesas.filter(d => d.cartao === nome);
+            const porRef = [...new Set(itensCartao.map(d => d.dataRef).filter(Boolean))].sort();
+            const c = dadosCartao(nome);
+            const faturas = porRef.map(ref => {
+                const itens = itensCartao.filter(d => d.dataRef === ref).sort(porDataVirtual);
+                const total = somaDesp(itens);
+                const configurado = !!(c && diaValido(c.fechamento) && diaValido(c.vencimento));
+                const dt = configurado ? datasFatura(c, ref) : null;
+                const paga = !!(c && (c.pagas || []).includes(ref));
+                const vencida = !!(dt && dt.venc < hoje && !paga);
+                return { ref, itens, total, paga, vencida, fecha: dt && dt.fecha, venc: dt && dt.venc, configurado };
             });
-            html += `<div class="tree-card" id="${idC}"><div class="tree-header" onclick="document.getElementById('${idC}').classList.toggle('open')"><span>💳 ${c}</span><span style="color: var(--danger)">${brl(sumC)}</span></div><div class="tree-body">${subHtml}</div></div>`;
+            const total = somaDesp(itensCartao);
+            const todasPagas = faturas.length > 0 && faturas.every(f => f.paga);
+            const temVencida = faturas.some(f => f.vencida);
+            return { nome, c, faturas, total, todasPagas, temVencida };
+        }).filter(x => x.total > 0 || x.faturas.length > 0).sort((a, b) => (b.total - a.total) || a.nome.localeCompare(b.nome));
+
+        const totalGeral = gruposCartao.reduce((s, c) => s + c.total, 0);
+        let em30 = 0, vencido = 0;
+        const despesasAlertas = obterDespesasPermitidas();
+        const cartoesAlertas = (db.cartoes || []).filter(c => typeof c === 'object' && !(db.cartoesInativos || []).includes(c.nome) && diaValido(c.fechamento) && diaValido(c.vencimento));
+        cartoesAlertas.forEach(c => faturasDoCartao(c, hoje, despesasAlertas).forEach(f => {
+            if (f.vencida) vencido += f.total;
+            else if (diasEntre(f.venc, hoje) <= 30) em30 += f.total;
+        }));
+
+        let html = `<div class="fat-resumo-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                <span style="font-size:0.68rem; color:var(--text-light); font-weight:800; text-transform:uppercase;">Total dos cartões no período</span>
+                <strong style="font-size:0.98rem; color:var(--text); font-variant-numeric:tabular-nums;">${brl(totalGeral)}</strong>
+            </div>
+            <div class="fat-alerta-grid">
+                <div class="fat-alerta-pill">
+                    <span>Vencem em 30 dias</span>
+                    <strong>${brl(em30)}</strong>
+                </div>
+                <div class="fat-alerta-pill${vencido > 0.005 ? ' perigo' : ''}">
+                    <span>${vencido > 0.005 ? '⚠ Vencidas em aberto' : 'Faturas vencidas'}</span>
+                    <strong style="${vencido <= 0.005 ? 'color:var(--success);' : ''}">${vencido > 0.005 ? brl(vencido) : '✔ Em dia'}</strong>
+                </div>
+            </div>
+        </div>`;
+
+        if (!gruposCartao.length) {
+            html += '<p class="helper" style="text-align:center;">Sem lançamentos de cartão no período selecionado.</p>';
+        }
+
+        gruposCartao.forEach(({ nome, c, faturas, total, todasPagas, temVencida }) => {
+            const id = 'card_' + rnd();
+            const cfgDias = c && diaValido(c.fechamento) && diaValido(c.vencimento)
+                ? `Fecha dia ${diaValido(c.fechamento)} · Melhor dia ${cartaoMelhorDia(c)} · Vence dia ${diaValido(c.vencimento)}`
+                : 'Configure fechamento e vencimento em Ajuste';
+            const badgeVenc = temVencida ? '<span class="fat-badge-vencida">⚠ VENCIDA</span>' : '';
+            const corTotal = todasPagas ? 'var(--success)' : 'var(--danger)';
+
+            const corpo = faturas.map(f => {
+                const porPessoa = [...new Set(f.itens.map(d => d.pessoa))].filter(Boolean).map(p => {
+                    const its = f.itens.filter(d => d.pessoa === p).sort(porDataVirtual);
+                    return { p, its, soma: somaDesp(its) };
+                }).sort((a, b) => (b.soma - a.soma) || a.p.localeCompare(b.p));
+
+                const sub = porPessoa.map(x => {
+                    const sid = id + '_' + rnd();
+                    return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${x.its.map(linhaDespesaArvore).join('')}</div></div>`;
+                }).join('');
+
+                const detalheData = f.configurado
+                    ? linhaFatura({ fecha: f.fecha, venc: f.venc, fechada: f.fecha < hoje, vencida: f.vencida }, hoje)
+                    : 'Fechamento e vencimento não configurados neste cartão';
+                const status = f.paga
+                    ? '<span style="color:var(--success);">· PAGA</span>'
+                    : (f.vencida ? '<span style="color:var(--danger);">· VENCIDA</span>' : '<span style="color:var(--primary);">· EM ABERTO</span>');
+                const acao = f.paga
+                    ? `<button type="button" class="fat-btn-status" data-n="${escHtml(nome)}" data-r="${f.ref}" onclick="desfazerFaturaPaga(this.dataset.n, this.dataset.r)">↩ desfazer</button>`
+                    : `<button type="button" class="fat-btn-status marcar" data-n="${escHtml(nome)}" data-r="${f.ref}" onclick="marcarFaturaPaga(this.dataset.n, this.dataset.r)">✔ marcar paga</button>`;
+
+                return `<div class="fat-fatura-bloco">
+                    <div style="padding:3px 2px 2px; font-size:0.74rem; display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800;">
+                        <span>Fatura ${formatarMesAno(f.ref)} ${status}</span>
+                        <span style="white-space:nowrap; display:inline-flex; align-items:center; gap:6px;">${brl(f.total)} ${acao}</span>
+                    </div>
+                    <div class="fat-sub" style="padding:0 2px 4px;">${detalheData}</div>
+                    ${sub}
+                </div>`;
+            }).join('');
+
+            html += `<div class="tree-card${todasPagas ? ' quitado' : ''}" id="${id}">
+                <div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')">
+                    <div class="tree-person-info">
+                        <div class="avatar">💳</div>
+                        <div style="min-width:0;">
+                            <span>${escHtml(nome)}${badgeVenc}</span>
+                            <div class="fat-sub">${cfgDias}</div>
+                        </div>
+                    </div>
+                    <span style="color:${corTotal}; white-space:nowrap;">${todasPagas ? '✔ ' : ''}${brl(total)}</span>
+                </div>
+                <div class="tree-body">${corpo}</div>
+            </div>`;
         });
+
+        // Acordos em aberto como alertas separados dos cartões
+        const ac = acordosEmAlerta(hoje);
+        if (ac.length) {
+            const porPessoa = [...new Set(ac.map(x => x.d.pessoa))].filter(Boolean).map(p => {
+                const its = ac.filter(x => x.d.pessoa === p);
+                return { p, its, soma: its.reduce((s, x) => s + getValorAjustadoEmprestimo(x.d), 0) };
+            }).sort((a, b) => b.soma - a.soma);
+            const idAc = 'ac_' + rnd();
+            const corpoAc = porPessoa.map(x => {
+                const sid = idAc + '_' + rnd();
+                const rows = x.its.map(({d, venc, dias}) => {
+                    const venceu = dias < 0, rolou = d.dataRefOrig && d.dataRefOrig !== d.dataRef;
+                    return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${escHtml(String(d.desc || '').replace(/\s*\(\d+\/\d+\)\s*$/, ''))}${rolou ? ' <span style="display:inline-block; margin-left:6px; padding:1px 6px; border-radius:6px; font-size:0.6rem; background:#ef4444; color:#fff;">↻ ' + formatarMesAno(d.dataRefOrig) + '</span>' : ''}</strong><span style="color:${venceu ? 'var(--danger)' : 'var(--text-light)'};">${venceu ? 'venceu' : 'vence'} ${fmtDM(venc)} (${textoDias(dias)})${d.jurosRegra ? ' · com juros' : ''}</span></div><div class="t-val ${venceu ? 'desp' : ''}">${brl(getValorAjustadoEmprestimo(d))}</div></div>`;
+                }).join('');
+                return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${rows}</div></div>`;
+            }).join('');
+            const totalAc = ac.reduce((s, x) => s + getValorAjustadoEmprestimo(x.d), 0);
+            html += `<div style="margin:12px 4px 5px; font-size:0.7rem; color:var(--text-light); font-weight:800; text-transform:uppercase;">Acordos em aberto · alertas separados</div><div class="tree-card" id="${idAc}"><div class="tree-header" onclick="document.getElementById('${idAc}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💲</div><span>Acordos</span></div><span style="color:var(--danger);">${brl(totalAc)}</span></div><div class="tree-body">${corpoAc}</div></div>`;
+        }
         return html;
     }
 
@@ -3134,93 +3408,6 @@
         });
         return out.sort((a, b) => a.venc - b.venc);
     }
-    function construirFaturas(despesas) {
-        // Conciliação: usa EXATAMENTE as despesas já filtradas por atualizarSaldos(),
-        // incluindo faturas pagas, antigas e futuras. Assim, cada cartão soma o mesmo
-        // conjunto de lançamentos nas visões POR CARTÃO e POR FATURA.
-        const hoje0 = new Date(), hoje = new Date(hoje0.getFullYear(), hoje0.getMonth(), hoje0.getDate());
-        const rnd = () => Math.random().toString(36).substr(2, 8);
-        const gruposCartao = [...new Set(despesas.map(d => d.cartao).filter(Boolean))].map(nome => {
-            const itensCartao = despesas.filter(d => d.cartao === nome);
-            const porRef = [...new Set(itensCartao.map(d => d.dataRef).filter(Boolean))].sort();
-            const c = dadosCartao(nome);
-            const faturas = porRef.map(ref => {
-                const itens = itensCartao.filter(d => d.dataRef === ref).sort(porDataVirtual);
-                const total = somaDesp(itens);
-                const configurado = c && diaValido(c.fechamento) && diaValido(c.vencimento);
-                const dt = configurado ? datasFatura(c, ref) : null;
-                return { ref, itens, total, paga: !!(c && (c.pagas || []).includes(ref)), fecha: dt && dt.fecha, venc: dt && dt.venc, configurado };
-            });
-            return { nome, faturas, total: somaDesp(itensCartao) };
-        }).sort((a, b) => b.total - a.total || a.nome.localeCompare(b.nome));
-
-        const totalGeral = gruposCartao.reduce((s, c) => s + c.total, 0);
-        // Alertas operacionais preservados e independentes do filtro histórico da Visão:
-        // a conciliação usa o período selecionado; os avisos continuam olhando as faturas em aberto atuais.
-        let em30 = 0, vencido = 0;
-        const despesasAlertas = obterDespesasPermitidas();
-        const cartoesAlertas = (db.cartoes || []).filter(c => typeof c === 'object' && !(db.cartoesInativos || []).includes(c.nome) && diaValido(c.fechamento) && diaValido(c.vencimento));
-        cartoesAlertas.forEach(c => faturasDoCartao(c, hoje, despesasAlertas).forEach(f => {
-            if (f.vencida) vencido += f.total;
-            else if (diasEntre(f.venc, hoje) <= 30) em30 += f.total;
-        }));
-        let html = `<div style="padding:4px 6px 10px; margin-bottom:6px; border-bottom:1px solid var(--border);">
-            <div style="font-size:0.72rem; color:var(--text-light);">CONCILIAÇÃO DAS FATURAS · mesmo período da visão por cartão</div>
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:3px;"><strong style="font-size:0.82rem;">Total dos cartões no período</strong><strong style="font-size:1rem; color:var(--text);">${brl(totalGeral)}</strong></div>
-            <div class="fat-sub" style="margin-top:4px;">Inclui faturas pagas, em aberto, antigas e futuras que pertencem ao período selecionado. O status de pagamento não altera a soma.</div>
-            <div style="display:flex; justify-content:space-between; gap:8px; margin-top:7px; font-size:0.72rem;"><span>Vencem nos próximos 30 dias</span><strong>${brl(em30)}</strong></div>
-            ${vencido > 0.005 ? `<div style="display:flex; justify-content:space-between; gap:8px; margin-top:3px; font-size:0.72rem; color:var(--danger);"><span>⚠ Vencidas e ainda em aberto</span><strong>${brl(vencido)}</strong></div>` : ''}
-        </div>`;
-
-        if (!gruposCartao.length) html += '<p class="helper" style="text-align:center;">Sem lançamentos de cartão no período selecionado.</p>';
-
-        gruposCartao.forEach(({ nome, faturas, total }) => {
-            const id = 'fat_' + rnd();
-            const cfgDias = c && diaValido(c.fechamento) && diaValido(c.vencimento)
-                ? `Fecha dia ${diaValido(c.fechamento)} · Vira / melhor dia dia ${cartaoMelhorDia(c)} · Vence dia ${diaValido(c.vencimento)}`
-                : 'Configure fechamento e vencimento para exibir os alertas do cartão';
-            const corpo = faturas.map(f => {
-                const porPessoa = [...new Set(f.itens.map(d => d.pessoa))].filter(Boolean).map(p => {
-                    const its = f.itens.filter(d => d.pessoa === p).sort(porDataVirtual);
-                    return { p, its, soma: somaDesp(its) };
-                }).sort((a, b) => b.soma - a.soma || a.p.localeCompare(b.p));
-                const sub = porPessoa.map(x => {
-                    const sid = id + '_' + rnd();
-                    return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${x.its.map(linhaDespesaArvore).join('')}</div></div>`;
-                }).join('');
-                const detalheData = f.configurado ? linhaFatura({ fecha:f.fecha, venc:f.venc, fechada:f.fecha < hoje, vencida:f.venc < hoje }, hoje) : 'Fechamento e vencimento não configurados neste cartão';
-                const status = f.paga ? '<span style="color:var(--success);">· PAGA</span>' : '<span style="color:var(--warning);">· EM ABERTO</span>';
-                const acao = f.paga
-                    ? `<button class="gc-chip" data-n="${escHtml(nome)}" data-r="${f.ref}" onclick="desfazerFaturaPaga(this.dataset.n, this.dataset.r)">↩ desfazer pagamento</button>`
-                    : `<button class="gc-chip" data-n="${escHtml(nome)}" data-r="${f.ref}" onclick="marcarFaturaPaga(this.dataset.n, this.dataset.r)">✔ marcar paga</button>`;
-                return `<div style="padding:7px 4px 3px; font-size:0.73rem; display:flex; justify-content:space-between; align-items:center; gap:6px; font-weight:800;"><span>Fatura ${formatarMesAno(f.ref)} ${status}</span><span style="white-space:nowrap;">${brl(f.total)} ${acao}</span></div><div class="fat-sub" style="padding:0 4px 4px;">${detalheData}</div>${sub}`;
-            }).join('');
-            html += `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💳</div><div style="min-width:0;"><span>${escHtml(nome)}</span><div class="fat-sub">${cfgDias}</div></div></div><span style="color:var(--danger);">${brl(total)}</span></div><div class="tree-body">${corpo}</div></div>`;
-        });
-
-        // Os acordos continuam aparecendo como alertas separados; eles não entram
-        // na conciliação de cartões, assim como não entram na visão POR CARTÃO.
-        const ac = acordosEmAlerta(hoje);
-        if (ac.length) {
-            const porPessoa = [...new Set(ac.map(x => x.d.pessoa))].filter(Boolean).map(p => {
-                const its = ac.filter(x => x.d.pessoa === p);
-                return { p, its, soma: its.reduce((s, x) => s + getValorAjustadoEmprestimo(x.d), 0) };
-            }).sort((a, b) => b.soma - a.soma);
-            const idAc = 'fat_' + rnd();
-            const corpoAc = porPessoa.map(x => {
-                const sid = idAc + '_' + rnd();
-                const rows = x.its.map(({d, venc, dias}) => {
-                    const venceu = dias < 0, rolou = d.dataRefOrig && d.dataRefOrig !== d.dataRef;
-                    return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${escHtml(String(d.desc || '').replace(/\s*\(\d+\/\d+\)\s*$/, ''))}${rolou ? ' <span style="display:inline-block; margin-left:6px; padding:1px 6px; border-radius:6px; font-size:0.6rem; background:#ef4444; color:#fff;">↻ ' + formatarMesAno(d.dataRefOrig) + '</span>' : ''}</strong><span style="color:${venceu ? 'var(--danger)' : 'var(--text-light)'};">${venceu ? 'venceu' : 'vence'} ${fmtDM(venc)} (${textoDias(dias)})${d.jurosRegra ? ' · com juros' : ''}</span></div><div class="t-val ${venceu ? 'desp' : ''}">${brl(getValorAjustadoEmprestimo(d))}</div></div>`;
-                }).join('');
-                return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${rows}</div></div>`;
-            }).join('');
-            const totalAc = ac.reduce((s, x) => s + getValorAjustadoEmprestimo(x.d), 0);
-            html += `<div style="margin:12px 4px 5px; font-size:0.72rem; color:var(--text-light); font-weight:800;">ACORDOS EM ABERTO · alertas separados dos cartões</div><div class="tree-card" id="${idAc}"><div class="tree-header" onclick="document.getElementById('${idAc}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💲</div><span>Acordos</span></div><span style="color:var(--danger);">${brl(totalAc)}</span></div><div class="tree-body">${corpoAc}</div></div>`;
-        }
-        return html;
-    }
-
     /* ================= SUBCATEGORIA (opcional) ================= */
     // Sugestões: as subcategorias que você já usou (na categoria escolhida); a lista não fica guardada em lugar nenhum, vem dos próprios lançamentos
     function subcategoriasDe(cat) {
