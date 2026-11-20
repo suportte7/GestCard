@@ -266,9 +266,17 @@
         .gc-topo .gc-titulo { margin: 0; }
         .gc-escopo { background: transparent; border: none; color: var(--text-light); font-size: 0.62rem; font-weight: 700; padding: 0; max-width: 55%; text-align-last: right; }
         .gc-grupo.tem-sub > .gc-linha { cursor: pointer; }
-        .gc-grupo.tem-sub .gc-nome::after { content: ' ▸'; opacity: 0.5; } .gc-grupo.tem-sub.aberto .gc-nome::after { content: ' ▾'; }
+        .gc-grupo.tem-sub > div:first-child .gc-nome::after { content: ' ▸'; opacity: 0.5; } .gc-grupo.tem-sub.aberto > div:first-child .gc-nome::after { content: ' ▾'; }
         .gc-subs { display: none; padding: 1px 0 3px 12px; } .gc-grupo.aberto .gc-subs { display: block; }
         .gc-subs .gc-linha { height: 12px; font-size: 0.58rem; } .gc-subs .gc-barra { opacity: 0.45; }
+        .gc-chips { display: flex; align-items: center; gap: 4px; overflow-x: auto; white-space: nowrap; padding: 1px 0 2px; scrollbar-width: none; }
+        .gc-chips::-webkit-scrollbar { display: none; }
+        .gc-rot { flex: 0 0 auto; min-width: 46px; font-size: 0.56rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); opacity: 0.7; font-weight: 700; }
+        .gc-chip { flex: 0 0 auto; font-size: 0.6rem; font-weight: 700; padding: 1px 7px; border-radius: 9px; border: 1px solid var(--border); background: transparent; color: var(--text-light); cursor: pointer; font-family: inherit; }
+        .gc-chip.on { border-color: var(--primary); color: var(--text); background: color-mix(in srgb, var(--primary) 16%, transparent); }
+        .gc-total { font-size: 0.62rem; font-weight: 700; color: var(--text-light); }
+        .gc-val { flex: 0 0 68px; text-align: right; color: var(--text); opacity: 0.85; font-variant-numeric: tabular-nums; }
+        .gc-nome { flex: 0 0 27%; max-width: 27%; } .gc-subs .gc-nome { flex: 0 0 27%; max-width: 27%; }
         .gc-pct { flex: 0 0 30px; text-align: right; font-variant-numeric: tabular-nums; }
         .fat-sub { font-size: 0.68rem; color: var(--text-light); font-weight: 600; line-height: 1.3; }
         .dash-tab-btn { padding-left: 4px; padding-right: 4px; }
@@ -831,7 +839,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.5'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.0'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1795,32 +1803,35 @@
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
         renderizarGraficoCategorias(despesas);
     }
-    // Gráfico bem discreto: uma barra fina por categoria com o percentual de cada uma no período escolhido (as maiores primeiro).
-    // Canto direito: escolher Todos, uma PESSOA ou um CARTÃO para ver onde cada um gasta. Tocar numa categoria abre as subcategorias (se houver).
-    let escopoCat = '';
-    function mudarEscopoCat(v) { escopoCat = v; atualizarSaldos(); }
+    // Gráfico bem discreto: uma barra fina por categoria com o percentual E o valor de cada uma no período escolhido (as maiores primeiro).
+    // Filtros: PESSOAS e CARTÕES (o acordo conta como um cartão), com mais de uma escolha; os dois juntos. Tocar numa categoria abre as subcategorias.
+    let catPessoas = new Set(), catCartoes = new Set();
+    function alternarFiltroCat(tipo, nome) { const S = tipo === 'p' ? catPessoas : catCartoes; if (!nome) S.clear(); else if (S.has(nome)) S.delete(nome); else S.add(nome); atualizarSaldos(); }
     function renderizarGraficoCategorias(despesas) {
         const box = document.getElementById('grafico-categorias'); if (!box) return;
         const esconder = () => { box.style.display = 'none'; box.innerHTML = ''; };
         if (visaoDashboardAtual === 'fatura') return esconder(); // faturas não seguem o filtro de período
-        const cartaoDe = d => d.cartao || '💲 Acordo', temValor = d => getValorAjustadoEmprestimo(d) > 0, uteis = despesas.filter(temValor);
+        const cartaoDe = d => d.cartao || '💲 Acordo', uteis = despesas.filter(d => getValorAjustadoEmprestimo(d) > 0);
         if (!uteis.length) return esconder();
         const pessoas = [...new Set(uteis.map(d => d.pessoa))].sort(), cartoes = [...new Set(uteis.map(cartaoDe))].sort();
-        if (escopoCat && !(escopoCat.startsWith('p:') ? pessoas.includes(escopoCat.slice(2)) : cartoes.includes(escopoCat.slice(2)))) escopoCat = ''; // a pessoa/cartão escolhido não tem lançamentos neste período
-        const base = uteis.filter(d => !escopoCat || (escopoCat.startsWith('p:') ? d.pessoa === escopoCat.slice(2) : cartaoDe(d) === escopoCat.slice(2)));
-        const seletor = `<select class="gc-escopo" onchange="mudarEscopoCat(this.value)"><option value="">Todos</option><optgroup label="Pessoas">${pessoas.map(p => `<option value="p:${escHtml(p)}"${escopoCat === 'p:' + p ? ' selected' : ''}>👤 ${escHtml(p)}</option>`).join('')}</optgroup><optgroup label="Cartões">${cartoes.map(c => `<option value="c:${escHtml(c)}"${escopoCat === 'c:' + c ? ' selected' : ''}>💳 ${escHtml(c)}</option>`).join('')}</optgroup></select>`;
-        const soma = {}; let total = 0; base.forEach(d => { const v = getValorAjustadoEmprestimo(d), c = d.categoria || 'Sem categoria'; (soma[c] = soma[c] || []).push(d); total += v; });
+        [...catPessoas].forEach(p => { if (!pessoas.includes(p)) catPessoas.delete(p); }); [...catCartoes].forEach(c => { if (!cartoes.includes(c)) catCartoes.delete(c); }); // some o que não existe neste período
+        if (pessoas.every(p => catPessoas.has(p))) catPessoas.clear(); if (cartoes.every(c => catCartoes.has(c))) catCartoes.clear(); // todos marcados = todos
+        const base = uteis.filter(d => (!catPessoas.size || catPessoas.has(d.pessoa)) && (!catCartoes.size || catCartoes.has(cartaoDe(d))));
+        const chip = (tipo, nome, rotulo, on) => `<button type="button" class="gc-chip${on ? ' on' : ''}" data-n="${escHtml(nome)}" onclick="alternarFiltroCat('${tipo}', this.dataset.n)">${escHtml(rotulo)}</button>`;
+        const chips = (tipo, titulo, todos, lista, S) => `<div class="gc-chips"><span class="gc-rot">${titulo}</span>${chip(tipo, '', todos, !S.size)}${lista.map(n => chip(tipo, n, (tipo === 'p' ? '👤 ' : (n === '💲 Acordo' ? '' : '💳 ')) + n, S.has(n))).join('')}</div>`;
+        const soma = {}; let total = 0; base.forEach(d => { const c = d.categoria || 'Sem categoria'; (soma[c] = soma[c] || []).push(d); total += getValorAjustadoEmprestimo(d); });
         let itens = Object.keys(soma).map(c => [c, soma[c], somaDesp(soma[c])]).sort((a, b) => b[2] - a[2]);
         if (itens.length > 8) itens = itens.slice(0, 7).concat([['Outras', itens.slice(7).flatMap(x => x[1]), itens.slice(7).reduce((t, x) => t + x[2], 0)]]);
         const rotulo = p => p < 1 ? '<1%' : Math.round(p) + '%', largura = p => Math.max(2, p).toFixed(1) + '%';
-        const linha = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${largura(v / tot * 100)}"></span></span><span class="gc-pct">${rotulo(v / tot * 100)}</span></div>`;
+        const linha = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${largura(v / tot * 100)}"></span></span><span class="gc-pct">${rotulo(v / tot * 100)}</span><span class="gc-val">${brl(v)}</span></div>`;
         box.style.display = 'block';
-        box.innerHTML = `<div class="gc-topo"><span class="gc-titulo">Categorias</span>${seletor}</div>` + itens.map(([c, ds, v]) => {
-            const subs = {}; ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
-            const chaves = Object.keys(subs), semSub = ds.filter(d => !(d.subcategoria || '').trim()), temSub = chaves.length > 0 && c !== 'Outras';
-            const corpo = temSub ? chaves.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linha('↳ ' + k, sv, v, c + ' › ' + k)).join('') : '';
-            return `<div class="gc-grupo${temSub ? ' tem-sub' : ''}">${temSub ? '<div onclick="this.parentElement.classList.toggle(\'aberto\')">' : '<div>'}${linha(c, v, total, c)}</div>${temSub ? `<div class="gc-subs">${corpo}</div>` : ''}</div>`;
-        }).join('');
+        box.innerHTML = `<div class="gc-topo"><span class="gc-titulo">Categorias</span><span class="gc-total">${brl(total)}</span></div>${chips('p', 'Pessoas', 'Todas', pessoas, catPessoas)}${chips('c', 'Cartões', 'Todos', cartoes, catCartoes)}`
+            + (itens.length ? itens.map(([c, ds, v]) => {
+                const subs = {}; ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
+                const chaves = Object.keys(subs), semSub = ds.filter(d => !(d.subcategoria || '').trim()), temSub = chaves.length > 0 && c !== 'Outras';
+                const corpo = temSub ? chaves.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linha('↳ ' + k, sv, v, c + ' › ' + k)).join('') : '';
+                return `<div class="gc-grupo${temSub ? ' tem-sub' : ''}">${temSub ? '<div onclick="this.parentElement.classList.toggle(\'aberto\')">' : '<div>'}${linha(c, v, total, c)}</div>${temSub ? `<div class="gc-subs">${corpo}</div>` : ''}</div>`;
+            }).join('') : '<div class="gc-linha"><span class="gc-nome" style="flex:1">Nada neste filtro.</span></div>');
     }
     
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
@@ -2550,6 +2561,7 @@
                 }
                 if (cfg.melhorDia && diaValido(c.fechamento) && agora.getDate() === Math.min(diaValido(c.fechamento), ultimoDiaMes(agora.getFullYear(), agora.getMonth()))) out.cartoes.push(`🔄 ${nome}: a fatura FECHA HOJE (dia ${diaValido(c.fechamento)}). Melhor dia de compra: dia ${cartaoMelhorDia(c)}.`);
                 if (cfg.melhorDia && diaValido(c.fechamento) && agora.getDate() === Math.min(cartaoMelhorDia(c), ultimoDiaMes(agora.getFullYear(), agora.getMonth()))) out.cartoes.push(`✅ ${nome}: melhor dia para comprar!`);
+                if (diaValido(c.fechamento) && diaValido(c.vencimento)) { const hojeD = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate()); faturasDoCartao(c, hojeD, db.despesas).filter(f => f.vencida && f.itens.length).slice(0, 3).forEach(f => out.cartoes.push(`🔴 ${nome}: fatura de ${formatarMesAno(f.ref)} VENCIDA há ${-diasEntre(f.venc, hojeD)} dia(s) — ${brl(f.total)}`)); }
             });
         }
         if (cfg.acordos) {
@@ -3091,17 +3103,25 @@
     // Fatura cujo mês de referência é "ym" (o mês em que ela FECHA): fecha no dia do fechamento; vence no mesmo mês se o vencimento é depois do fechamento, senão no mês seguinte
     function datasFatura(c, ym) { const f = diaValido(c.fechamento), v = diaValido(c.vencimento); return { fecha: dataNoMes(ym, f), venc: v > f ? dataNoMes(ym, v) : dataNoMes(mesMais(ym, 1), v) }; }
     function faturasDoCartao(c, hoje, despesas) {
-        const mesAtual = `${hoje.getFullYear()}-${pushPad(hoje.getMonth() + 1)}`; const out = [];
-        for (let k = -2; k <= 2; k++) {
-            const ref = mesMais(mesAtual, k), dt = datasFatura(c, ref); if (dt.venc < hoje) continue; // já venceu
-            const itens = despesas.filter(d => d.cartao === c.nome && d.dataRef === ref);
-            out.push({ ref, fecha: dt.fecha, venc: dt.venc, itens, total: itens.reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0), fechada: dt.fecha < hoje });
+        const mesAtual = `${hoje.getFullYear()}-${pushPad(hoje.getMonth() + 1)}`, pagas = c.pagas || [], pend = [], jaPagas = [];
+        for (let k = -8; k <= 2; k++) {
+            const ref = mesMais(mesAtual, k), dt = datasFatura(c, ref), itens = despesas.filter(d => d.cartao === c.nome && d.dataRef === ref);
+            const f = { ref, fecha: dt.fecha, venc: dt.venc, itens, total: itens.reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0), fechada: dt.fecha < hoje, vencida: dt.venc < hoje };
+            if (pagas.includes(ref)) { if (itens.length) jaPagas.push(f); continue; }
+            if (f.vencida && (ref < '2026-09' || !itens.length)) continue; // fatura vencida e em aberto: de set/26 em diante e com lançamentos (igual ao acordo)
+            pend.push(f);
         }
-        return out.sort((a, b) => a.venc - b.venc).slice(0, 2);
+        const lista = pend.filter(f => f.vencida).sort((a, b) => a.venc - b.venc).concat(pend.filter(f => !f.vencida).sort((a, b) => a.venc - b.venc).slice(0, 2));
+        lista.jaPagas = jaPagas.slice(-3); return lista;
     }
+    // Fatura (e acordo) em aberto que passou do vencimento continua aparecendo, em vermelho, até ser paga
+    function marcarFaturaPaga(nome, ref) { const c = dadosCartao(nome); if (!c) return; c.pagas = [...new Set([...(c.pagas || []), ref])].sort(); salvarDB(); atualizarSaldos(); sincronizarManual(true); toast(`✔ Fatura de ${formatarMesAno(ref)} do ${nome} marcada como paga.`); }
+    function desfazerFaturaPaga(nome, ref) { const c = dadosCartao(nome); if (!c || !c.pagas) return; c.pagas = c.pagas.filter(x => x !== ref); if (!c.pagas.length) delete c.pagas; salvarDB(); atualizarSaldos(); sincronizarManual(true); toast(`Fatura de ${formatarMesAno(ref)} do ${nome} voltou para em aberto.`); }
     function linhaFatura(f, hoje) {
         const dFecha = diasEntre(f.fecha, hoje), dVenc = diasEntre(f.venc, hoje);
-        return `${f.fechada ? 'fechada em ' + fmtDM(f.fecha) : 'fecha ' + fmtDM(f.fecha) + ' (' + textoDias(dFecha) + ')'} · vence ${fmtDM(f.venc)} (${textoDias(dVenc)})`;
+        const fecha = f.fechada ? 'fechada em ' + fmtDM(f.fecha) : 'fecha ' + fmtDM(f.fecha) + ' (' + textoDias(dFecha) + ')';
+        const venc = f.vencida ? `<span style="color:var(--danger); font-weight:800;">VENCIDA há ${-dVenc} dia${dVenc === -1 ? '' : 's'}</span> (venceu ${fmtDM(f.venc)})` : `vence ${fmtDM(f.venc)} (${textoDias(dVenc)})`;
+        return `${fecha} · ${venc}`;
     }
     function acordosEmAlerta(hoje) {
         const out = [];
@@ -3117,29 +3137,41 @@
     function construirFaturas() {
         const ag = new Date(), hoje = new Date(ag.getFullYear(), ag.getMonth(), ag.getDate()), despesas = obterDespesasPermitidas();
         const cartoes = (db.cartoes || []).filter(c => typeof c === 'object' && !(db.cartoesInativos || []).includes(c.nome) && diaValido(c.fechamento) && diaValido(c.vencimento));
-        const todos = cartoes.map(c => ({ c, fat: faturasDoCartao(c, hoje, despesas) })).filter(x => x.fat.length);
-        const linhas = todos.filter(x => x.fat.some(f => f.itens.length)).sort((a, b) => a.fat[0].venc - b.fat[0].venc), semFatura = todos.filter(x => !x.fat.some(f => f.itens.length)).map(x => x.c.nome);
-        const em30 = linhas.reduce((s, x) => s + x.fat.filter(f => diasEntre(f.venc, hoje) <= 30).reduce((t, f) => t + f.total, 0), 0);
-        let html = `<div style="font-size:0.72rem; color:var(--text-light); margin:2px 4px 8px; display:flex; justify-content:space-between;"><span>Faturas que vencem nos próximos 30 dias</span><strong style="color:var(--text);">${brl(em30)}</strong></div>`;
-        linhas.forEach(({ c, fat }) => {
-            const id = 'fat_' + Math.random().toString(36).substr(2, 8); const f0 = fat[0];
-            const aviso = cartaoSemConferir(c) ? ' <span style="color:var(--primary);" title="Dias padrão: confira no cadastro do cartão">⚠</span>' : '';
-            let corpo = fat.map(f => {
+        const fontes = [], semFatura = []; let em30 = 0, vencido = 0; const rnd = () => Math.random().toString(36).substr(2, 8);
+        // ----- cartões -----
+        cartoes.forEach(c => {
+            const fat = faturasDoCartao(c, hoje, despesas), comItens = fat.filter(f => f.itens.length);
+            if (!comItens.length && !(fat.jaPagas || []).length) { if (fat.length || true) semFatura.push(c.nome); return; }
+            comItens.forEach(f => { if (f.vencida) vencido += f.total; else if (diasEntre(f.venc, hoje) <= 30) em30 += f.total; });
+            if (!comItens.length) { semFatura.push(c.nome); return; }
+            const id = 'fat_' + rnd(), f0 = comItens[0], aviso = cartaoSemConferir(c) ? ' <span style="color:var(--primary);" title="Dias padrão: confira no cadastro do cartão">⚠</span>' : '';
+            const corpo = comItens.map(f => {
                 const porPessoa = [...new Set(f.itens.map(d => d.pessoa))].map(p => ({ p, its: f.itens.filter(d => d.pessoa === p).sort(porDataVirtual) })).map(x => ({ ...x, soma: somaDesp(x.its) })).sort((a, b) => b.soma - a.soma);
-                const sub = porPessoa.map(x => { const sid = id + '_' + Math.random().toString(36).substr(2, 6);
+                const sub = porPessoa.map(x => { const sid = id + '_' + rnd();
                     return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${x.its.map(linhaDespesaArvore).join('')}</div></div>`; }).join('');
-                return `<div style="padding:6px 4px 2px; font-size:0.72rem; display:flex; justify-content:space-between; font-weight:800;"><span>Fatura ${formatarMesAno(f.ref)}</span><span>${brl(f.total)}</span></div><div class="fat-sub" style="padding:0 4px 4px;">${linhaFatura(f, hoje)}</div>${sub || '<p class="helper" style="padding:0 4px;">Sem lançamentos nesta fatura.</p>'}`;
-            }).join('');
-            html += `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💳</div><div style="min-width:0;"><span>${escHtml(c.nome)}${aviso}</span><div class="fat-sub">${linhaFatura(f0, hoje)}</div></div></div><span style="color:var(--text);">${brl(f0.total)}</span></div><div class="tree-body">${corpo}</div></div>`;
+                return `<div style="padding:6px 4px 2px; font-size:0.72rem; display:flex; justify-content:space-between; align-items:center; font-weight:800;"><span>Fatura ${formatarMesAno(f.ref)}${f.vencida ? ' <span style="color:var(--danger);">· vencida</span>' : ''}</span><span>${brl(f.total)} <button class="gc-chip" data-n="${escHtml(c.nome)}" data-r="${f.ref}" onclick="marcarFaturaPaga(this.dataset.n, this.dataset.r)">✔ paga</button></span></div><div class="fat-sub" style="padding:0 4px 4px;">${linhaFatura(f, hoje)}</div>${sub}`;
+            }).join('') + ((fat.jaPagas || []).length ? `<div class="fat-sub" style="padding:6px 4px 2px;">Pagas: ${fat.jaPagas.map(f => `<button class="gc-chip" data-n="${escHtml(c.nome)}" data-r="${f.ref}" onclick="desfazerFaturaPaga(this.dataset.n, this.dataset.r)">↩ ${formatarMesAno(f.ref)}</button>`).join(' ')}</div>` : '');
+            fontes.push({ chave: f0.venc, html: `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💳</div><div style="min-width:0;"><span>${escHtml(c.nome)}${aviso}</span><div class="fat-sub">${linhaFatura(f0, hoje)}</div></div></div><span style="color:${f0.vencida ? 'var(--danger)' : 'var(--text)'};">${brl(f0.total)}</span></div><div class="tree-body">${corpo}</div></div>` });
         });
-        if (!todos.length) html += '<p class="helper" style="text-align:center;">Cadastre o fechamento e o vencimento dos cartões (Ajuste > Cartões) para ver as faturas.</p>';
-        else if (semFatura.length) html += `<p class="fat-sub" style="padding:4px 6px;">Sem lançamentos nas próximas faturas: ${semFatura.map(escHtml).join(', ')}</p>`;
+        // ----- acordos: tratados como um cartão (mesma linha, vencidos continuam até serem pagos) -----
         const ac = acordosEmAlerta(hoje);
-        html += `<div style="margin:14px 4px 6px; font-size:0.7rem; font-weight:800; letter-spacing:.05em; color:var(--text-light);">💲 ACORDOS VENCIDOS OU A VENCER (30 DIAS)</div>`;
-        html += ac.length ? ac.map(({ d, venc, dias }) => {
-            const venceu = dias < 0, rolou = d.dataRefOrig && d.dataRefOrig !== d.dataRef;
-            return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${escHtml(d.pessoa)} — ${escHtml(String(d.desc || '').replace(/\s*\(\d+\/\d+\)\s*$/, ''))}${rolou ? ' <span style="display:inline-block; margin-left:6px; padding:1px 6px; border-radius:6px; font-size:0.6rem; background:#ef4444; color:#fff;">↻ ' + formatarMesAno(d.dataRefOrig) + '</span>' : ''}</strong><span style="color:${venceu ? 'var(--danger)' : 'var(--text-light)'};">${venceu ? 'venceu' : 'vence'} ${fmtDM(venc)} (${textoDias(dias)})${d.jurosRegra ? ' · com juros' : ''}</span></div><div class="t-val ${venceu ? 'desp' : ''}">${brl(getValorAjustadoEmprestimo(d))}</div></div>`;
-        }).join('') : '<p class="helper" style="padding:0 4px;">Nenhum acordo vencido ou vencendo nos próximos 30 dias.</p>';
+        if (ac.length) {
+            const id = 'fat_' + rnd(), p0 = ac[0], totalAc = ac.reduce((s, x) => s + getValorAjustadoEmprestimo(x.d), 0);
+            ac.forEach(x => { const v = getValorAjustadoEmprestimo(x.d); if (x.dias < 0) vencido += v; else em30 += v; });
+            const status = p0.dias < 0 ? `<span style="color:var(--danger); font-weight:800;">VENCIDO há ${-p0.dias} dia${p0.dias === -1 ? '' : 's'}</span> (venceu ${fmtDM(p0.venc)})` : `vence ${fmtDM(p0.venc)} (${textoDias(p0.dias)})`;
+            const porPessoa = [...new Set(ac.map(x => x.d.pessoa))].map(p => ({ p, its: ac.filter(x => x.d.pessoa === p) })).map(x => ({ ...x, soma: x.its.reduce((s, y) => s + getValorAjustadoEmprestimo(y.d), 0) })).sort((a, b) => b.soma - a.soma);
+            const corpo = porPessoa.map(x => { const sid = id + '_' + rnd();
+                const rows = x.its.map(({ d, venc, dias }) => { const venceu = dias < 0, rolou = d.dataRefOrig && d.dataRefOrig !== d.dataRef;
+                    return `<div class="t-row" onclick="abrirEdicao(${d.id}, 'desp')"><div class="t-desc"><strong>${escHtml(String(d.desc || '').replace(/\s*\(\d+\/\d+\)\s*$/, ''))}${rolou ? ' <span style="display:inline-block; margin-left:6px; padding:1px 6px; border-radius:6px; font-size:0.6rem; background:#ef4444; color:#fff;">↻ ' + formatarMesAno(d.dataRefOrig) + '</span>' : ''}</strong><span style="color:${venceu ? 'var(--danger)' : 'var(--text-light)'};">${venceu ? 'venceu' : 'vence'} ${fmtDM(venc)} (${textoDias(dias)})${d.jurosRegra ? ' · com juros' : ''}</span></div><div class="t-val ${venceu ? 'desp' : ''}">${brl(getValorAjustadoEmprestimo(d))}</div></div>`; }).join('');
+                return `<div class="sub-tree-card" id="${sid}"><div class="sub-tree-header" onclick="document.getElementById('${sid}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">${getIniciais(x.p)}</div><span>${escHtml(x.p)}</span></div><span style="color:var(--text);">${brl(x.soma)}</span></div><div class="sub-tree-body">${rows}</div></div>`; }).join('');
+            fontes.push({ chave: p0.venc, html: `<div class="tree-card" id="${id}"><div class="tree-header" onclick="document.getElementById('${id}').classList.toggle('open')"><div class="tree-person-info"><div class="avatar">💲</div><div style="min-width:0;"><span>Acordos</span><div class="fat-sub">${status} · ${ac.length} em aberto</div></div></div><span style="color:${p0.dias < 0 ? 'var(--danger)' : 'var(--text)'};">${brl(totalAc)}</span></div><div class="tree-body">${corpo}</div></div>` });
+        }
+        fontes.sort((a, b) => a.chave - b.chave);
+        let html = `<div style="font-size:0.72rem; color:var(--text-light); margin:2px 4px 4px; display:flex; justify-content:space-between;"><span>Vencem nos próximos 30 dias (faturas e acordos)</span><strong style="color:var(--text);">${brl(em30)}</strong></div>`;
+        if (vencido > 0.005) html += `<div style="font-size:0.72rem; margin:0 4px 8px; display:flex; justify-content:space-between; color:var(--danger);"><span>⚠ Vencidos e ainda em aberto</span><strong>${brl(vencido)}</strong></div>`; else html = html.replace('margin:2px 4px 4px;', 'margin:2px 4px 8px;');
+        html += fontes.map(f => f.html).join('');
+        if (!cartoes.length && !ac.length) html += '<p class="helper" style="text-align:center;">Cadastre o fechamento e o vencimento dos cartões (Ajuste > Cartões) para ver as faturas.</p>';
+        else if (semFatura.length) html += `<p class="fat-sub" style="padding:4px 6px;">Sem lançamentos nas próximas faturas: ${semFatura.map(escHtml).join(', ')}</p>`;
         return html;
     }
 
