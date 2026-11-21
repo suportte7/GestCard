@@ -2,8 +2,9 @@
   "versao": "1.3",
   "data": "2026-11-21",
   "notas": [
-    "GestCard 1.3 — atualização de versão baseada no pacote GestCard 1.2, preservando a estrutura e as funcionalidades existentes.",
-    "Nenhuma alteração na estrutura dos dados, no banco local, nas regras de lançamentos ou nas integrações.",
-    "Pacote revisado para conferência de sintaxe e consistência básica de referências antes dos testes."
+    "GestCard 1.3 — Visão Geral reorganizada em três abas na mesma tela: Pessoas, Cartões e Gráficos.",
+    "Gráficos integrados à Visão Geral, com indicadores de cobrado, recebido e diferença; projeção de faturas para seis meses; uso de limite por cartão quando o limite já estiver cadastrado; gastos por categoria com detalhamento; resumo por responsável; e evolução mensal com três meses anteriores, mês atual e dois futuros.",
+    "Navegação simplificada: removido o acesso separado de Gráficos no menu inferior; links antigos para Gráficos são direcionados à nova aba dentro da Visão Geral.",
+    "Preservada a estrutura de dados existente: nenhuma alteração nos campos, formatos, registros, valores, cálculos de armazenamento ou sincronização. Cartões sem limite cadastrado continuam funcionando normalmente."
   ]
 }
