@@ -1,9 +1,9 @@
 {
-  "versao": "1.2",
-  "data": "2026-11-20",
+  "versao": "1.3",
+  "data": "2026-11-21",
   "notas": [
-    "GestCard 1.2 — unificação das abas Por Cartão e Faturas e gráfico analítico interativo na Visão Geral.",
-    "Aba única Por Cartão: reúne os lançamentos por cartão com os ciclos de fechamento/melhor dia/vencimento, alertas operacionais (vencimentos nos próximos 30 dias e faturas vencidas em aberto), marcação de fatura paga/em aberto e acordos em aberto.",
-    "Gráfico analítico interativo na Visão Geral: sincronizado com a aba ativa (Por Pessoa ou Por Cartão), com filtros rápidos incluindo 'Só Meus', detalhamento por subcategoria e pessoa/cartão ao tocar na categoria, e alternância entre Distribuição por Categorias e Evolução de 6 Meses (3 anteriores, atual e 2 futuros)."
+    "GestCard 1.3 — atualização de versão baseada no pacote GestCard 1.2, preservando a estrutura e as funcionalidades existentes.",
+    "Nenhuma alteração na estrutura dos dados, no banco local, nas regras de lançamentos ou nas integrações.",
+    "Pacote revisado para conferência de sintaxe e consistência básica de referências antes dos testes."
   ]
 }
