@@ -358,6 +358,42 @@
         .graf-barra-rec { background: var(--success); height: 100%; }
         .graf-vazio { font-size: 0.68rem; color: var(--text-light); text-align: center; padding: 10px 6px; }
 
+
+        /* ===== GestCard 1.4 — painel analítico modernizado (somente visual) ===== */
+        #painel-visao-graficos { padding-top: 4px; }
+        #graf-conteudo-principal { display:grid; grid-template-columns:1fr; gap:12px; }
+        .graf-secao-card { position:relative; overflow:hidden; background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--primary) 3%,var(--surface))); border:1px solid color-mix(in srgb,var(--primary) 18%,var(--border)); border-radius:18px; padding:14px; margin:0; box-shadow:0 5px 18px rgba(0,0,0,.045); }
+        .graf-topo { margin-bottom:12px; padding-bottom:9px; border-bottom:1px solid color-mix(in srgb,var(--primary) 14%,var(--border)); }
+        .graf-titulo { font-size:.76rem; letter-spacing:.035em; color:var(--text); }
+        .graf-sub { font-size:.66rem; }
+        .graf-kpis { gap:8px; margin:0; }
+        .graf-kpi { min-width:0; border:1px solid color-mix(in srgb,var(--primary) 16%,var(--border)); border-radius:14px; padding:11px 10px; background:linear-gradient(145deg,color-mix(in srgb,var(--primary) 9%,var(--surface)),var(--surface)); box-shadow:0 4px 12px rgba(0,0,0,.035); }
+        .graf-kpi span { font-size:.61rem; letter-spacing:.055em; }
+        .graf-kpi strong { font-size:clamp(.78rem,3.3vw,1.05rem); margin-top:5px; overflow-wrap:anywhere; }
+        .graf-lim-row { padding:10px 0; margin:0; border-bottom:1px solid var(--border); }
+        .graf-lim-head { font-size:.76rem; margin-bottom:7px; }
+        .graf-lim-trilho { height:11px; background:color-mix(in srgb,var(--text) 9%,var(--border)); }
+        .graf-lim-barra { box-shadow:0 1px 5px rgba(0,0,0,.16); }
+        .graf-lim-meta { font-size:.65rem; margin-top:6px; gap:8px; flex-wrap:wrap; }
+        .gc-evo-grid { height:154px; gap:7px; padding:12px 4px 3px; }
+        .gc-evo-col { border-radius:10px; padding:4px 2px 2px; transition:background .2s,transform .2s; }
+        .gc-evo-col.sel { background:color-mix(in srgb,var(--primary) 10%,transparent); transform:translateY(-2px); }
+        .gc-evo-val { font-size:.58rem; }
+        .gc-evo-bar-wrap { max-width:38px; background:color-mix(in srgb,var(--text) 5%,transparent); border-radius:8px; overflow:hidden; }
+        .gc-evo-bar { border-radius:8px 8px 4px 4px; background:linear-gradient(180deg,var(--primary),color-mix(in srgb,var(--primary) 45%,#64748b)); }
+        .gc-evo-col.futuro .gc-evo-bar { background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--primary) 45%,transparent) 0 5px,color-mix(in srgb,var(--primary) 15%,transparent) 5px 10px); }
+        .gc-evo-mes { font-size:.62rem; }
+        .gc-evo-detalhe { margin-top:10px; padding:10px 11px; border-radius:12px; font-size:.69rem; }
+        .graf-pessoa-bloco { padding:10px 0 2px; margin-top:8px; }
+        .graf-pessoa-topo { font-size:.76rem; margin-bottom:7px; }
+        .graf-dupla-barra { height:10px; border-radius:99px; }
+        .graf-vazio { padding:18px 8px; }
+        #grafico-categorias .gc-linha { height:20px; font-size:.68rem; }
+        #grafico-categorias .gc-trilho { height:7px; border-radius:99px; }
+        #grafico-categorias .gc-barra { border-radius:99px; }
+        @media (min-width:700px) { #graf-conteudo-principal { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; } #graf-conteudo-principal > .graf-kpis { grid-column:1/-1; } #graf-conteudo-principal > .graf-secao-card:last-child { grid-column:1/-1; } }
+        @media (max-width:380px) { .graf-kpis { grid-template-columns:1fr 1fr; } .graf-kpi:last-child { grid-column:1/-1; } .graf-lim-meta { flex-direction:column; } }
+
     </style>
 </head>
 <body>
@@ -561,7 +597,8 @@
             <div class="form-group" style="flex:1; margin:0;"><label>VENCE (DIA)</label><input type="number" id="ec-vence" class="form-input" min="1" max="31" inputmode="numeric" style="padding:10px;"></div>
             <div class="form-group" style="flex:1; margin:0;"><label>MELHOR DIA</label><input type="number" id="ec-melhor" class="form-input" min="1" max="31" inputmode="numeric" placeholder="auto" style="padding:10px;"></div>
         </div>
-        <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. Se o banco mudar as datas, é só editar aqui: os avisos sempre usam o valor atual.</p>
+        <div class="form-group"><label>LIMITE DO CARTÃO (R$)</label><input type="number" id="ec-limite" class="form-input" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 5000,00"></div>
+        <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. O limite é opcional e serve para os indicadores de utilização na aba Gráficos.</p>
         <button class="btn btn-primary" onclick="salvarCartaoEditado()">SALVAR CARTÃO</button>
     </div>
 
@@ -789,7 +826,8 @@
                     <div class="form-group" style="flex:1; margin:0;"><label>VENCE (DIA)</label><input type="number" id="novo-cartao-vence" class="form-input" placeholder="05" style="padding:10px;"></div>
                     <div class="form-group" style="flex:1; margin:0;"><label>MELHOR DIA</label><input type="number" id="novo-cartao-melhor" class="form-input" placeholder="auto" style="padding:10px;"></div>
                 </div>
-                <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. Todas as datas podem ser editadas depois no lápis de cada cartão.</p>
+                <div class="form-group"><label>LIMITE DO CARTÃO (R$)</label><input type="number" id="novo-cartao-limite" class="form-input" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 5000,00"></div>
+                <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. O limite é opcional e pode ser editado depois no lápis de cada cartão.</p>
                 <button class="btn btn-outline" style="margin-bottom: 10px; padding:10px;" onclick="addCartao()">ADICIONAR CARTÃO</button>
                 <div id="lista-edit-cartoes"></div>
             </div>
@@ -2134,7 +2172,7 @@
                 <div class="graf-lim-trilho"><div class="graf-lim-barra ${barCls}" style="width:${limite > 0 ? Math.min(100, Math.max(2, pct)).toFixed(1) : 0}%"></div></div>
                 <div class="graf-lim-meta">
                     <span>Usado: <strong>${brl(gasto)}</strong></span>
-                    <span>${limite > 0 ? (disp >= 0 ? `Disponível: <strong>${brl(disp)}</strong> de ${brl(limite)}` : `Acima do limite em <strong>${brl(Math.abs(disp))}</strong>`) : 'Configure o limite em Ajuste › Cartões'}</span>
+                    <span>${limite > 0 ? (disp >= 0 ? `Disponível: <strong>${brl(disp)}</strong> de ${brl(limite)}` : `Acima do limite em <strong>${brl(Math.abs(disp))}</strong>`) : 'Informe o limite em Ajustes › Cartões'}</span>
                 </div>
             </div>`;
         }).join('') : '<div class="graf-vazio">Nenhum cartão ativo encontrado para o filtro atual.</div>';
@@ -3020,9 +3058,10 @@
             let nome = c.nome || c; let inativo = (db.cartoesInativos||[]).includes(nome);
             const obj = typeof c === 'object' ? c : { nome: c };
             const dias = diaValido(obj.fechamento) && diaValido(obj.vencimento) ? `Fecha dia ${obj.fechamento} • Vence dia ${obj.vencimento} • Melhor dia ${cartaoMelhorDia(obj)}${obj.melhorDia ? '' : ' (auto)'}` : 'Dias não informados';
+            const limiteInfo = Number(obj.limite) > 0 ? `<div style="color:var(--success);font-size:.7rem;margin-top:2px;">Limite: ${brl(Number(obj.limite))}</div>` : '<div style="color:var(--text-light);font-size:.7rem;margin-top:2px;">Limite não informado</div>';
             const aviso = cartaoSemConferir(obj) ? `<div style="color:var(--primary); font-size:0.7rem; margin-top:2px;">⚠️ Dias padrão: confira no lápis (sem aviso até conferir)</div>` : '';
             html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border);">
-                <div><strong>${escHtml(nome)}</strong> ${inativo ? '<span style="color:var(--danger); font-size:0.7rem;">(Inativo)</span>' : ''}<div style="color:var(--text-light); font-size:0.72rem; margin-top:2px;">${dias}</div>${aviso}</div>
+                <div><strong>${escHtml(nome)}</strong> ${inativo ? '<span style="color:var(--danger); font-size:0.7rem;">(Inativo)</span>' : ''}<div style="color:var(--text-light); font-size:0.72rem; margin-top:2px;">${dias}</div>${limiteInfo}${aviso}</div>
                 <div style="display:flex; gap:6px;">
                     <button class="btn-small" style="color:var(--primary);" onclick="abrirEdicaoCartao(decodeURIComponent('${encodeURIComponent(nome)}'))"><span class="material-icons-outlined" style="font-size:1rem;">edit</span></button>
                     ${true ? `<button class="btn-small" style="color:var(--text);" onclick="toggleAtivoCartao('${nome}')"><span class="material-icons-outlined" style="font-size:1rem;">${inativo?'visibility_off':'visibility'}</span></button>` : ''}
@@ -3038,10 +3077,12 @@
         const f = diaValido(document.getElementById('novo-cartao-fecha').value), v = diaValido(document.getElementById('novo-cartao-vence').value);
         if (!f || !v) return toast('Informe o dia de fechamento e o de vencimento (1 a 31).', 'erro');
         const mTxt = document.getElementById('novo-cartao-melhor').value.trim(); const m = mTxt === '' ? null : diaValido(mTxt);
+        const limTxt = document.getElementById('novo-cartao-limite').value.trim(); const limite = limTxt === '' ? 0 : Number(limTxt.replace(',', '.'));
+        if (!Number.isFinite(limite) || limite < 0) return toast('Informe um limite válido ou deixe vazio.', 'erro');
         if (mTxt !== '' && !m) return toast('Melhor dia: de 1 a 31 ou deixe vazio.', 'erro');
-        db.cartoes.push({ nome: n, fechamento: f, vencimento: v, melhorDia: m, conferido: true });
+        db.cartoes.push({ nome: n, fechamento: f, vencimento: v, melhorDia: m, limite, conferido: true });
         salvarDB(); carregarSelectsGerais(); sincronizarManual(true);
-        ['novo-cartao-nome', 'novo-cartao-fecha', 'novo-cartao-vence', 'novo-cartao-melhor'].forEach(id => document.getElementById(id).value = '');
+        ['novo-cartao-nome', 'novo-cartao-fecha', 'novo-cartao-vence', 'novo-cartao-melhor', 'novo-cartao-limite'].forEach(id => document.getElementById(id).value = '');
         toast('Cartão adicionado!');
     }
     function abrirEdicaoCartao(nome) {
@@ -3050,6 +3091,7 @@
         document.getElementById('ec-nome-orig').value = nome; document.getElementById('ec-nome').value = nome;
         document.getElementById('ec-fecha').value = o.fechamento || ''; document.getElementById('ec-vence').value = o.vencimento || '';
         document.getElementById('ec-melhor').value = o.melhorDia || '';
+        document.getElementById('ec-limite').value = Number(o.limite) > 0 ? o.limite : '';
         document.getElementById('modal-overlay').classList.add('open'); document.getElementById('modal-cartao').classList.add('open');
     }
     function salvarCartaoEditado() {
@@ -3058,6 +3100,8 @@
         const nome = document.getElementById('ec-nome').value.trim().toUpperCase();
         const f = diaValido(document.getElementById('ec-fecha').value), v = diaValido(document.getElementById('ec-vence').value);
         const mTxt = document.getElementById('ec-melhor').value.trim(); const m = mTxt === '' ? null : diaValido(mTxt);
+        const limTxt = document.getElementById('ec-limite').value.trim(); const limite = limTxt === '' ? 0 : Number(limTxt.replace(',', '.'));
+        if (!Number.isFinite(limite) || limite < 0) return toast('Informe um limite válido ou deixe vazio.', 'erro');
         if (!nome) return toast('Informe o nome do cartão.', 'erro');
         if (!f || !v) return toast('Fechamento e vencimento: informe um dia de 1 a 31.', 'erro');
         if (mTxt !== '' && !m) return toast('Melhor dia: de 1 a 31 ou deixe vazio.', 'erro');
@@ -3069,7 +3113,7 @@
             cartoesSelCal = cartoesSelCal.map(x => x === orig ? nome : x); cartoesSelExt = cartoesSelExt.map(x => x === orig ? nome : x);
             const cfg = pushCfg(currentUser); if (Array.isArray(cfg.listaCartoes)) { cfg.listaCartoes = cfg.listaCartoes.map(x => x === orig ? nome : x); localStorage.setItem('gc_push_cfg_' + currentUser.id, JSON.stringify(cfg)); }
         }
-        c.nome = nome; c.fechamento = f; c.vencimento = v; c.melhorDia = m; c.conferido = true;
+        c.nome = nome; c.fechamento = f; c.vencimento = v; c.melhorDia = m; c.limite = limite; c.conferido = true;
         salvarDB(); fecharModais(); carregarSelectsGerais(); atualizarTelaAtual(); sincronizarManual(true); toast('Cartão atualizado!');
     }
     function toggleAtivoCartao(c) { if(!db.cartoesInativos) db.cartoesInativos = []; if(db.cartoesInativos.includes(c)) db.cartoesInativos = db.cartoesInativos.filter(x => x !== c); else db.cartoesInativos.push(c); salvarDB(); carregarSelectsGerais(); }
