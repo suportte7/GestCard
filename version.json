@@ -1,11 +1,9 @@
 {
-  "versao": "1.5",
+  "versao": "1.3",
   "data": "2026-11-21",
   "notas": [
-    "GestCard 1.5 — Dashboard financeiro com indicadores de cobrança, recebimento e saldo em aberto.",
-    "Novo gráfico mensal comparando valores cobrados e recebidos, mantendo a seleção de mês.",
-    "Novo gráfico de distribuição por categoria; detalhamento por categoria e responsável preservado.",
-    "Comparação por pessoa, uso de limites e projeção de faturas mantidos.",
-    "Estrutura dos dados, cálculos existentes, abas Pessoas e Cartões e demais telas preservados."
+    "GestCard 1.3 — removida a tela dedicada Gráficos e seu processamento exclusivo para deixar a navegação mais leve.",
+    "Mantido o gráfico compacto existente na Visão Geral; nenhuma estrutura de dados, lançamento, cálculo financeiro, backup ou sincronização foi alterada.",
+    "Preservadas as demais telas e funcionalidades da versão 1.2."
   ]
 }
