@@ -1,10 +1,11 @@
 {
-  "versao": "1.4",
+  "versao": "1.5",
   "data": "2026-11-21",
   "notas": [
-    "GestCard 1.4 — Aba Gráficos redesenhada com cartões analíticos, indicadores e barras modernizadas.",
-    "Campo opcional de limite incluído no cadastro e edição de cartões.",
-    "Limites antigos permanecem sem valor até serem informados; estrutura de despesas e pagamentos preservada.",
-    "Demais funções e arquivos mantidos."
+    "GestCard 1.5 — Dashboard financeiro com indicadores de cobrança, recebimento e saldo em aberto.",
+    "Novo gráfico mensal comparando valores cobrados e recebidos, mantendo a seleção de mês.",
+    "Novo gráfico de distribuição por categoria; detalhamento por categoria e responsável preservado.",
+    "Comparação por pessoa, uso de limites e projeção de faturas mantidos.",
+    "Estrutura dos dados, cálculos existentes, abas Pessoas e Cartões e demais telas preservados."
   ]
 }
