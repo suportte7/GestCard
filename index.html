@@ -116,8 +116,6 @@
         .dash-tabs { display: flex; gap: 6px; margin-bottom: 10px; background: var(--surface); padding: 4px; border-radius: 8px; border: 1px solid var(--border);}
         .dash-tab-btn { flex: 1; padding: 6px; border: none; background: transparent; color: var(--text-light); font-weight: 700; border-radius: 6px; cursor: pointer; font-size: 0.75rem;}
         .dash-tab-btn.active { background: var(--primary); color: var(--bg); }
-        #tela-dashboard .dash-tab-btn { min-width: 0; white-space: nowrap; font-size: clamp(0.62rem, 2.5vw, 0.75rem); }
-        #painel-visao-graficos { min-width: 0; }
 
         .form-group { margin-bottom: 12px; width: 100%; box-sizing: border-box;}
         .form-group label { display: block; font-size: 0.7rem; margin-bottom: 4px; font-weight: 800; color: var(--text-light); text-transform: uppercase; text-align: center; letter-spacing: 0.05em;}
@@ -331,118 +329,6 @@
         .gc-evo-tag { font-size: 0.48rem; font-weight: 700; color: var(--text-light); opacity: 0.8; text-transform: uppercase; }
         .gc-evo-detalhe { margin-top: 6px; padding: 6px 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; font-size: 0.65rem; color: var(--text-light); display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; }
     
-        /* ===== Aba Dedicada Gráficos (v1.3) ===== */
-        .graf-filtros-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 8px 10px; margin-bottom: 8px; }
-        .graf-secao-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 8px; }
-        .graf-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
-        .graf-titulo { font-size: 0.72rem; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); }
-        .graf-sub { font-size: 0.62rem; color: var(--text-light); font-weight: 700; }
-        .graf-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
-        .graf-kpi { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
-        .graf-kpi span { display: block; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; color: var(--text-light); letter-spacing: 0.03em; }
-        .graf-kpi strong { display: block; font-size: 0.82rem; font-weight: 900; color: var(--text); margin-top: 2px; font-variant-numeric: tabular-nums; }
-        .graf-lim-row { margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); }
-        .graf-lim-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .graf-lim-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 0.68rem; font-weight: 800; margin-bottom: 3px; }
-        .graf-lim-trilho { height: 7px; border-radius: 999px; background: var(--border); overflow: hidden; }
-        .graf-lim-barra { height: 100%; border-radius: 999px; background: var(--primary); transition: width 0.25s ease; }
-        .graf-lim-barra.alerta { background: #f59e0b; }
-        .graf-lim-barra.estouro { background: var(--danger); }
-        .graf-lim-meta { display: flex; justify-content: space-between; font-size: 0.58rem; color: var(--text-light); margin-top: 2px; font-variant-numeric: tabular-nums; }
-        .graf-pessoa-bloco { border-top: 1px dashed var(--border); padding-top: 7px; margin-top: 7px; }
-        .graf-pessoa-bloco:first-child { border-top: none; padding-top: 0; margin-top: 0; }
-        .graf-pessoa-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 0.72rem; font-weight: 800; margin-bottom: 4px; }
-        .graf-pessoa-vals { font-size: 0.62rem; font-weight: 800; font-variant-numeric: tabular-nums; }
-        .graf-dupla-barra { display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: var(--border); gap: 1px; }
-        .graf-barra-cob { background: var(--danger); height: 100%; }
-        .graf-barra-rec { background: var(--success); height: 100%; }
-        .graf-vazio { font-size: 0.68rem; color: var(--text-light); text-align: center; padding: 10px 6px; }
-
-
-        /* ===== GestCard 1.4 — painel analítico modernizado (somente visual) ===== */
-        #painel-visao-graficos { padding-top: 4px; }
-        #graf-conteudo-principal { display:grid; grid-template-columns:1fr; gap:12px; }
-        .graf-secao-card { position:relative; overflow:hidden; background:linear-gradient(145deg,var(--surface),color-mix(in srgb,var(--primary) 3%,var(--surface))); border:1px solid color-mix(in srgb,var(--primary) 18%,var(--border)); border-radius:18px; padding:14px; margin:0; box-shadow:0 5px 18px rgba(0,0,0,.045); }
-        .graf-topo { margin-bottom:12px; padding-bottom:9px; border-bottom:1px solid color-mix(in srgb,var(--primary) 14%,var(--border)); }
-        .graf-titulo { font-size:.76rem; letter-spacing:.035em; color:var(--text); }
-        .graf-sub { font-size:.66rem; }
-        .graf-kpis { gap:8px; margin:0; }
-        .graf-kpi { min-width:0; border:1px solid color-mix(in srgb,var(--primary) 16%,var(--border)); border-radius:14px; padding:11px 10px; background:linear-gradient(145deg,color-mix(in srgb,var(--primary) 9%,var(--surface)),var(--surface)); box-shadow:0 4px 12px rgba(0,0,0,.035); }
-        .graf-kpi span { font-size:.61rem; letter-spacing:.055em; }
-        .graf-kpi strong { font-size:clamp(.78rem,3.3vw,1.05rem); margin-top:5px; overflow-wrap:anywhere; }
-        .graf-lim-row { padding:10px 0; margin:0; border-bottom:1px solid var(--border); }
-        .graf-lim-head { font-size:.76rem; margin-bottom:7px; }
-        .graf-lim-trilho { height:11px; background:color-mix(in srgb,var(--text) 9%,var(--border)); }
-        .graf-lim-barra { box-shadow:0 1px 5px rgba(0,0,0,.16); }
-        .graf-lim-meta { font-size:.65rem; margin-top:6px; gap:8px; flex-wrap:wrap; }
-        .gc-evo-grid { height:154px; gap:7px; padding:12px 4px 3px; }
-        .gc-evo-col { border-radius:10px; padding:4px 2px 2px; transition:background .2s,transform .2s; }
-        .gc-evo-col.sel { background:color-mix(in srgb,var(--primary) 10%,transparent); transform:translateY(-2px); }
-        .gc-evo-val { font-size:.58rem; }
-        .gc-evo-bar-wrap { max-width:38px; background:color-mix(in srgb,var(--text) 5%,transparent); border-radius:8px; overflow:hidden; }
-        .gc-evo-bar { border-radius:8px 8px 4px 4px; background:linear-gradient(180deg,var(--primary),color-mix(in srgb,var(--primary) 45%,#64748b)); }
-        .gc-evo-col.futuro .gc-evo-bar { background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--primary) 45%,transparent) 0 5px,color-mix(in srgb,var(--primary) 15%,transparent) 5px 10px); }
-        .gc-evo-mes { font-size:.62rem; }
-        .gc-evo-detalhe { margin-top:10px; padding:10px 11px; border-radius:12px; font-size:.69rem; }
-        .graf-pessoa-bloco { padding:10px 0 2px; margin-top:8px; }
-        .graf-pessoa-topo { font-size:.76rem; margin-bottom:7px; }
-        .graf-dupla-barra { display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:3px; height:18px; border-radius:0; background:transparent; overflow:visible; }
-        .graf-dupla-barra .graf-barra-cob, .graf-dupla-barra .graf-barra-rec { height:7px; min-width:2px; border-radius:99px; flex:0 0 auto; }
-        .graf-vazio { padding:18px 8px; }
-        #grafico-categorias .gc-linha { height:20px; font-size:.68rem; }
-        #grafico-categorias .gc-trilho { height:7px; border-radius:99px; }
-        #grafico-categorias .gc-barra { border-radius:99px; }
-        @media (min-width:700px) { #graf-conteudo-principal { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; } #graf-conteudo-principal > .graf-kpis { grid-column:1/-1; } #graf-conteudo-principal > .graf-secao-card:last-child { grid-column:1/-1; } }
-        @media (max-width:380px) { .graf-kpis { grid-template-columns:1fr 1fr; } .graf-kpi:last-child { grid-column:1/-1; } .graf-lim-meta { flex-direction:column; } }
-        /* ===== Dashboard analítico GestCard — visualização avançada ===== */
-        #graf-conteudo-principal { gap:14px; }
-        .graf-dashboard-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:5px 2px 1px; }
-        .graf-dashboard-head h3 { margin:0; color:var(--text); font-size:1rem; font-weight:900; letter-spacing:-.025em; }
-        .graf-dashboard-head p { margin:4px 0 0; color:var(--text-light); font-size:.68rem; }
-        .graf-periodo-pill { flex:0 0 auto; border:1px solid color-mix(in srgb,var(--primary) 28%,var(--border)); color:var(--primary); background:color-mix(in srgb,var(--primary) 8%,var(--surface)); padding:6px 9px; border-radius:999px; font-size:.62rem; font-weight:800; }
-        .graf-kpis { grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
-        .graf-kpi { position:relative; min-height:83px; overflow:hidden; padding:12px 11px 10px; border-radius:15px; }
-        .graf-kpi:after { content:""; position:absolute; width:54px; height:54px; right:-18px; top:-20px; border-radius:50%; background:color-mix(in srgb,var(--primary) 9%,transparent); }
-        .graf-kpi strong { position:relative; z-index:1; font-size:clamp(.78rem,3.5vw,1.08rem); white-space:nowrap; }
-        .graf-kpi .graf-kpi-sub { display:block; margin-top:4px; color:var(--text-light); font-size:.57rem; font-weight:700; }
-        .graf-kpi-progress { height:5px; margin-top:8px; border-radius:99px; overflow:hidden; background:var(--border); }
-        .graf-kpi-progress span { display:block; height:100%; border-radius:99px; background:var(--success); }
-        .graf-secao-card.graf-destaque { border-color:color-mix(in srgb,var(--primary) 32%,var(--border)); }
-        .graf-chart-legend { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:2px 0 8px; color:var(--text-light); font-size:.65rem; font-weight:750; }
-        .graf-legend-item { display:inline-flex; align-items:center; gap:5px; }
-        .graf-legend-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
-        .graf-line-chart { display:block; width:100%; height:auto; overflow:visible; }
-        .graf-line-chart text { font-family:inherit; fill:var(--text-light); font-size:11px; }
-        .graf-chart-detail { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:8px; padding:10px 11px; border-radius:12px; background:var(--bg); border:1px solid var(--border); font-size:.68rem; color:var(--text-light); }
-        .graf-chart-detail strong { color:var(--text); }
-        .graf-donut-wrap { display:grid; grid-template-columns:minmax(112px, .8fr) minmax(0,1.5fr); gap:14px; align-items:center; padding:4px 0 12px; }
-        .graf-donut { width:min(100%,154px); aspect-ratio:1; margin:auto; border-radius:50%; position:relative; display:grid; place-items:center; }
-        .graf-donut:after { content:""; position:absolute; inset:22%; border-radius:50%; background:var(--surface); box-shadow:0 0 0 1px var(--border); }
-        .graf-donut-centro { position:relative; z-index:1; text-align:center; max-width:75%; }
-        .graf-donut-centro strong { display:block; color:var(--text); font-size:.82rem; font-weight:900; line-height:1.15; }
-        .graf-donut-centro span { display:block; color:var(--text-light); font-size:.55rem; font-weight:800; text-transform:uppercase; margin-top:3px; }
-        .graf-donut-legenda { display:grid; gap:7px; min-width:0; }
-        .graf-donut-item { display:grid; grid-template-columns:9px minmax(0,1fr) auto; gap:7px; align-items:center; font-size:.64rem; }
-        .graf-donut-cor { width:8px; height:8px; border-radius:3px; }
-        .graf-donut-nome { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); font-weight:700; }
-        .graf-donut-valor { color:var(--text-light); font-weight:800; font-variant-numeric:tabular-nums; white-space:nowrap; }
-        .graf-pessoa-bloco { padding:11px 0 3px; }
-        .graf-pessoa-vals { white-space:nowrap; }
-        @media (min-width:700px) {
-          #graf-conteudo-principal > .graf-dashboard-head, #graf-conteudo-principal > .graf-kpis, #graf-conteudo-principal > .graf-secao-card.graf-destaque { grid-column:1/-1; }
-          #graf-conteudo-principal > .graf-secao-card:last-child { grid-column:1/-1; }
-        }
-        @media (max-width:420px) {
-          .graf-kpis { gap:5px; }
-          .graf-kpi { min-height:76px; padding:10px 7px; }
-          .graf-kpi span { font-size:.54rem; }
-          .graf-kpi strong { font-size:.75rem; }
-          .graf-donut-wrap { grid-template-columns:105px minmax(0,1fr); gap:9px; }
-          .graf-donut { width:104px; }
-          .graf-donut-centro strong { font-size:.68rem; }
-          .graf-donut-item { font-size:.59rem; }
-          .graf-dashboard-head h3 { font-size:.9rem; }
-        }
 
 
     </style>
@@ -648,8 +534,7 @@
             <div class="form-group" style="flex:1; margin:0;"><label>VENCE (DIA)</label><input type="number" id="ec-vence" class="form-input" min="1" max="31" inputmode="numeric" style="padding:10px;"></div>
             <div class="form-group" style="flex:1; margin:0;"><label>MELHOR DIA</label><input type="number" id="ec-melhor" class="form-input" min="1" max="31" inputmode="numeric" placeholder="auto" style="padding:10px;"></div>
         </div>
-        <div class="form-group"><label>LIMITE DO CARTÃO (R$)</label><input type="number" id="ec-limite" class="form-input" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 5000,00"></div>
-        <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. O limite é opcional e serve para os indicadores de utilização na aba Gráficos.</p>
+        <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. Se o banco mudar as datas, é só editar aqui: os avisos sempre usam o valor atual.</p>
         <button class="btn btn-primary" onclick="salvarCartaoEditado()">SALVAR CARTÃO</button>
     </div>
 
@@ -744,17 +629,11 @@
                 <div class="metric"><small>Diferença</small><strong id="metric-saldo" style="color: var(--danger);">R$&nbsp;0,00</strong></div>
             </div>
             <div class="card">
-                <div class="dash-tabs" role="tablist" aria-label="Visão Geral">
-                    <button class="dash-tab-btn active" id="btn-visao-pessoa" onclick="alternarVisaoDash('pessoa')" role="tab" aria-selected="true">👤 PESSOAS</button>
-                    <button class="dash-tab-btn" id="btn-visao-cartao" onclick="alternarVisaoDash('cartao')" role="tab" aria-selected="false">💳 CARTÕES</button>
-                    <button class="dash-tab-btn" id="btn-visao-graficos" onclick="alternarAbaDashboard('graficos')" role="tab" aria-selected="false">📊 GRÁFICOS</button>
+                <div class="dash-tabs">
+                    <button class="dash-tab-btn active" id="btn-visao-pessoa" onclick="alternarVisaoDash('pessoa')">👤 POR PESSOA</button>
+                    <button class="dash-tab-btn" id="btn-visao-cartao" onclick="alternarVisaoDash('cartao')">💳 POR CARTÃO</button>
                 </div>
-                <div id="painel-visao-lista">
-                    <div id="lista-arvore-saldos"></div>
-                </div>
-                <div id="painel-visao-graficos" style="display:none;">
-                    <div id="graf-conteudo-principal"></div>
-                </div>
+                <div id="lista-arvore-saldos"></div>
             </div>
         </div>
 
@@ -877,8 +756,7 @@
                     <div class="form-group" style="flex:1; margin:0;"><label>VENCE (DIA)</label><input type="number" id="novo-cartao-vence" class="form-input" placeholder="05" style="padding:10px;"></div>
                     <div class="form-group" style="flex:1; margin:0;"><label>MELHOR DIA</label><input type="number" id="novo-cartao-melhor" class="form-input" placeholder="auto" style="padding:10px;"></div>
                 </div>
-                <div class="form-group"><label>LIMITE DO CARTÃO (R$)</label><input type="number" id="novo-cartao-limite" class="form-input" min="0" step="0.01" inputmode="decimal" placeholder="Ex.: 5000,00"></div>
-                <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. O limite é opcional e pode ser editado depois no lápis de cada cartão.</p>
+                <p class="helper">Melhor dia vazio = dia seguinte ao fechamento. Todas as datas podem ser editadas depois no lápis de cada cartão.</p>
                 <button class="btn btn-outline" style="margin-bottom: 10px; padding:10px;" onclick="addCartao()">ADICIONAR CARTÃO</button>
                 <div id="lista-edit-cartoes"></div>
             </div>
@@ -1006,7 +884,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.5'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '1.3'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -1156,7 +1034,6 @@
     let cartoesSelExt = [];
     let dataCalendario = new Date(); dataCalendario.setDate(1);
     let visaoDashboardAtual = 'pessoa';
-    let abaDashboardAtual = 'lista'; // 'lista' | 'graficos' — estado visual, não altera dados
     let base64Desp = null; let base64Pag = null;
     
     function salvarDB() {
@@ -1806,13 +1683,9 @@
     }
 
     function mudarTela(id, titulo) {
-        // Compatibilidade: links antigos para a tela Gráficos agora abrem a aba dentro da Visão Geral.
-        if (id === 'graficos') { mudarTela('dashboard', 'Visão Geral'); alternarAbaDashboard('graficos'); return; }
         telaAtualId = id;
         document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
-        const destino = document.getElementById('tela-' + id);
-        if (!destino) return;
-        destino.style.display = 'block';
+        document.getElementById('tela-' + id).style.display = 'block';
         document.getElementById('page-title').innerText = titulo;
         document.querySelectorAll('.dock-item').forEach(el => el.classList.remove('active-icon'));
         if(document.getElementById('icon-' + id)) document.getElementById('icon-' + id).classList.add('active-icon');
@@ -1973,7 +1846,6 @@
         let pessoasUnicas = [...new Set(despesas.map(d=>d.pessoa).concat(pags.map(p=>p.pessoa)))].filter(Boolean);
         let html = visaoDashboardAtual === 'pessoa' ? construirArvorePessoas(pessoasUnicas, despesas, pags) : construirArvoreCartoes(despesas);
         document.getElementById('lista-arvore-saldos').innerHTML = html || '<p style="color:var(--text-light); text-align:center;">Sem movimentos no período.</p>';
-        if (abaDashboardAtual === 'graficos') renderizarTelaGraficos();
         }
     // Gráfico analítico interativo (v1.2):
     // - Sincronizado com a aba ativa (POR PESSOA prioriza filtro de pessoas + "Só Meus"; POR CARTÃO prioriza filtro de cartões).
@@ -2117,287 +1989,6 @@
     }
     
     
-    /* ================= GRÁFICOS INTEGRADOS À VISÃO GERAL (v1.3) ================= */
-    let grafMesProjSel = null, grafMesEvoSel = null, grafCatAberta = null;
-
-    function selecionarMesProjGraf(ym) { grafMesProjSel = ym; renderizarTelaGraficos(); }
-    function selecionarMesEvoGraf(ym) { grafMesEvoSel = ym; renderizarTelaGraficos(); }
-    function alternarDrillCatGraf(el, cat) {
-        const grupo = el.parentElement;
-        const abriu = !grupo.classList.contains('aberto');
-        grupo.classList.toggle('aberto', abriu);
-        grafCatAberta = abriu ? cat : null;
-    }
-
-    function renderizarTelaGraficos() {
-        const mainBox = document.getElementById('graf-conteudo-principal');
-        if (!mainBox) return;
-
-        const todasDesp = obterDespesasPermitidas().filter(d => getValorAjustadoEmprestimo(d) > 0);
-        const todosPag = obterPagamentosPermitidos().filter(p => (Number(p.valor) || 0) > 0);
-        const cartaoDe = d => d.cartao || '💲 Acordo';
-
-        const despFiltradasGlobal = todasDesp;
-        const pagFiltradosGlobal = todosPag;
-
-        const selDashId = document.getElementById('dash-filtro-global') ? 'dash-filtro-global' : null;
-        const range = selDashId ? getFiltroRange(selDashId, 'dash-dt-ini', 'dash-dt-fim') : null;
-        const despPeriodo = despFiltradasGlobal.filter(d => dentroDoPeriodo(d, range));
-        const pagPeriodo = pagFiltradosGlobal.filter(p => dentroDoPeriodo(p, range));
-
-        const totCobPeriodo = somaDesp(despPeriodo);
-        const totRecPeriodo = pagPeriodo.reduce((s, p) => s + (Number(p.valor) || 0), 0);
-        const saldoPeriodo = totCobPeriodo - totRecPeriodo;
-
-        const hj = new Date();
-        const mesAtual = `${hj.getFullYear()}-${pushPad(hj.getMonth() + 1)}`;
-        const fmtCurto = ym => {
-            const nomes = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-            const [a, m] = ym.split('-').map(Number);
-            return `${nomes[(m || 1) - 1]}/${String(a).slice(-2)}`;
-        };
-        const fmtK = v => v >= 1000 ? 'R$' + (v / 1000).toFixed(1).replace('.', ',') + 'k' : (v > 0 ? 'R$' + Math.round(v) : 'R$0');
-        const rotuloPct = p => p < 1 ? '<1%' : Math.round(p) + '%';
-        const larguraPct = p => Math.max(2, p).toFixed(1) + '%';
-        const linhaBarra = (nome, v, tot, tip) => `<div class="gc-linha" title="${escHtml(tip)}: ${brl(v)}"><span class="gc-nome">${escHtml(nome)}</span><span class="gc-trilho"><span class="gc-barra" style="width:${larguraPct(tot > 0 ? v / tot * 100 : 0)}"></span></span><span class="gc-pct">${rotuloPct(tot > 0 ? v / tot * 100 : 0)}</span><span class="gc-val">${brl(v)}</span></div>`;
-
-        // 1. Projeção de faturas futuras (6 meses à frente: mês atual + 5 próximos meses)
-        const mesesFuturos = [0, 1, 2, 3, 4, 5].map(k => mesMais(mesAtual, k));
-        if (!grafMesProjSel || !mesesFuturos.includes(grafMesProjSel)) grafMesProjSel = mesAtual;
-        const serieProj = mesesFuturos.map(ym => {
-            const dsMes = despFiltradasGlobal.filter(d => d.dataRef === ym);
-            const totalMes = somaDesp(dsMes);
-            const parcMes = dsMes.filter(d => /\(\d+\/\d+\)/.test(String(d.desc || '')) || d.isEmprestimo).reduce((s, d) => s + getValorAjustadoEmprestimo(d), 0);
-            const porCart = {};
-            dsMes.forEach(d => { const c = cartaoDe(d); porCart[c] = (porCart[c] || 0) + getValorAjustadoEmprestimo(d); });
-            const topCart = Object.entries(porCart).sort((a, b) => b[1] - a[1])[0];
-            return { ym, total: totalMes, parc: parcMes, qtd: dsMes.length, topCart };
-        });
-        const maxProj = Math.max(1, ...serieProj.map(s => s.total));
-        const totProj6m = serieProj.reduce((s, x) => s + x.total, 0);
-        const selProj = serieProj.find(s => s.ym === grafMesProjSel) || serieProj[0];
-
-        const projColsHtml = serieProj.map(s => {
-            const hPct = s.total > 0 ? Math.max(6, Math.round((s.total / maxProj) * 100)) : 4;
-            const cls = ['gc-evo-col', s.ym === mesAtual ? 'atual' : 'futuro', s.ym === grafMesProjSel ? 'sel' : ''].filter(Boolean).join(' ');
-            const tag = s.ym === mesAtual ? 'Atual' : 'Futuro';
-            return `<div class="${cls}" onclick="selecionarMesProjGraf('${s.ym}')" title="${formatarMesAno(s.ym)}: ${brl(s.total)}">
-                <span class="gc-evo-val">${fmtK(s.total)}</span>
-                <div class="gc-evo-bar-wrap"><div class="gc-evo-bar" style="height:${hPct}%"></div></div>
-                <span class="gc-evo-mes">${fmtCurto(s.ym)}</span>
-                <span class="gc-evo-tag">${tag}</span>
-            </div>`;
-        }).join('');
-
-        const blocoProjecao = `
-            <div class="graf-secao-card">
-                <div class="graf-topo">
-                    <span class="graf-titulo">📅 Projeção de Faturas Futuras (6 Meses)</span>
-                    <span class="graf-sub">Total previsto: <strong>${brl(totProj6m)}</strong></span>
-                </div>
-                <div class="gc-evo-grid">${projColsHtml}</div>
-                <div class="gc-evo-detalhe">
-                    <div><strong style="color:var(--text);">${formatarMesAno(selProj.ym)}</strong> · ${selProj.qtd} lanç. · <strong style="color:var(--primary);">${brl(selProj.total)}</strong></div>
-                    <div>${selProj.qtd ? `Parcelas/Acordos: <strong>${brl(selProj.parc)}</strong>${selProj.topCart ? ` · Principal: <strong>${escHtml(selProj.topCart[0])}</strong> (${brl(selProj.topCart[1])})` : ''}` : 'Sem faturas projetadas neste mês'}</div>
-                </div>
-            </div>`;
-
-        // 2. Uso de limite por cartão (no período selecionado ou geral se tiver limite configurado)
-        const cartoesObjs = (db.cartoes || []).filter(c => {
-            const nomeC = c.nome || c;
-            const inativos = db.cartoesInativos || [];
-            return !inativos.includes(nomeC);
-        });
-        const limitesHtml = cartoesObjs.length ? cartoesObjs.map(c => {
-            const nomeC = c.nome || c;
-            const limite = Number(c.limite) || 0;
-            // Considera despesas abertas/do período ou total do cartão se não houver período restrito
-            const gastoRef = despPeriodo.filter(d => d.cartao === nomeC);
-            const gastoGeral = despFiltradasGlobal.filter(d => d.cartao === nomeC);
-            const gasto = gastoRef.length > 0 || range ? somaDesp(gastoRef) : somaDesp(gastoGeral);
-            const pct = limite > 0 ? (gasto / limite) * 100 : 0;
-            const barCls = pct >= 95 ? 'estouro' : (pct >= 75 ? 'alerta' : '');
-            const disp = limite > 0 ? (limite - gasto) : 0;
-            return `<div class="graf-lim-row">
-                <div class="graf-lim-head"><span>💳 ${escHtml(nomeC)}</span><span>${limite > 0 ? `${Math.round(pct)}%` : 'Sem limite'}</span></div>
-                <div class="graf-lim-trilho"><div class="graf-lim-barra ${barCls}" style="width:${limite > 0 ? Math.min(100, Math.max(2, pct)).toFixed(1) : 0}%"></div></div>
-                <div class="graf-lim-meta">
-                    <span>Usado: <strong>${brl(gasto)}</strong></span>
-                    <span>${limite > 0 ? (disp >= 0 ? `Disponível: <strong>${brl(disp)}</strong> de ${brl(limite)}` : `Acima do limite em <strong>${brl(Math.abs(disp))}</strong>`) : 'Informe o limite em Ajustes › Cartões'}</span>
-                </div>
-            </div>`;
-        }).join('') : '<div class="graf-vazio">Nenhum cartão ativo encontrado para o filtro atual.</div>';
-
-        const blocoLimites = `
-            <div class="graf-secao-card">
-                <div class="graf-topo">
-                    <span class="graf-titulo">💳 Uso de Limite por Cartão</span>
-                    <span class="graf-sub">${range ? 'No período filtrado' : 'Acumulado'}</span>
-                </div>
-                ${limitesHtml}
-            </div>`;
-
-        // 3. Gastos por categoria (com drilldown por subcategoria e pessoa/cartão)
-        const somaCat = {};
-        let totalCat = 0;
-        despPeriodo.forEach(d => {
-            const cat = d.categoria || 'Sem categoria';
-            (somaCat[cat] = somaCat[cat] || []).push(d);
-            totalCat += getValorAjustadoEmprestimo(d);
-        });
-        let itensCat = Object.keys(somaCat).map(c => [c, somaCat[c], somaDesp(somaCat[c])]).sort((a, b) => b[2] - a[2]);
-        if (itensCat.length > 8) {
-            itensCat = itensCat.slice(0, 7).concat([['Outras', itensCat.slice(7).flatMap(x => x[1]), itensCat.slice(7).reduce((t, x) => t + x[2], 0)]]);
-        }
-
-        const catListaHtml = itensCat.length ? itensCat.map(([c, ds, v]) => {
-            const subs = {};
-            ds.forEach(d => { const k = (d.subcategoria || '').trim(); if (k) (subs[k] = subs[k] || []).push(d); });
-            const chavesSub = Object.keys(subs);
-            const semSub = ds.filter(d => !(d.subcategoria || '').trim());
-            const subsHtml = chavesSub.length > 0
-                ? `<div class="gc-drill-sec">Subcategorias</div>` + chavesSub.map(k => [k, somaDesp(subs[k])]).sort((a, b) => b[1] - a[1]).concat(semSub.length ? [['Sem subcategoria', somaDesp(semSub)]] : []).map(([k, sv]) => linhaBarra('↳ ' + k, sv, v, c + ' › ' + k)).join('')
-                : '';
-            const porPessoaCat = {};
-            ds.forEach(d => { const k = '👤 ' + (d.pessoa || 'Sem pessoa'); porPessoaCat[k] = (porPessoaCat[k] || 0) + getValorAjustadoEmprestimo(d); });
-            const pessoaCatHtml = `<div class="gc-drill-sec">Por Responsável</div>` + Object.entries(porPessoaCat).sort((a, b) => b[1] - a[1]).map(([k, pv]) => linhaBarra(k, pv, v, c + ' · ' + k)).join('');
-            const aberta = grafCatAberta === c;
-            return `<div class="gc-grupo tem-sub${aberta ? ' aberto' : ''}"><div data-cat="${escHtml(c)}" onclick="alternarDrillCatGraf(this, this.dataset.cat)">${linhaBarra(c, v, totalCat, c)}</div><div class="gc-drill">${subsHtml}${pessoaCatHtml}</div></div>`;
-        }).join('') : '<div class="graf-vazio">Sem despesas por categoria no período selecionado.</div>';
-
-        const paletaGraf = ['var(--primary)', 'var(--success)', '#60a5fa', '#a78bfa', '#f59e0b', '#f472b6', '#14b8a6', '#94a3b8'];
-        const fatiasCat = itensCat.map(([nome, ds, valor], i) => ({ nome, valor, cor: paletaGraf[i % paletaGraf.length], pct: totalCat > 0 ? valor / totalCat * 100 : 0 }));
-        let anguloCat = 0;
-        const gradienteCat = fatiasCat.map(f => { const ini = anguloCat; anguloCat += f.pct * 3.6; return f.cor + ' ' + ini.toFixed(2) + 'deg ' + anguloCat.toFixed(2) + 'deg'; }).join(', ');
-        const legendaCat = fatiasCat.slice(0, 6).map(f => '<div class="graf-donut-item"><span class="graf-donut-cor" style="background:' + f.cor + '"></span><span class="graf-donut-nome" title="' + escHtml(f.nome) + '">' + escHtml(f.nome) + '</span><span class="graf-donut-valor">' + f.pct.toFixed(0) + '% · ' + brl(f.valor) + '</span></div>').join('');
-        const notaCat = fatiasCat.length > 6 ? '<small style="color:var(--text-light);font-size:.58rem;">+ ' + (fatiasCat.length - 6) + ' categoria(s) no detalhamento</small>' : '';
-        const donutCategorias = totalCat > 0 ? '<div class="graf-donut-wrap"><div class="graf-donut" style="background:conic-gradient(' + gradienteCat + ')"><div class="graf-donut-centro"><strong>' + brl(totalCat) + '</strong><span>Total no período</span></div></div><div class="graf-donut-legenda">' + legendaCat + notaCat + '</div></div>' : '';
-        const blocoCategorias = `
-            <div class="graf-secao-card">
-                <div class="graf-topo">
-                    <span class="graf-titulo">📊 Distribuição por Categoria</span>
-                    <span class="graf-sub">Toque nas barras para detalhar · <strong>${brl(totalCat)}</strong></span>
-                </div>
-                ${donutCategorias}
-                <div class="gc-drill-sec">Detalhamento por categoria</div>
-                ${catListaHtml}
-            </div>`;
-
-        // 4. Divisão de despesas por responsável (Cobrado × Recebido × Saldo)
-        const pessoasResumo = [...new Set(despPeriodo.map(d => d.pessoa).concat(pagPeriodo.map(p => p.pessoa)))]
-            .filter(Boolean)
-            .map(p => {
-                const cob = somaDesp(despPeriodo.filter(d => d.pessoa === p));
-                const rec = pagPeriodo.filter(pg => pg.pessoa === p).reduce((s, pg) => s + (Number(pg.valor) || 0), 0);
-                return { pessoa: p, cob, rec, diff: cob - rec };
-            })
-            .sort((a, b) => b.diff - a.diff || b.cob - a.cob);
-
-        const maxPessoa = Math.max(1, ...pessoasResumo.map(x => Math.max(x.cob, x.rec)));
-        const pessoasHtml = pessoasResumo.length ? pessoasResumo.map(item => {
-            const pCob = Math.min(100, (item.cob / maxPessoa) * 100);
-            const pRec = Math.min(100, (item.rec / maxPessoa) * 100);
-            const stTxt = item.diff > 0.01 ? `Deve ${brl(item.diff)}` : (item.diff < -0.01 ? `Crédito ${brl(Math.abs(item.diff))}` : 'Quitado');
-            const stCor = item.diff > 0.01 ? 'var(--danger)' : 'var(--success)';
-            return `<div class="graf-pessoa-bloco">
-                <div class="graf-pessoa-topo">
-                    <span>👤 ${escHtml(item.pessoa)}</span>
-                    <span class="graf-pessoa-vals" style="color:${stCor};">${stTxt}</span>
-                </div>
-                <div class="graf-dupla-barra" title="Cobrado: ${brl(item.cob)} | Recebido: ${brl(item.rec)}">
-                    <div class="graf-barra-cob" style="width:${pCob.toFixed(1)}%"></div>
-                    <div class="graf-barra-rec" style="width:${pRec.toFixed(1)}%"></div>
-                </div>
-                <div class="graf-lim-meta">
-                    <span>Cobrado: <strong>${brl(item.cob)}</strong></span>
-                    <span>Recebido: <strong>${brl(item.rec)}</strong></span>
-                </div>
-            </div>`;
-        }).join('') : '<div class="graf-vazio">Sem movimentação por responsável no período.</div>';
-
-        const blocoResponsaveis = `
-            <div class="graf-secao-card">
-                <div class="graf-topo">
-                    <span class="graf-titulo">👥 Divisão de Despesas por Responsável</span>
-                    <span class="graf-sub">🔴 Cobrado · 🟢 Recebido</span>
-                </div>
-                ${pessoasHtml}
-            </div>`;
-
-        // 5. Evolução mensal dos últimos 6 meses (3 anteriores + atual + 2 futuros)
-        const mesesEvo = [-3, -2, -1, 0, 1, 2].map(k => mesMais(mesAtual, k));
-        if (!grafMesEvoSel || !mesesEvo.includes(grafMesEvoSel)) grafMesEvoSel = mesAtual;
-        const serieEvo = mesesEvo.map(ym => {
-            const dsMes = despFiltradasGlobal.filter(d => d.dataRef === ym);
-            const totalMes = somaDesp(dsMes);
-            const recMes = pagFiltradosGlobal.filter(p => p.dataRef === ym).reduce((s, p) => s + (Number(p.valor) || 0), 0);
-            const porCatM = {};
-            dsMes.forEach(d => { const c = d.categoria || 'Sem categoria'; porCatM[c] = (porCatM[c] || 0) + getValorAjustadoEmprestimo(d); });
-            const topCat = Object.entries(porCatM).sort((a, b) => b[1] - a[1])[0];
-            return { ym, total: totalMes, rec: recMes, qtd: dsMes.length, topCat };
-        });
-        const maxEvo = Math.max(1, ...serieEvo.map(s => s.total));
-        const totEvo6m = serieEvo.reduce((s, x) => s + x.total, 0);
-        const selEvo = serieEvo.find(s => s.ym === grafMesEvoSel) || serieEvo[3];
-
-        const evoColsHtml = serieEvo.map(s => {
-            const hPct = s.total > 0 ? Math.max(6, Math.round((s.total / maxEvo) * 100)) : 4;
-            const cls = ['gc-evo-col', s.ym === mesAtual ? 'atual' : (s.ym > mesAtual ? 'futuro' : ''), s.ym === grafMesEvoSel ? 'sel' : ''].filter(Boolean).join(' ');
-            const tag = s.ym === mesAtual ? 'Atual' : (s.ym > mesAtual ? 'Prev.' : '');
-            return `<div class="${cls}" onclick="selecionarMesEvoGraf('${s.ym}')" title="${formatarMesAno(s.ym)}: ${brl(s.total)}">
-                <span class="gc-evo-val">${fmtK(s.total)}</span>
-                <div class="gc-evo-bar-wrap"><div class="gc-evo-bar" style="height:${hPct}%"></div></div>
-                <span class="gc-evo-mes">${fmtCurto(s.ym)}</span>
-                <span class="gc-evo-tag">${tag || '&nbsp;'}</span>
-            </div>`;
-        }).join('');
-
-        const maxEvoLinha = Math.max(1, ...serieEvo.flatMap(x => [x.total, x.rec]));
-        const chartX = i => 52 + (i * 616 / Math.max(1, serieEvo.length - 1));
-        const chartY = v => 174 - (Math.max(0, v) / maxEvoLinha) * 140;
-        const pathCob = serieEvo.map((x, i) => (i ? 'L ' : 'M ') + chartX(i).toFixed(1) + ' ' + chartY(x.total).toFixed(1)).join(' ');
-        const pathRec = serieEvo.map((x, i) => (i ? 'L ' : 'M ') + chartX(i).toFixed(1) + ' ' + chartY(x.rec).toFixed(1)).join(' ');
-        const gridSvg = [34, 80, 127, 174].map(y => '<line x1="42" y1="' + y + '" x2="678" y2="' + y + '" stroke="var(--border)" stroke-dasharray="3 5" stroke-width="1"/>').join('');
-        const dotsCob = serieEvo.map((x, i) => '<circle cx="' + chartX(i) + '" cy="' + chartY(x.total) + '" r="' + (x.ym === grafMesEvoSel ? 5 : 3.5) + '" fill="var(--danger)" stroke="var(--surface)" stroke-width="2"/>').join('');
-        const dotsRec = serieEvo.map((x, i) => '<circle cx="' + chartX(i) + '" cy="' + chartY(x.rec) + '" r="' + (x.ym === grafMesEvoSel ? 5 : 3.5) + '" fill="var(--success)" stroke="var(--surface)" stroke-width="2"/>').join('');
-        const labelsEvo = serieEvo.map((x, i) => '<text x="' + chartX(i) + '" y="204" text-anchor="middle" style="font-weight:' + (x.ym === mesAtual ? 900 : 650) + ';fill:' + (x.ym === mesAtual ? 'var(--primary)' : 'var(--text-light)') + '">' + fmtCurto(x.ym) + '</text>').join('');
-        const blocoEvolucao = `
-            <div class="graf-secao-card graf-destaque">
-                <div class="graf-topo">
-                    <span class="graf-titulo">📈 Fluxo mensal · cobrado x recebido</span>
-                    <span class="graf-sub">Últimos meses e lançamentos futuros</span>
-                </div>
-                <div class="graf-chart-legend"><span class="graf-legend-item"><i class="graf-legend-dot" style="background:var(--danger)"></i> Cobrado</span><span class="graf-legend-item"><i class="graf-legend-dot" style="background:var(--success)"></i> Recebido</span><span class="graf-legend-item" style="margin-left:auto;">Janela: ${brl(totEvo6m)}</span></div>
-                <svg class="graf-line-chart" viewBox="0 0 720 220" role="img" aria-label="Gráfico de linhas comparando valores cobrados e recebidos por mês">
-                    ${gridSvg}
-                    <path d="${pathCob}" fill="none" stroke="var(--danger)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="${pathRec}" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    ${dotsCob}${dotsRec}${labelsEvo}
-                </svg>
-                <div class="graf-chart-detail"><span><strong>${formatarMesAno(selEvo.ym)}</strong> · ${selEvo.qtd} lançamento(s)</span><span>Cobrado: <strong style="color:var(--danger)">${brl(selEvo.total)}</strong></span><span>Recebido: <strong style="color:var(--success)">${brl(selEvo.rec)}</strong></span></div>
-                <div class="graf-mes-selecao" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-top:8px;">
-                    ${serieEvo.map(x => '<button type="button" onclick="selecionarMesEvoGraf(\'' + x.ym + '\')" style="border:1px solid ' + (x.ym === grafMesEvoSel ? 'var(--primary)' : 'var(--border)') + ';background:' + (x.ym === grafMesEvoSel ? 'color-mix(in srgb,var(--primary) 12%,var(--surface))' : 'var(--bg)') + ';color:' + (x.ym === grafMesEvoSel ? 'var(--primary)' : 'var(--text-light)') + ';border-radius:8px;padding:6px 2px;font-size:.57rem;font-weight:800;">' + fmtCurto(x.ym) + '</button>').join('')}
-                </div>
-            </div>`;
-
-        const periodoEl = document.getElementById('dash-filtro-global');
-        const periodoNome = periodoEl && periodoEl.selectedOptions && periodoEl.selectedOptions[0] ? periodoEl.selectedOptions[0].textContent.trim() : 'Todo o período';
-        const taxaRecebimento = totCobPeriodo > 0 ? Math.min(100, (totRecPeriodo / totCobPeriodo) * 100) : 0;
-        const situacaoSaldo = saldoPeriodo > 0.01 ? 'Em aberto' : (saldoPeriodo < -0.01 ? 'Crédito acumulado' : 'Tudo equilibrado');
-        const resumoTopo = `
-            <div class="graf-dashboard-head">
-                <div><h3>Painel financeiro</h3><p>Indicadores e análises dos seus lançamentos</p></div>
-                <span class="graf-periodo-pill">${escHtml(periodoNome)}</span>
-            </div>
-            <div class="graf-kpis">
-                <div class="graf-kpi"><span>Valor cobrado</span><strong style="color:var(--danger);">${brl(totCobPeriodo)}</strong><small class="graf-kpi-sub">${despPeriodo.length} lançamento(s)</small></div>
-                <div class="graf-kpi"><span>Total recebido</span><strong style="color:var(--success);">${brl(totRecPeriodo)}</strong><small class="graf-kpi-sub">${pagPeriodo.length} recebimento(s)</small></div>
-                <div class="graf-kpi"><span>${situacaoSaldo}</span><strong style="color:${saldoPeriodo > 0.01 ? 'var(--danger)' : 'var(--success)'};">${brl(Math.abs(saldoPeriodo))}</strong><div class="graf-kpi-progress"><span style="width:${taxaRecebimento.toFixed(1)}%"></span></div><small class="graf-kpi-sub">${taxaRecebimento.toFixed(0)}% recebido do total cobrado</small></div>
-            </div>`;
-
-        mainBox.innerHTML = resumoTopo + blocoEvolucao + blocoCategorias + blocoResponsaveis + blocoLimites + blocoProjecao;
-    }
-
     // Re-desenha a tela que está aberta (dashboard, calendário, extrato ou config) depois de qualquer alteração
     function atualizarTelaAtual() {
         if (typeof currentUser === 'undefined' || !currentUser) return;
@@ -2408,31 +1999,12 @@
         if (aberta('config')) { renderizarListaParcelamentos(); renderizarListaTransferencia(); }
     }
 
-    function atualizarBotoesAbasDashboard() {
-        const emGraficos = abaDashboardAtual === 'graficos';
-        const painelLista = document.getElementById('painel-visao-lista');
-        const painelGraficos = document.getElementById('painel-visao-graficos');
-        const bP = document.getElementById('btn-visao-pessoa');
-        const bC = document.getElementById('btn-visao-cartao');
-        const bG = document.getElementById('btn-visao-graficos');
-        if (painelLista) painelLista.style.display = emGraficos ? 'none' : 'block';
-        if (painelGraficos) painelGraficos.style.display = emGraficos ? 'block' : 'none';
-        if (bP) { bP.classList.toggle('active', !emGraficos && visaoDashboardAtual === 'pessoa'); bP.setAttribute('aria-selected', String(!emGraficos && visaoDashboardAtual === 'pessoa')); }
-        if (bC) { bC.classList.toggle('active', !emGraficos && visaoDashboardAtual === 'cartao'); bC.setAttribute('aria-selected', String(!emGraficos && visaoDashboardAtual === 'cartao')); }
-        if (bG) { bG.classList.toggle('active', emGraficos); bG.setAttribute('aria-selected', String(emGraficos)); }
-    }
-
-    function alternarAbaDashboard(aba) {
-        abaDashboardAtual = aba === 'graficos' ? 'graficos' : 'lista';
-        atualizarBotoesAbasDashboard();
-        if (abaDashboardAtual === 'graficos') renderizarTelaGraficos();
-        else atualizarSaldos();
-    }
-
     function alternarVisaoDash(modo) {
         visaoDashboardAtual = (modo === 'cartao' || modo === 'fatura') ? 'cartao' : 'pessoa';
-        abaDashboardAtual = 'lista';
-        atualizarBotoesAbasDashboard();
+        const bP = document.getElementById('btn-visao-pessoa');
+        const bC = document.getElementById('btn-visao-cartao');
+        if (bP) bP.classList.toggle('active', visaoDashboardAtual === 'pessoa');
+        if (bC) bC.classList.toggle('active', visaoDashboardAtual === 'cartao');
         atualizarSaldos();
     }
 
@@ -3141,10 +2713,9 @@
             let nome = c.nome || c; let inativo = (db.cartoesInativos||[]).includes(nome);
             const obj = typeof c === 'object' ? c : { nome: c };
             const dias = diaValido(obj.fechamento) && diaValido(obj.vencimento) ? `Fecha dia ${obj.fechamento} • Vence dia ${obj.vencimento} • Melhor dia ${cartaoMelhorDia(obj)}${obj.melhorDia ? '' : ' (auto)'}` : 'Dias não informados';
-            const limiteInfo = Number(obj.limite) > 0 ? `<div style="color:var(--success);font-size:.7rem;margin-top:2px;">Limite: ${brl(Number(obj.limite))}</div>` : '<div style="color:var(--text-light);font-size:.7rem;margin-top:2px;">Limite não informado</div>';
             const aviso = cartaoSemConferir(obj) ? `<div style="color:var(--primary); font-size:0.7rem; margin-top:2px;">⚠️ Dias padrão: confira no lápis (sem aviso até conferir)</div>` : '';
             html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border);">
-                <div><strong>${escHtml(nome)}</strong> ${inativo ? '<span style="color:var(--danger); font-size:0.7rem;">(Inativo)</span>' : ''}<div style="color:var(--text-light); font-size:0.72rem; margin-top:2px;">${dias}</div>${limiteInfo}${aviso}</div>
+                <div><strong>${escHtml(nome)}</strong> ${inativo ? '<span style="color:var(--danger); font-size:0.7rem;">(Inativo)</span>' : ''}<div style="color:var(--text-light); font-size:0.72rem; margin-top:2px;">${dias}</div>${aviso}</div>
                 <div style="display:flex; gap:6px;">
                     <button class="btn-small" style="color:var(--primary);" onclick="abrirEdicaoCartao(decodeURIComponent('${encodeURIComponent(nome)}'))"><span class="material-icons-outlined" style="font-size:1rem;">edit</span></button>
                     ${true ? `<button class="btn-small" style="color:var(--text);" onclick="toggleAtivoCartao('${nome}')"><span class="material-icons-outlined" style="font-size:1rem;">${inativo?'visibility_off':'visibility'}</span></button>` : ''}
@@ -3160,12 +2731,10 @@
         const f = diaValido(document.getElementById('novo-cartao-fecha').value), v = diaValido(document.getElementById('novo-cartao-vence').value);
         if (!f || !v) return toast('Informe o dia de fechamento e o de vencimento (1 a 31).', 'erro');
         const mTxt = document.getElementById('novo-cartao-melhor').value.trim(); const m = mTxt === '' ? null : diaValido(mTxt);
-        const limTxt = document.getElementById('novo-cartao-limite').value.trim(); const limite = limTxt === '' ? 0 : Number(limTxt.replace(',', '.'));
-        if (!Number.isFinite(limite) || limite < 0) return toast('Informe um limite válido ou deixe vazio.', 'erro');
         if (mTxt !== '' && !m) return toast('Melhor dia: de 1 a 31 ou deixe vazio.', 'erro');
-        db.cartoes.push({ nome: n, fechamento: f, vencimento: v, melhorDia: m, limite, conferido: true });
+        db.cartoes.push({ nome: n, fechamento: f, vencimento: v, melhorDia: m, conferido: true });
         salvarDB(); carregarSelectsGerais(); sincronizarManual(true);
-        ['novo-cartao-nome', 'novo-cartao-fecha', 'novo-cartao-vence', 'novo-cartao-melhor', 'novo-cartao-limite'].forEach(id => document.getElementById(id).value = '');
+        ['novo-cartao-nome', 'novo-cartao-fecha', 'novo-cartao-vence', 'novo-cartao-melhor'].forEach(id => document.getElementById(id).value = '');
         toast('Cartão adicionado!');
     }
     function abrirEdicaoCartao(nome) {
@@ -3174,7 +2743,6 @@
         document.getElementById('ec-nome-orig').value = nome; document.getElementById('ec-nome').value = nome;
         document.getElementById('ec-fecha').value = o.fechamento || ''; document.getElementById('ec-vence').value = o.vencimento || '';
         document.getElementById('ec-melhor').value = o.melhorDia || '';
-        document.getElementById('ec-limite').value = Number(o.limite) > 0 ? o.limite : '';
         document.getElementById('modal-overlay').classList.add('open'); document.getElementById('modal-cartao').classList.add('open');
     }
     function salvarCartaoEditado() {
@@ -3183,8 +2751,6 @@
         const nome = document.getElementById('ec-nome').value.trim().toUpperCase();
         const f = diaValido(document.getElementById('ec-fecha').value), v = diaValido(document.getElementById('ec-vence').value);
         const mTxt = document.getElementById('ec-melhor').value.trim(); const m = mTxt === '' ? null : diaValido(mTxt);
-        const limTxt = document.getElementById('ec-limite').value.trim(); const limite = limTxt === '' ? 0 : Number(limTxt.replace(',', '.'));
-        if (!Number.isFinite(limite) || limite < 0) return toast('Informe um limite válido ou deixe vazio.', 'erro');
         if (!nome) return toast('Informe o nome do cartão.', 'erro');
         if (!f || !v) return toast('Fechamento e vencimento: informe um dia de 1 a 31.', 'erro');
         if (mTxt !== '' && !m) return toast('Melhor dia: de 1 a 31 ou deixe vazio.', 'erro');
@@ -3196,7 +2762,7 @@
             cartoesSelCal = cartoesSelCal.map(x => x === orig ? nome : x); cartoesSelExt = cartoesSelExt.map(x => x === orig ? nome : x);
             const cfg = pushCfg(currentUser); if (Array.isArray(cfg.listaCartoes)) { cfg.listaCartoes = cfg.listaCartoes.map(x => x === orig ? nome : x); localStorage.setItem('gc_push_cfg_' + currentUser.id, JSON.stringify(cfg)); }
         }
-        c.nome = nome; c.fechamento = f; c.vencimento = v; c.melhorDia = m; c.limite = limite; c.conferido = true;
+        c.nome = nome; c.fechamento = f; c.vencimento = v; c.melhorDia = m; c.conferido = true;
         salvarDB(); fecharModais(); carregarSelectsGerais(); atualizarTelaAtual(); sincronizarManual(true); toast('Cartão atualizado!');
     }
     function toggleAtivoCartao(c) { if(!db.cartoesInativos) db.cartoesInativos = []; if(db.cartoesInativos.includes(c)) db.cartoesInativos = db.cartoesInativos.filter(x => x !== c); else db.cartoesInativos.push(c); salvarDB(); carregarSelectsGerais(); }
@@ -3694,12 +3260,10 @@
 
     /* ================= ATUALIZAÇÃO AUTOMÁTICA DO APP ================= */
     let telaAtualId = 'dashboard', recargaPendente = false, ultimoInfoVersao = null, ultimaChecagemMs = 0;
-    const TITULOS_TELA = { dashboard: 'Visão Geral', calendario: 'Calendário', extrato: 'Cobranças e Extrato', config: 'Ajuste' };
+    const TITULOS_TELA = { dashboard: 'Visão Geral', graficos: 'Gráficos', calendario: 'Calendário', extrato: 'Extrato', config: 'Ajuste' };
     function restaurarTelaDepoisDeAtualizar() {
         let t = null; try { t = sessionStorage.getItem('gc_tela_retorno'); sessionStorage.removeItem('gc_tela_retorno'); } catch (e) {}
-        const id = t === 'graficos' ? 'dashboard' : (TITULOS_TELA[t] ? t : 'dashboard');
-        mudarTela(id, TITULOS_TELA[id]);
-        if (t === 'graficos') alternarAbaDashboard('graficos');
+        const id = TITULOS_TELA[t] ? t : 'dashboard'; mudarTela(id, TITULOS_TELA[id]);
     }
     function versaoMaior(a, b) { const x = String(a).split('.').map(n => parseInt(n) || 0), y = String(b).split('.').map(n => parseInt(n) || 0); for (let i = 0; i < Math.max(x.length, y.length); i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0); } return false; }
     function podeRecarregarAgora() { if (document.querySelector('.modal.open')) return false; const a = document.activeElement; return !(a && ['INPUT', 'TEXTAREA', 'SELECT'].includes(a.tagName)); }
