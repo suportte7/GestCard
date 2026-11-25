@@ -693,6 +693,65 @@
 
         <!-- TELA 4: MENU AJUSTE (cada seção abre e fecha ao tocar) -->
         <div id="tela-config" class="tela" style="display: none;">
+            <!-- GestCard 1.5: integridade, auditoria e histórico -->
+            <div class="section-label">🛡️ Gestão e integridade</div>
+            <div class="card acc-card open" id="gc15-auditoria-card">
+                <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">fact_check</span><span class="acc-title">Central de Auditoria</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+                <div class="acc-body">
+                    <p class="helper">Analisa lançamentos e recebimentos em busca de possíveis duplicidades, campos ausentes e inconsistências. A análise é somente leitura: nenhum dado será corrigido ou apagado automaticamente.</p>
+                    <button class="btn btn-primary" style="padding:10px;" onclick="gc15ExecutarAuditoria()"><span class="material-icons-outlined">search</span> ANALISAR MEUS DADOS</button>
+                    <div id="gc15-audit-resumo" class="helper" style="margin-top:10px;">Execute uma análise para conferir seus dados.</div>
+                    <div id="gc15-audit-lista"></div>
+                </div>
+            </div>
+            <div class="card acc-card" id="gc15-historico-card">
+                <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">history</span><span class="acc-title">Histórico de Alterações</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+                <div class="acc-body">
+                    <p class="helper">Registra alterações identificáveis em compras e recebimentos realizadas neste aparelho, com usuário, data e resumo. O histórico é local e não substitui o backup.</p>
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><select id="gc15-hist-filtro" class="form-input" style="flex:1;min-width:130px;" onchange="gc15RenderHistorico()"><option value="todos">Todas as operações</option><option value="criado">Inclusões</option><option value="alterado">Alterações</option><option value="removido">Remoções</option></select><button class="btn btn-outline" style="padding:9px;" onclick="gc15ExportarHistorico()">EXPORTAR</button></div>
+                    <div id="gc15-hist-lista" style="margin-top:10px;"></div>
+                </div>
+            </div>
+            <div class="card" style="padding:12px;"><strong>Proteção de acesso</strong><p class="helper" style="margin:6px 0 0;">O GestCard mantém a autenticação e as permissões já existentes. A versão 1.5 adiciona limitação temporária de tentativas incorretas neste aparelho. A proteção não substitui PIN forte, HTTPS e as regras de acesso da nuvem.</p></div>
+            <div class="section-label">🚀 GestCard 2.0 — Gestão avançada</div>
+            <div class="card acc-card open" id="gc20-painel-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">insights</span><span class="acc-title">Painel financeiro 2.0</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                  <div><label>MÊS DE REFERÊNCIA</label><input type="month" id="gc20-mes" class="form-input" onchange="gc20RenderTudo()"></div>
+                  <div style="display:flex;align-items:end;"><button class="btn btn-primary" style="width:100%;padding:10px;" onclick="gc20RenderTudo()">ATUALIZAR</button></div>
+                </div>
+                <div id="gc20-resumo" class="metric-grid"></div>
+                <div id="gc20-comparativo" style="margin-top:12px;"></div>
+                <div id="gc20-alertas" style="margin-top:12px;"></div>
+              </div>
+            </div>
+            <div class="card acc-card" id="gc20-fechamento-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">event_available</span><span class="acc-title">Fechamento mensal</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Gera uma fotografia dos totais do mês. O fechamento não bloqueia nem altera lançamentos antigos; mudanças posteriores serão sinalizadas como divergência e exigirão conferência.</p>
+                <div id="gc20-fechamento-resumo" class="helper"></div><button class="btn btn-primary" style="padding:10px;" onclick="gc20FecharMes()">FECHAR MÊS SELECIONADO</button><div id="gc20-fechamentos-lista" style="margin-top:10px;"></div>
+              </div>
+            </div>
+            <div class="card acc-card" id="gc20-inadimplencia-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">warning_amber</span><span class="acc-title">Parcelas com vencimento ultrapassado</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Estimativa baseada no mês de referência e vencimento configurado do cartão. Confira pagamentos e acordos antes de tratar o resultado como saldo devedor individual.</p><div id="gc20-inadimplencia"></div></div>
+            </div>
+            <div class="card acc-card" id="gc20-lixeira-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">delete_sweep</span><span class="acc-title">Lixeira inteligente</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Exclusões feitas a partir da versão 2.0 podem ser recuperadas. Itens antigos já excluídos não podem ser reconstruídos por esta lixeira.</p><div id="gc20-lixeira-lista"></div></div>
+            </div>
+            <div class="card acc-card" id="gc20-relatorios-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">description</span><span class="acc-title">Relatórios e exportações</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Exporte compras, recebimentos e resumo financeiro em CSV compatível com Excel. O backup JSON continua sendo a cópia completa para restauração.</p><button class="btn btn-outline" style="padding:10px;margin-bottom:8px;" onclick="gc20ExportarRelatorio('mes')">EXPORTAR MÊS SELECIONADO (CSV)</button><button class="btn btn-outline" style="padding:10px;margin-top:8px;" onclick="gc20ExportarRelatorio('completo')">EXPORTAR HISTÓRICO COMPLETO (CSV)</button><button class="btn btn-outline" style="padding:10px;margin-top:8px;" onclick="gc20ExportarXlsx()">GERAR EXCEL (.XLSX)</button><button class="btn btn-outline" style="padding:10px;margin-top:8px;" onclick="gc20ExportarPdf()">GERAR RELATÓRIO PDF</button></div>
+            </div>
+            <div class="card acc-card" id="gc20-permissoes-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">admin_panel_settings</span><span class="acc-title">Permissões locais por usuário</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Configuração local por aparelho. É uma camada de conveniência na interface, não substitui validação de permissões no Google Apps Script.</p><div id="gc20-permissoes"></div></div>
+            </div>
+            <div class="card acc-card" id="gc20-emergencia-card">
+              <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">health_and_safety</span><span class="acc-title">Central de recuperação e diagnóstico</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
+              <div class="acc-body"><p class="helper">Verifica estrutura local, contagem de registros, armazenamento, conexão e versão. Não altera dados.</p><button class="btn btn-primary" style="padding:10px;" onclick="gc20Diagnosticar()">EXECUTAR DIAGNÓSTICO</button><button class="btn btn-outline" style="padding:10px;margin:8px 0;" onclick="exportarBackup(false)">BAIXAR BACKUP DE SEGURANÇA</button><div id="gc20-diagnostico" class="helper"></div></div>
+            </div>
             <div class="section-label">👤 Meu perfil</div>
             <div class="card acc-card open">
 <div class="acc-head" onclick="toggleAcc(this)"><span class="material-icons-outlined">person</span><span class="acc-title">Meu perfil e acesso</span><span class="material-icons-outlined acc-chev">expand_more</span></div>
@@ -884,7 +943,7 @@
 </div>
 
 <script>
-    const APP_VERSION = '1.3'; // única fonte da versão; mude também o version.json (veja o LEIA-ME)
+    const APP_VERSION = '2.0'; // versão do aplicativo
     // (Opcional) URL da nuvem direto no código. O normal é usar o config.json (veja o LEIA-ME): ele é enviado uma vez e as novas versões do app não o substituem.
     const URL_NUVEM_APP = '';
     // ===== Troca de nome (ControlCard -> GestCard): copia o que o navegador já guarda para os nomes novos e apaga os antigos. Os DADOS não mudam =====
@@ -935,12 +994,15 @@
        ROOT.usuarios       -> quem usa o sistema (nome, PIN, perfil)
        ROOT.dados[userId]  -> banco DESTE usuário: pessoas (a quem empresta o cartão), cartões, categorias, lançamentos
        db                  -> atalho para o banco do usuário logado: todo o app trabalha em db.* */
-    const CHAVES_LISTA = ['pessoas','cartoes','categorias','pessoasInativas','cartoesInativos','categoriasInativas','emprestimos','despesas','pagamentos'];
-    function novoDataset() { return { pessoas: [], cartoes: [], categorias: ["🛍 Mercado/Compras", "🚗 Transporte/Veículo", "🏠 Casa/Contas"], pessoasInativas: [], cartoesInativos: [], categoriasInativas: [], emprestimos: [], despesas: [], pagamentos: [], comprovantes: {} }; }
+    const CHAVES_LISTA = ['pessoas','cartoes','categorias','pessoasInativas','cartoesInativos','categoriasInativas','emprestimos','despesas','pagamentos','gc20Lixeira','gc20Fechamentos'];
+    function novoDataset() { return { pessoas: [], cartoes: [], categorias: ["🛍 Mercado/Compras", "🚗 Transporte/Veículo", "🏠 Casa/Contas"], pessoasInativas: [], cartoesInativos: [], categoriasInativas: [], emprestimos: [], despesas: [], pagamentos: [], comprovantes: {}, gc20Lixeira: [], gc20Fechamentos: [], gc20Preferencias: {} }; }
     function normalizarDataset(ds) {
         ds = ds && typeof ds === 'object' ? ds : {};
         CHAVES_LISTA.forEach(k => { if (!Array.isArray(ds[k])) ds[k] = []; });
         if (!ds.comprovantes || typeof ds.comprovantes !== 'object') ds.comprovantes = {};
+        if (!Array.isArray(ds.gc20Lixeira)) ds.gc20Lixeira = [];
+        if (!Array.isArray(ds.gc20Fechamentos)) ds.gc20Fechamentos = [];
+        if (!ds.gc20Preferencias || typeof ds.gc20Preferencias !== 'object') ds.gc20Preferencias = {};
         ds.cartoes = ds.cartoes.map(c => typeof c === 'string' ? { nome: c, fechamento: 25, vencimento: 5 } : c);
         delete ds.usuarios; delete ds.versao; delete ds.usuarioNome; // não pertencem ao banco do usuário
         return ds;
@@ -970,8 +1032,8 @@
         return { versao: 'v4', usuarios: [], dados: {} };
     }
     // ===== Versão do formato dos dados: cada passo leva o banco de um formato para o seguinte =====
-    const SCHEMA_ATUAL = 1;
-    const MIGRACOES = { 0: root => { /* 4.0 a 4.2: ainda sem número de formato; nada a converter */ } };
+    const SCHEMA_ATUAL = 2;
+    const MIGRACOES = { 0: root => { /* 4.0 a 4.2: ainda sem número de formato; nada a converter */ }, 1: root => { Object.keys(root.dados || {}).forEach(k => { const ds = root.dados[k] || (root.dados[k] = {}); if (!Array.isArray(ds.gc20Lixeira)) ds.gc20Lixeira = []; if (!Array.isArray(ds.gc20Fechamentos)) ds.gc20Fechamentos = []; if (!ds.gc20Preferencias || typeof ds.gc20Preferencias !== 'object') ds.gc20Preferencias = {}; }); } };
     function migrarSchema(root) { let v = parseInt(root.schema) || 0; while (v < SCHEMA_ATUAL) { if (MIGRACOES[v]) MIGRACOES[v](root); v++; } root.schema = SCHEMA_ATUAL; root.appVersao = APP_VERSION; return root; }
     let ROOT = migrarSchema(carregarRoot());
     let db = vincularDataset(normalizarDataset(novoDataset())); // banco vazio até alguém entrar
@@ -1012,6 +1074,7 @@
         db = vincularDataset(normalizarDataset(ROOT.dados[user.id]));
         const n = sanearDataset(db);
         if (criado || n > 0) salvarDB();
+        gc15InicializarHistorico();
         snapshotDiario();
     }
     // Garante que tudo o que um lançamento cita (pessoa, cartão, categoria) exista nos cadastros, sem nomes repetidos nem ids duplicados
@@ -1036,8 +1099,89 @@
     let visaoDashboardAtual = 'pessoa';
     let base64Desp = null; let base64Pag = null;
     
+    /* ================= GESTCARD 1.5: SEGURANÇA, AUDITORIA E HISTÓRICO ================= */
+    const GC15_MAX_HIST = 500;
+    let gc15UltimoEstado = null;
+    function gc15Chave(sufixo) { return 'gc15_' + sufixo + '_' + (currentUser && currentUser.id ? currentUser.id : 'sem_usuario'); }
+    function gc15LerHistorico() { try { const a = JSON.parse(localStorage.getItem(gc15Chave('historico')) || '[]'); return Array.isArray(a) ? a : []; } catch(e) { return []; } }
+    function gc15GravarHistorico(lista) { try { localStorage.setItem(gc15Chave('historico'), JSON.stringify(lista.slice(-GC15_MAX_HIST))); } catch(e) { /* histórico não pode impedir o salvamento principal */ } }
+    function gc15ResumoItem(x) { return x ? { id:x.id, desc:x.desc||'', pessoa:x.pessoa||'', cartao:x.cartao||'', valor:Number(x.valor)||0, data:x.data||x.dataCompra||'', dataRef:x.dataRef||'', categoria:x.categoria||'', pagoEm:x.pagoEm||'', acordoPagoId:x.acordoPagoId||null } : null; }
+    function gc15Snapshot() {
+        const map = {};
+        ['despesas','pagamentos'].forEach(tipo => (db[tipo]||[]).forEach(x => { const id = String(x.id); map[tipo+':'+id] = gc15ResumoItem(x); }));
+        return map;
+    }
+    function gc15RegistrarMudancas() {
+        if (!currentUser) return;
+        const agora = gc15Snapshot();
+        if (gc15UltimoEstado) {
+            const antes = gc15UltimoEstado, chaves = new Set([...Object.keys(antes), ...Object.keys(agora)]), eventos=[];
+            chaves.forEach(k => {
+                const a=antes[k], b=agora[k]; if (!a && b) eventos.push({tipo:'criado', entidade:k.split(':')[0], item:b});
+                else if (a && !b) eventos.push({tipo:'removido', entidade:k.split(':')[0], item:a});
+                else if (a && b && JSON.stringify(a)!==JSON.stringify(b)) eventos.push({tipo:'alterado', entidade:k.split(':')[0], antes:a, item:b});
+            });
+            if (eventos.length) {
+                const hist=gc15LerHistorico(), usuario=currentUser.nome||'Usuário';
+                eventos.slice(0,100).forEach(ev=>hist.push({quando:new Date().toISOString(), usuario, ...ev}));
+                gc15GravarHistorico(hist);
+            }
+        }
+        gc15UltimoEstado = agora;
+    }
+    function gc15InicializarHistorico() { gc15UltimoEstado = gc15Snapshot(); }
+    function gc15Esc(s) { return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+    function gc15ExecutarAuditoria() {
+        if (!currentUser) return;
+        const achados=[], despesas=db.despesas||[], pagamentos=db.pagamentos||[];
+        function checar(lista,tipo) {
+            const ids=new Map(), duplicatas=new Map();
+            lista.forEach((x,i)=>{
+                if (!x || typeof x!=='object') { achados.push({nivel:'erro',titulo:'Registro inválido',detalhe:`${tipo}: item ${i+1} não é um objeto válido.`}); return; }
+                if (x.id==null || x.id==='') achados.push({nivel:'alerta',titulo:'Registro sem identificador',detalhe:`${tipo}: ${x.desc||'Item '+(i+1)}.`});
+                else { const k=String(x.id); if(ids.has(k)) achados.push({nivel:'erro',titulo:'Identificador duplicado',detalhe:`${tipo}: ID ${k} aparece mais de uma vez.`}); ids.set(k,true); }
+                const chave=[String(x.pessoa||'').trim().toUpperCase(),String(x.desc||'').trim().toUpperCase(),String(x.data||x.dataCompra||''),String(x.dataRef||''),Number(x.valor)||0].join('|');
+                if (chave.replace(/\|/g,'').trim()) { if(duplicatas.has(chave)) achados.push({nivel:'alerta',titulo:'Possível lançamento duplicado',detalhe:`${tipo}: ${x.desc||'Sem descrição'} · ${x.pessoa||'Sem pessoa'} · ${brl(Number(x.valor)||0)}. Confira antes de alterar.`}); else duplicatas.set(chave,true); }
+                if (!String(x.pessoa||'').trim()) achados.push({nivel:'alerta',titulo:'Pessoa não informada',detalhe:`${tipo}: ${x.desc||'Registro '+(i+1)}.`});
+                if (!Number.isFinite(Number(x.valor)) || Number(x.valor)<=0) achados.push({nivel:'erro',titulo:'Valor inválido',detalhe:`${tipo}: ${x.desc||'Registro '+(i+1)}.`});
+                if (tipo==='Compra' && !String(x.cartao||'').trim()) achados.push({nivel:'alerta',titulo:'Cartão não informado',detalhe:`${x.desc||'Compra '+(i+1)}.`});
+            });
+        }
+        checar(despesas,'Compra'); checar(pagamentos,'Recebimento');
+        // Confere sequências de parcelas quando a descrição usa o padrão (parcela/total).
+        const gruposParc=new Map();
+        despesas.forEach(x=>{ const m=String(x.desc||'').match(/^(.*)\s+\((\d+)\/(\d+)\)$/); if(!m) return; const chave=[m[1].trim().toUpperCase(),x.pessoa||'',x.cartao||'',x.dataCompra||''].join('|'); if(!gruposParc.has(chave)) gruposParc.set(chave,{total:Number(m[3]),nums:[],desc:m[1]}); const g=gruposParc.get(chave); g.total=Math.max(g.total,Number(m[3])); g.nums.push(Number(m[2])); });
+        gruposParc.forEach(g=>{ const nums=new Set(g.nums); for(let i=1;i<=g.total;i++) if(!nums.has(i)) achados.push({nivel:'alerta',titulo:'Possível parcela ausente',detalhe:`${g.desc}: não foi localizada a parcela ${i}/${g.total}. Confira se o parcelamento está completo.`}); if(nums.size!==g.nums.length) achados.push({nivel:'erro',titulo:'Número de parcela repetido',detalhe:`${g.desc}: há numeração de parcela repetida.`}); });
+        // Referências: aponta cartões/pessoas ausentes sem criar ou alterar cadastros.
+        const pessoas=new Set((db.pessoas||[]).map(x=>String(x).toUpperCase()));
+        despesas.concat(pagamentos).forEach(x=>{ if(x && x.pessoa && pessoas.size && !pessoas.has(String(x.pessoa).toUpperCase())) achados.push({nivel:'alerta',titulo:'Pessoa fora do cadastro',detalhe:`${x.desc||'Lançamento'}: ${x.pessoa}.`}); });
+        const erros=achados.filter(x=>x.nivel==='erro').length, alertas=achados.length-erros;
+        const resumo=document.getElementById('gc15-audit-resumo'), lista=document.getElementById('gc15-audit-lista');
+        if(resumo) resumo.innerHTML=`<strong>Verificação concluída:</strong> ${despesas.length} compras e ${pagamentos.length} recebimentos analisados. <span style="color:var(--danger)">${erros} erro(s)</span> · <span style="color:var(--warning,#d97706)">${alertas} alerta(s)</span>.`;
+        if(lista) lista.innerHTML=achados.length?achados.slice(0,150).map(a=>`<div class="aj-linha" style="display:block;padding:9px 0;"><strong style="color:${a.nivel==='erro'?'var(--danger)':'var(--primary)'}">${gc15Esc(a.titulo)}</strong><div class="helper" style="margin:3px 0 0;">${gc15Esc(a.detalhe)}</div></div>`).join(''):`<div class="helper" style="padding:10px 0;color:var(--success);">Nenhuma inconsistência detectada pelas verificações disponíveis. Isso não garante, por si só, que todos os dados estejam corretos.</div>`;
+        if(achados.length>150 && lista) lista.innerHTML+=`<p class="helper">Exibindo os primeiros 150 apontamentos.</p>`;
+    }
+    function gc15RenderHistorico() {
+        const el=document.getElementById('gc15-hist-lista'); if(!el) return;
+        const filtro=(document.getElementById('gc15-hist-filtro')||{}).value||'todos';
+        const hist=gc15LerHistorico().slice().reverse().filter(x=>filtro==='todos'||x.tipo===filtro);
+        el.innerHTML=hist.length?hist.slice(0,100).map(x=>{
+            const d=new Date(x.quando), quando=isNaN(d)?'Data indisponível':d.toLocaleString('pt-BR');
+            const item=x.item||{}, titulo=x.tipo==='criado'?'Incluído':x.tipo==='removido'?'Removido':'Alterado';
+            const detalhe=x.tipo==='alterado'?`${x.antes&&x.antes.desc||''}: ${brl(x.antes&&x.antes.valor||0)} → ${brl(item.valor||0)}`:`${item.desc||'Registro'} · ${item.pessoa||''} · ${brl(item.valor||0)}`;
+            return `<div class="aj-linha" style="display:block;padding:9px 0;"><strong>${gc15Esc(titulo)} · ${x.entidade==='despesas'?'Compra':'Recebimento'}</strong><div class="helper" style="margin:2px 0;">${gc15Esc(detalhe)}</div><span class="helper">${gc15Esc(x.usuario)} · ${gc15Esc(quando)}</span></div>`;
+        }).join(''):'<p class="helper">Nenhuma alteração registrada ainda neste aparelho.</p>';
+    }
+    function gc15ExportarHistorico() {
+        const dados=gc15LerHistorico(); const blob=new Blob([JSON.stringify({app:'GestCard',versao:'1.5',exportadoEm:new Date().toISOString(),historico:dados},null,2)],{type:'application/json'});
+        const url=URL.createObjectURL(blob), a=document.createElement('a'); a.href=url; a.download='GestCard-historico-'+(currentUser&&currentUser.id||'usuario')+'.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+    function gc15FalhasLogin() { try { return JSON.parse(localStorage.getItem('gc15_login_falhas')||'{"n":0,"ate":0}'); } catch(e) { return {n:0,ate:0}; } }
+    function gc15RegistrarFalhaLogin() { const x=gc15FalhasLogin(); x.n=(x.n||0)+1; if(x.n>=5){x.ate=Date.now()+30000;x.n=0;} try{localStorage.setItem('gc15_login_falhas',JSON.stringify(x));}catch(e){} }
+    function gc15LimparFalhasLogin() { try{localStorage.removeItem('gc15_login_falhas');}catch(e){} }
+
     function salvarDB() {
-        try { gravarRoot(); alteracoes++; if (currentUser) localStorage.setItem(chavePendente(), '1'); snapshotPorTempo(); return true; }
+        try { gravarRoot(); gc15RegistrarMudancas(); alteracoes++; if (currentUser) localStorage.setItem(chavePendente(), '1'); snapshotPorTempo(); return true; }
         catch (e) { toast('⚠️ Memória do aparelho cheia! Baixe um backup e apague comprovantes antigos.', 'erro'); return false; }
     }
 
@@ -1120,6 +1264,8 @@
     function manterConectado() { let c = document.getElementById('login-manter'); return c ? c.checked : true; }
 
     async function tentarLogin() {
+        const bloqueio = gc15FalhasLogin();
+        if (bloqueio.ate && Date.now() < bloqueio.ate) { const faltam=Math.ceil((bloqueio.ate-Date.now())/1000); return toast(`Muitas tentativas. Aguarde ${faltam} segundos.`, 'erro'); }
         let nome = document.getElementById('login-nome').value.trim().toUpperCase();
         let pin = document.getElementById('login-pin').value.trim();
         if(!nome || pin.length !== 4) return toast("Preencha Nome e PIN (4 dígitos).", "erro");
@@ -1145,13 +1291,16 @@
             const r = await loginNuvem(nome, pin);
             if (r && r.ok && r.usuario && r.usuario.nome) { executarLoginReal(adotarUsuarioDaNuvem(r.usuario, pin), manterConectado()); return; }
             document.getElementById('login-pin').value = '';
+            if (!(r && r.erro === 'rede')) gc15RegistrarFalhaLogin();
             return toast(r && r.erro === 'rede' ? 'Não consegui falar com a nuvem.' : (msgErroNuvem[r && r.erro] || 'Nome ou PIN incorretos!'), 'erro');
         }
+        gc15RegistrarFalhaLogin();
         toast("Nome ou PIN incorretos!", "erro");
         document.getElementById('login-pin').value = '';
     }
 
     function executarLoginReal(user, manter) {
+        gc15LimparFalhasLogin();
         currentUser = user; abrirBancoDoUsuario(user);
         // manter === true: lembra neste aparelho; false: só até fechar o app; undefined: não muda (sessão restaurada)
         if (manter === true) { localStorage.setItem('gc_logged_user', user.id); sessionStorage.removeItem('gc_logged_user'); }
@@ -1233,7 +1382,9 @@
     }
     function baixarJson(obj, nome) {
         const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json;charset=utf-8" });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome; a.click();
+        const url = URL.createObjectURL(blob); const a = document.createElement('a');
+        a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
     }
     function exportarBackup(auto = false) {
         if (!currentUser) return;
@@ -2370,10 +2521,10 @@
         let p = pessoas[0] || 'Cliente';
         let t = sD.reduce((a,b)=>a+getValorAjustadoEmprestimo(b),0) - sP.reduce((a,b)=>a+b.valor,0);
 
-        let txt = `📄 *Resumo de Compras*\n👤 *${p}*\n\n`;
-        if(sD.length > 0){ txt += `🛒 *Compras/Despesas:*\n`; sD.forEach((d,i) => txt += `${i+1}. ${d.desc} - ${brl(getValorAjustadoEmprestimo(d))}\n`); }
-        if(sP.length > 0){ txt += `\n💰 *Abatimentos/Recebidos:*\n`; sP.forEach((pg,i) => txt += `${i+1}. ${pg.desc||'Recebimento'} - ${brl(pg.valor)}\n`); }
-        txt += t > 0.01 ? `\n💳 *TOTAL GERAL: ${brl(t)}*` : (t < -0.01 ? `\n✅ *Crédito de ${brl(-t)}*` : `\n✅ *Quitado*`);
+        let txt = `📄 *Resumo de Fatura*\n👤 *${p}*\n\n`;
+        if(sD.length > 0){ txt += `🛒 *Cobranças:*\n`; sD.forEach((d,i) => txt += `${i+1}. ${d.desc} - ${brl(getValorAjustadoEmprestimo(d))}\n`); }
+        if(sP.length > 0){ txt += `\n💰 *Abatimentos / Recebidos:*\n`; sP.forEach((pg,i) => txt += `${i+1}. ${pg.desc||'Recebimento'} - ${brl(pg.valor)}\n`); }
+        txt += t > 0.01 ? `\n💳 *TOTAL A PAGAR: ${brl(t)}*` : (t < -0.01 ? `\n✅ *Crédito de ${brl(-t)}*` : `\n✅ *Quitado*`);
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`, '_blank');
     }
 
@@ -2381,8 +2532,42 @@
     let calcTargetInput = null; let calcExp = "";
     function abrirCalc(btn) { calcTargetInput = btn.previousElementSibling; calcExp = ""; document.getElementById('calc-display').innerText = "0"; document.getElementById('modal-calc').classList.add('open'); }
     function fecharCalc() { document.getElementById('modal-calc').classList.remove('open'); calcTargetInput = null; }
-    function cBtn(val) { if(val === 'C') calcExp = ""; else calcExp += val; document.getElementById('calc-display').innerText = calcExp || "0"; }
-    function cConfirmar() { try { if(calcExp && calcTargetInput) calcTargetInput.value = eval(calcExp).toFixed(2); calcTargetInput.dispatchEvent(new Event('input', { bubbles: true })); } catch(e){} fecharCalc(); }
+    function cBtn(val) {
+        // Aceita somente teclas da calculadora; nunca executa texto como JavaScript.
+        if (val === 'C') calcExp = '';
+        else if (/^[0-9.+*/-]$/.test(String(val)) && calcExp.length < 48) calcExp += val;
+        const display = document.getElementById('calc-display');
+        if (display) display.innerText = calcExp || '0';
+    }
+    function avaliarExpressaoCalc(expressao) {
+        const tokens = String(expressao).match(/\d+(?:\.\d+)?|[()+*/-]/g) || [];
+        if (!tokens.length || tokens.join('') !== String(expressao).replace(/\s+/g, '')) throw new Error('Expressão inválida');
+        let i = 0;
+        function fator() {
+            const t = tokens[i++];
+            if (t === '+' || t === '-') { const n = fator(); return t === '-' ? -n : n; }
+            if (t === '(') { const n = soma(); if (tokens[i++] !== ')') throw new Error('Parênteses inválidos'); return n; }
+            if (!t || !/^\d+(?:\.\d+)?$/.test(t)) throw new Error('Número inválido');
+            return Number(t);
+        }
+        function produto() { let n = fator(); while (tokens[i] === '*' || tokens[i] === '/') { const op = tokens[i++], b = fator(); if (op === '/' && b === 0) throw new Error('Divisão por zero'); n = op === '*' ? n * b : n / b; } return n; }
+        function soma() { let n = produto(); while (tokens[i] === '+' || tokens[i] === '-') { const op = tokens[i++], b = produto(); n = op === '+' ? n + b : n - b; } return n; }
+        const resultado = soma();
+        if (i !== tokens.length || !Number.isFinite(resultado)) throw new Error('Cálculo inválido');
+        return resultado;
+    }
+    function cConfirmar() {
+        const alvo = calcTargetInput;
+        try {
+            if (!alvo) return fecharCalc();
+            if (calcExp) {
+                const resultado = avaliarExpressaoCalc(calcExp);
+                alvo.value = resultado.toFixed(2);
+                alvo.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        } catch (e) { toast(e.message || 'Não foi possível calcular.', 'erro'); return; }
+        fecharCalc();
+    }
 
     function abrirModalLancamento() {
         { const sc = document.getElementById('subcategoria-compra'); if (sc) sc.value = ''; atualizarListaSubcat(''); }
@@ -3014,7 +3199,7 @@
             db.usuarios.forEach(u => {
                 let stat = u.ativo ? '<span style="color:var(--success)">ATIVO</span>' : '<span style="color:var(--danger)">BLOQUEADO</span>';
                 let b = u.ativo ? `<button class="btn-small" style="color:var(--danger);" onclick="adminToggleBloqueio('${u.id}')">BLOQUEAR</button>` : `<button class="btn-small" style="color:var(--success);" onclick="adminToggleBloqueio('${u.id}')">LIBERAR</button>`;
-                html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border);"><div><strong>${escHtml(u.nome)}</strong><br><span style="font-size:0.7rem; color:var(--text-light);">PIN: ${u.pin} | Perfil: ${u.role.toUpperCase()} | ${stat}</span></div>${u.role !== 'admin' ? b : ''}</div>`;
+                html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--border);"><div><strong>${escHtml(u.nome)}</strong><br><span style="font-size:0.7rem; color:var(--text-light);">PIN: •••• | Perfil: ${u.role.toUpperCase()} | ${stat}</span></div>${u.role !== 'admin' ? b : ''}</div>`;
             });
         }
         el.innerHTML = html;
@@ -3217,7 +3402,6 @@
         if (!currentUser) return false;
         const uid = currentUser.id; const dados = JSON.stringify(db); // captura o estado AGORA, antes de qualquer troca
         const meta = { userId: uid, ts: Date.now(), motivo, qtdDesp: db.despesas.length, qtdPag: db.pagamentos.length };
-        localStorage.setItem('gc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('gc_snap_sig_' + uid, String(dados.length)); // marca já, para dois gatilhos seguidos não criarem pontos repetidos
         try {
             const bd = await snapAbrir(); const tx = bd.transaction(['dados', 'meta'], 'readwrite');
             const fim = new Promise((ok, falha) => { tx.oncomplete = ok; tx.onerror = () => falha(tx.error); tx.onabort = () => falha(tx.error); });
@@ -3225,7 +3409,7 @@
             const ids = await snapReq(tx.objectStore('meta').index('user').getAllKeys(uid)); // da mais antiga para a mais nova
             ids.slice(0, Math.max(0, ids.length - SNAP_MAX)).forEach(k => { tx.objectStore('dados').delete(k); tx.objectStore('meta').delete(k); });
             await fim; bd.close();
-            localStorage.setItem('gc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('gc_snap_sig_' + uid, String(dados.length));
+            try { localStorage.setItem('gc_snap_ts_' + uid, String(meta.ts)); localStorage.setItem('gc_snap_sig_' + uid, String(dados.length)); } catch (e) { /* o snapshot no IndexedDB continua válido */ }
             return true;
         } catch (e) { return false; }
     }
@@ -3597,6 +3781,45 @@
             navigator.serviceWorker.addEventListener('controllerchange', () => { if (tinhaControle && !recarregou) { recarregou = true; recarregarSuave(); } });
         });
     }
+
+/* ================= GESTCARD 2.0 — MÓDULOS EVOLUTIVOS =================
+   Migração aditiva: não remove nem renomeia campos do formato v4. */
+function gc20MesAtual(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
+function gc20Init(){if(!currentUser)return;normalizarDataset(db);if(!document.getElementById('gc20-mes').value)document.getElementById('gc20-mes').value=gc20MesAtual();gc20RenderTudo();}
+function gc20Esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function gc20Din(v){return brl(Number(v)||0);}
+function gc20Resumo(mes){const ds=(db.despesas||[]).filter(x=>String(x.dataRef||x.dataCompra||'').slice(0,7)===mes),ps=(db.pagamentos||[]).filter(x=>String(x.dataRef||x.data||'').slice(0,7)===mes);const compras=ds.reduce((a,x)=>a+(Number(x.valor)||0),0),receb=ps.reduce((a,x)=>a+(Number(x.valor)||0),0);return {mes,compras,receb,diferenca:compras-receb,qtdCompras:ds.length,qtdReceb:ps.length};}
+function gc20RenderTudo(){if(!currentUser)return;const mes=document.getElementById('gc20-mes')?.value||gc20MesAtual(),r=gc20Resumo(mes),el=document.getElementById('gc20-resumo');if(el)el.innerHTML=`<div class="metric"><small>Compras / faturas ref.</small><strong>${gc20Din(r.compras)}</strong></div><div class="metric"><small>Recebimentos ref.</small><strong style="color:var(--success)">${gc20Din(r.receb)}</strong></div><div class="metric"><small>Diferença de fluxo</small><strong style="color:${r.diferenca>0?'var(--danger)':'var(--success)'}">${gc20Din(r.diferenca)}</strong></div><div class="metric"><small>Movimentações</small><strong>${r.qtdCompras+r.qtdReceb}</strong></div>`;gc20RenderComparativo(mes);gc20RenderAlertas();gc20RenderFechamentos();gc20RenderInadimplencia();gc20RenderLixeira();gc20RenderPermissoes();}
+function gc20RenderComparativo(mes){const el=document.getElementById('gc20-comparativo');if(!el)return;const [a,m]=mes.split('-').map(Number),prev=new Date(a,m-2,1),pm=`${prev.getFullYear()}-${String(prev.getMonth()+1).padStart(2,'0')}`,r=gc20Resumo(mes),p=gc20Resumo(pm),max=Math.max(r.compras,r.receb,p.compras,p.receb,1);const bar=(label,v)=>`<div style="margin:7px 0;"><div style="display:flex;justify-content:space-between;font-size:.75rem"><span>${label}</span><strong>${gc20Din(v)}</strong></div><div style="height:9px;background:var(--border);border-radius:8px;overflow:hidden"><div style="height:100%;width:${Math.max(1,v/max*100)}%;background:var(--primary);border-radius:8px"></div></div></div>`;el.innerHTML=`<strong>Comparativo: ${formatarMesAno(pm)} × ${formatarMesAno(mes)}</strong>${bar('Compras — mês selecionado',r.compras)}${bar('Compras — mês anterior',p.compras)}${bar('Recebimentos — mês selecionado',r.receb)}${bar('Recebimentos — mês anterior',p.receb)}`;}
+function gc20RenderAlertas(){const el=document.getElementById('gc20-alertas');if(!el)return;const hoje=new Date();hoje.setHours(0,0,0,0);let vencidas=0,proximas=0;for(const d of db.despesas||[]){const c=dadosCartao(d.cartao);if(!c||!d.dataRef)continue;try{const dt=datasFatura(c,d.dataRef).venc;dt.setHours(0,0,0,0);if(dt<hoje)vencidas++;else if((dt-hoje)/86400000<=7)proximas++;}catch(e){}}const pend=localStorage.getItem(chavePendente())==='1';const snap=currentUser?Number(localStorage.getItem('gc_snap_ts_'+currentUser.id)||0):0;const backupAntigo=!snap||Date.now()-snap>7*86400000;const itens=[];if(vencidas)itens.push(`⚠️ ${vencidas} parcela(s) com vencimento estimado ultrapassado`);if(proximas)itens.push(`📅 ${proximas} parcela(s) com vencimento nos próximos 7 dias`);if(pend)itens.push('☁️ Existem alterações aguardando sincronização');if(backupAntigo)itens.push('💾 Não há ponto de restauração recente detectado neste aparelho');el.innerHTML=`<strong>Central de notificações</strong><div class="helper" style="margin-top:5px">${itens.length?itens.map(gc20Esc).join('<br>'):'✓ Nenhum alerta local identificado.'}</div>`;}
+function gc20RenderInadimplencia(){const el=document.getElementById('gc20-inadimplencia');if(!el)return;const hoje=new Date();hoje.setHours(0,0,0,0);const atras=[];for(const d of db.despesas||[]){const c=dadosCartao(d.cartao);if(!c||!d.dataRef)continue;try{const venc=datasFatura(c,d.dataRef).venc;venc.setHours(0,0,0,0);if(venc<hoje)atras.push({d,venc});}catch(e){}}atras.sort((a,b)=>a.venc-b.venc);el.innerHTML=atras.length?`<div class="helper">${atras.length} parcela(s) com vencimento estimado ultrapassado · total bruto ${gc20Din(atras.reduce((s,x)=>s+(Number(x.d.valor)||0),0))}</div>`+atras.slice(0,100).map(x=>`<div class="aj-linha" style="display:block;padding:8px 0"><strong>${gc20Esc(x.d.pessoa||'Sem pessoa')} — ${gc20Din(x.d.valor)}</strong><div class="helper">${gc20Esc(x.d.desc||'Compra')} · ${gc20Esc(x.d.cartao)} · referência ${gc20Esc(x.d.dataRef)} · vencimento ${x.venc.toLocaleDateString('pt-BR')}</div></div>`).join(''):'<div class="helper" style="color:var(--success)">Nenhuma parcela com vencimento estimado ultrapassado foi encontrada.</div>';}
+function gc20FecharMes(){if(!currentUser)return;const mes=document.getElementById('gc20-mes').value||gc20MesAtual(),r=gc20Resumo(mes);const ja=db.gc20Fechamentos.find(x=>x.mes===mes);if(ja&&!ehAdminEfetivo())return toast('Este mês já possui fechamento. Somente administrador pode reabrir.', 'erro');if(ja){if(!confirm('Este mês já foi fechado. Deseja substituir a fotografia do fechamento?'))return;db.gc20Fechamentos=db.gc20Fechamentos.filter(x=>x.mes!==mes);}if(!confirm(`Confirmar fechamento de ${formatarMesAno(mes)}?\nCompras: ${gc20Din(r.compras)}\nRecebimentos: ${gc20Din(r.receb)}\nDiferença de fluxo: ${gc20Din(r.diferenca)}\n\nNenhum lançamento será bloqueado ou alterado.`))return;db.gc20Fechamentos.push({...r,fechadoEm:new Date().toISOString(),fechadoPor:currentUser.nome||'Usuário'});salvarDB();gc20RenderFechamentos();toast('Fechamento registrado.');}
+function gc20ReabrirMes(mes){if(!ehAdminEfetivo())return toast('Apenas administrador pode reabrir fechamento.','erro');if(!confirm('Reabrir o fechamento de '+formatarMesAno(mes)+'? O registro histórico será preservado na auditoria.'))return;const f=db.gc20Fechamentos.find(x=>x.mes===mes);if(f){f.reabertoEm=new Date().toISOString();f.reabertoPor=currentUser.nome;f.status='reaberto';}salvarDB();gc20RenderFechamentos();}
+function gc20RenderFechamentos(){const el=document.getElementById('gc20-fechamentos-lista');if(!el)return;const mes=document.getElementById('gc20-mes')?.value||gc20MesAtual(),r=gc20Resumo(mes),f=db.gc20Fechamentos.find(x=>x.mes===mes);const resumo=document.getElementById('gc20-fechamento-resumo');if(resumo)resumo.innerHTML=f?`Fechado em ${new Date(f.fechadoEm).toLocaleString('pt-BR')} por ${gc20Esc(f.fechadoPor)}. ${Math.abs(f.compras-r.compras)>.009||Math.abs(f.receb-r.receb)>.009?'⚠️ Existem diferenças em relação à fotografia salva.':'✓ Totais conferem com a fotografia salva.'}`:`Mês ainda não fechado. Compras: ${gc20Din(r.compras)} · Recebimentos: ${gc20Din(r.receb)}.`;el.innerHTML=(db.gc20Fechamentos||[]).slice().sort((a,b)=>b.mes.localeCompare(a.mes)).map(x=>`<div class="aj-linha" style="display:flex;justify-content:space-between;gap:8px"><span><strong>${formatarMesAno(x.mes)}</strong><br><small>${gc20Esc(x.status||'Fechado')} · ${gc20Din(x.compras)}</small></span>${x.status==='reaberto'?'':`<button class="btn-small" onclick="gc20ReabrirMes('${x.mes}')">REABRIR</button>`}</div>`).join('')||'<p class="helper">Nenhum mês fechado ainda.</p>';}
+function gc20LixeiraRender(){const el=document.getElementById('gc20-lixeira-lista');if(!el)return;const l=db.gc20Lixeira||[];el.innerHTML=l.length?l.slice().reverse().slice(0,100).map(x=>`<div class="aj-linha" style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span><strong>${gc20Esc(x.item?.desc||'Registro')}</strong><br><small>${x.tipo==='despesas'?'Compra':'Recebimento'} · ${gc20Esc(x.item?.pessoa||'')} · ${gc20Din(x.item?.valor)} · ${new Date(x.excluidoEm).toLocaleString('pt-BR')}</small></span><span style="display:flex;gap:5px"><button class="btn-small" onclick="gc20Restaurar('${x.uid}')">RESTAURAR</button><button class="btn-small" style="color:var(--danger)" onclick="gc20ExcluirDefinitivo('${x.uid}')">APAGAR</button></span></div>`).join(''):'<p class="helper">A lixeira está vazia.</p>';}
+function gc20Restaurar(uid){const i=db.gc20Lixeira.findIndex(x=>x.uid===uid);if(i<0)return;const x=db.gc20Lixeira[i],arr=db[x.tipo];if(!Array.isArray(arr))return toast('Tipo de registro inválido.','erro');if(arr.some(y=>String(y.id)===String(x.item.id)))return toast('Já existe um registro com este identificador. A restauração foi cancelada.','erro');if(!confirm('Restaurar '+(x.item.desc||'este registro')+'?'))return;arr.push(x.item);db.gc20Lixeira.splice(i,1);salvarDB();atualizarTelaAtual();gc20RenderLixeira();sincronizarManual(true);toast('Registro restaurado.');}
+function gc20ExcluirDefinitivo(uid){if(!ehAdminEfetivo())return toast('A exclusão definitiva exige administrador.','erro');const i=db.gc20Lixeira.findIndex(x=>x.uid===uid);if(i<0)return;if(!confirm('Apagar definitivamente este registro da lixeira? Esta ação não poderá ser desfeita.'))return;db.gc20Lixeira.splice(i,1);salvarDB();gc20RenderLixeira();sincronizarManual(true);}
+function gc20EnviarLixeira(tipo,ids){const arr=db[tipo],set=new Set(ids.map(String)),alvos=arr.filter(x=>set.has(String(x.id)));if(!alvos.length)return;const gid='gc20_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);alvos.forEach(item=>db.gc20Lixeira.push({uid:gid+'_'+item.id,tipo,item:JSON.parse(JSON.stringify(item)),excluidoEm:new Date().toISOString(),excluidoPor:currentUser?.nome||'Usuário'}));db[tipo]=arr.filter(x=>!set.has(String(x.id)));}
+/* Substitui a exclusão definitiva de compra/recebimento por exclusão recuperável. */
+const gc20ExcluirOriginal=excluirLançamentoModal;
+excluirLançamentoModal=function(){const id=parseInt(document.getElementById('edit-id').value),tipoUI=document.getElementById('edit-tipo').value,tipo=tipoUI==='desp'?'despesas':'pagamentos',arr=db[tipo],obj=arr.find(x=>x.id===id);if(!obj)return;let ids=[id];if((String(obj.desc||'').match(/\(\d+\/\d+\)/)||obj.isAssinatura||obj.isEmprestimo)&&confirm('Deseja enviar TODAS AS COBRANÇAS FUTURAS deste lançamento para a lixeira também?')){const k=getGroupKey(obj);ids=arr.filter(x=>getGroupKey(x)===k&&x.dataRef>=obj.dataRef).map(x=>x.id);}else if(!confirm('Enviar este registro para a lixeira? Você poderá restaurá-lo depois.'))return;gc20EnviarLixeira(tipo,ids);salvarDB();fecharModais();atualizarTelaAtual();gc20RenderLixeira();sincronizarManual(true);toast(ids.length>1?`${ids.length} registros enviados para a lixeira.`:'Registro enviado para a lixeira.');};
+function gc20CsvCell(v){let s=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"';}
+function gc20ExportarRelatorio(modo){if(!currentUser)return;const mes=document.getElementById('gc20-mes')?.value||gc20MesAtual();let linhas=[['Tipo','ID','Data','Mês referência','Descrição','Pessoa','Cartão','Categoria','Valor']];(db.despesas||[]).filter(x=>modo==='completo'||String(x.dataRef||x.dataCompra||'').slice(0,7)===mes).forEach(x=>linhas.push(['Compra',x.id,x.dataCompra||'',x.dataRef||'',x.desc||'',x.pessoa||'',x.cartao||'',x.categoria||'',Number(x.valor)||0]));(db.pagamentos||[]).filter(x=>modo==='completo'||String(x.dataRef||x.data||'').slice(0,7)===mes).forEach(x=>linhas.push(['Recebimento',x.id,x.data||'',x.dataRef||'',x.desc||'',x.pessoa||'','','',Number(x.valor)||0]));const csv='\uFEFF'+linhas.map(r=>r.map(gc20CsvCell).join(';')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`GestCard_${modo==='mes'?mes:'historico'}_${currentUser.id}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);}
+async function gc20ExportarXlsx(){if(!currentUser)return;try{await carregarSheetJS();const mes=document.getElementById('gc20-mes')?.value||gc20MesAtual(),compras=(db.despesas||[]).map(x=>({ID:x.id,Data:x.dataCompra||'',Referencia:x.dataRef||'',Descricao:x.desc||'',Pessoa:x.pessoa||'',Cartao:x.cartao||'',Categoria:x.categoria||'',Valor:Number(x.valor)||0})),receb=(db.pagamentos||[]).map(x=>({ID:x.id,Data:x.data||'',Referencia:x.dataRef||'',Descricao:x.desc||'',Pessoa:x.pessoa||'',Valor:Number(x.valor)||0})),r=gc20Resumo(mes),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(compras),'Compras');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(receb),'Recebimentos');XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Resumo',formatarMesAno(mes)],['Compras',r.compras],['Recebimentos',r.receb],['Diferença de fluxo',r.diferenca]]),'Resumo');XLSX.writeFile(wb,`GestCard_Relatorio_${mes}.xlsx`);}catch(e){toast('Não foi possível gerar o Excel: '+(e.message||'verifique a conexão.'),'erro');}}
+function gc20ExportarPdf(){if(!currentUser)return;const mes=document.getElementById('gc20-mes')?.value||gc20MesAtual(),r=gc20Resumo(mes),w=window.open('','_blank');if(!w)return toast('Permita a abertura de janelas para gerar o PDF.','erro');const rows=[...(db.despesas||[]).filter(x=>String(x.dataRef||x.dataCompra||'').slice(0,7)===mes).map(x=>['Compra',x.dataCompra||'',x.desc||'',x.pessoa||'',Number(x.valor)||0]),...(db.pagamentos||[]).filter(x=>String(x.dataRef||x.data||'').slice(0,7)===mes).map(x=>['Recebimento',x.data||'',x.desc||'',x.pessoa||'',Number(x.valor)||0])];w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>GestCard ${mes}</title><style>body{font:12px Arial;padding:24px;color:#111}h1{font-size:20px}table{width:100%;border-collapse:collapse;margin-top:18px}td,th{border:1px solid #bbb;padding:6px;text-align:left}th{background:#eee}.tot{display:flex;gap:24px;margin:16px 0;font-weight:bold}@media print{button{display:none}}</style><h1>GestCard — Relatório ${formatarMesAno(mes)}</h1><p>Emitido em ${new Date().toLocaleString('pt-BR')} · Usuário ${gc20Esc(currentUser.nome)}</p><div class="tot"><span>Compras: ${gc20Din(r.compras)}</span><span>Recebimentos: ${gc20Din(r.receb)}</span><span>Diferença: ${gc20Din(r.diferenca)}</span></div><table><thead><tr><th>Tipo</th><th>Data</th><th>Descrição</th><th>Pessoa</th><th>Valor</th></tr></thead><tbody>${rows.map(x=>`<tr>${x.map((v,i)=>`<td>${i===4?gc20Din(v):gc20Esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></html>`);w.onload=()=>w.print();w.document.close();}
+function gc20RenderPermissoes(){const el=document.getElementById('gc20-permissoes');if(!el)return;if(!ehAdminEfetivo()){el.innerHTML='<p class="helper">Disponível apenas para o administrador confirmado.</p>';return;}const users=ROOT.usuarios||[];el.innerHTML=users.map(u=>{const p=u.gc20Permissoes||{};return `<div class="aj-linha" style="display:block;padding:9px 0"><strong>${gc20Esc(u.nome)} ${u.role==='admin'?'(ADMIN)':''}</strong><div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px"><label><input type="checkbox" ${p.cadastrar!==false?'checked':''} onchange="gc20SetPerm('${u.id}','cadastrar',this.checked)"> Cadastrar</label><label><input type="checkbox" ${p.editar!==false?'checked':''} onchange="gc20SetPerm('${u.id}','editar',this.checked)"> Editar</label><label><input type="checkbox" ${p.excluir!==false?'checked':''} onchange="gc20SetPerm('${u.id}','excluir',this.checked)"> Excluir</label><label><input type="checkbox" ${p.receber!==false?'checked':''} onchange="gc20SetPerm('${u.id}','receber',this.checked)"> Receber</label></div></div>`;}).join('')||'<p class="helper">Nenhum usuário local cadastrado.</p>';}
+function gc20SetPerm(uid,k,v){const u=ROOT.usuarios.find(x=>String(x.id)===String(uid));if(!u)return;u.gc20Permissoes=u.gc20Permissoes||{};u.gc20Permissoes[k]=v;gravarRoot();toast('Permissão local atualizada.');}
+function gc20Pode(acao){if(!currentUser||currentUser.role==='admin')return true;const u=ROOT.usuarios.find(x=>x.id===currentUser.id),p=u&&u.gc20Permissoes;if(!p||p[acao]===undefined)return true;return p[acao]===true;}
+const gc20SalvarCompraOriginal=salvarCompra;salvarCompra=function(){if(!gc20Pode('cadastrar'))return toast('Seu perfil não permite cadastrar compras.','erro');return gc20SalvarCompraOriginal.apply(this,arguments);};
+const gc20SalvarEdicaoOriginal=salvarEdicaoModal;salvarEdicaoModal=function(){if(!gc20Pode('editar'))return toast('Seu perfil não permite editar lançamentos.','erro');return gc20SalvarEdicaoOriginal.apply(this,arguments);};
+const gc20RegistrarBaixaOriginal=registrarBaixa; registrarBaixa=function(){if(!gc20Pode('receber'))return toast('Seu perfil não permite registrar recebimentos.','erro');return gc20RegistrarBaixaOriginal.apply(this,arguments);};
+const gc20RegistrarAcordoOriginal=registrarEmprestimo; registrarEmprestimo=function(){if(!gc20Pode('cadastrar'))return toast('Seu perfil não permite cadastrar acordos.','erro');return gc20RegistrarAcordoOriginal.apply(this,arguments);};
+const gc20MarcarAcordoOriginal=marcarAcordoPago; marcarAcordoPago=function(){if(!gc20Pode('receber'))return toast('Seu perfil não permite registrar recebimentos.','erro');return gc20MarcarAcordoOriginal.apply(this,arguments);};
+const gc20ExcluirCheck=excluirLançamentoModal;excluirLançamentoModal=function(){if(!gc20Pode('excluir'))return toast('Seu perfil não permite excluir lançamentos.','erro');return gc20ExcluirCheck.apply(this,arguments);};
+function gc20Diagnosticar(){const el=document.getElementById('gc20-diagnostico');if(!el)return;const checks=[];checks.push(['Banco local',!!localStorage.getItem(DB_NOME)]);checks.push(['Formato v4',ROOT.versao==='v4']);checks.push(['Schema atualizado',ROOT.schema===SCHEMA_ATUAL]);checks.push(['Listas principais',Array.isArray(db.despesas)&&Array.isArray(db.pagamentos)]);checks.push(['Lixeira disponível',Array.isArray(db.gc20Lixeira)]);checks.push(['Fechamentos disponíveis',Array.isArray(db.gc20Fechamentos)]);checks.push(['IndexedDB',!!window.indexedDB]);checks.push(['Service Worker',!!navigator.serviceWorker]);checks.push(['Conexão com internet',navigator.onLine]);checks.push(['Nuvem configurada',!!urlNuvem()]);const bytes=new Blob([JSON.stringify(ROOT)]).size;el.innerHTML=`<strong>Diagnóstico local — ${new Date().toLocaleString('pt-BR')}</strong><br>${checks.map(x=>`${x[1]?'✓':'⚠'} ${gc20Esc(x[0])}`).join('<br>')}<br><br>Usuário: ${gc20Esc(currentUser?.nome)}<br>Compras: ${db.despesas.length} · Recebimentos: ${db.pagamentos.length}<br>Itens na lixeira: ${db.gc20Lixeira.length}<br>Fechamentos: ${db.gc20Fechamentos.length}<br>Tamanho aproximado do banco: ${(bytes/1024).toFixed(1)} KB<br>Última sincronização local: ${gc20Esc(localStorage.getItem('gc_ultima_verificacao')?new Date(Number(localStorage.getItem('gc_ultima_verificacao'))).toLocaleString('pt-BR'):'não identificada')}<p class="helper">Este diagnóstico verifica o aparelho e a configuração visível. Não comprova a integridade do servidor Google nem a sincronização de outro dispositivo.</p>`;}
+// Atualiza os módulos quando o usuário abre Ajustes e depois do login.
+const gc20MudarTelaOriginal=mudarTela;mudarTela=function(id,titulo){const r=gc20MudarTelaOriginal.apply(this,arguments);if(id==='config')setTimeout(gc20Init,0);return r;};
+
 </script>
 </body>
 </html>
