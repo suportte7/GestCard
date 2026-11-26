@@ -1,12 +1,14 @@
 {
-  "versao": "2.0",
-  "data": "2026-11-24",
+  "versao": "2.1",
+  "data": "2026-11-25",
   "notas": [
     "GestCard 2.0: migração aditiva do banco v4, mantendo os registros e os fluxos existentes.",
     "Lixeira recuperável para exclusões de compras e recebimentos realizadas a partir da versão 2.0.",
     "Painel financeiro com comparativo mensal, notificações locais e estimativa de parcelas com vencimento ultrapassado.",
     "Fechamento mensal por fotografia dos totais, com detecção de divergências posteriores e reabertura administrativa.",
     "Exportação CSV de compras e recebimentos para Excel e central local de diagnóstico e recuperação.",
-    "Permissões locais configuráveis por usuário; a validação de autoridade no servidor Google Apps Script continua dependendo da atualização do backend."
+    "Permissões locais configuráveis por usuário; a validação de autoridade no servidor Google Apps Script continua dependendo da atualização do backend.",
+    "Painel Visão Geral aprimorado: pesquisa por pessoa/cartão e ordenação alfabética ou por saldo, com filtro visual sem modificar os cálculos financeiros.",
+    "Compatibilidade: alterações no HTML do painel; nenhuma mudança estrutural no banco de dados."
   ]
 }
