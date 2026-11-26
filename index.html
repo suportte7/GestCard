@@ -331,6 +331,13 @@
     
 
 
+    
+        /* GestCard 2.0 — filtros e refinamento do painel */
+        .gc20-dash-tools{display:grid;grid-template-columns:1fr auto;gap:7px;margin:8px 0 10px;align-items:center}
+        .gc20-dash-tools input,.gc20-dash-tools select{min-width:0;width:100%;box-sizing:border-box;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px 10px;font-size:.78rem}
+        .gc20-dash-count{font-size:.7rem;color:var(--text-light);padding:3px 4px 8px;font-weight:700}
+        .gc20-status{font-size:.58rem;padding:3px 7px;border-radius:20px;display:inline-block;font-weight:800;background:rgba(239,68,68,.12);color:var(--danger)}
+
     </style>
 </head>
 <body>
@@ -633,6 +640,8 @@
                     <button class="dash-tab-btn active" id="btn-visao-pessoa" onclick="alternarVisaoDash('pessoa')">👤 POR PESSOA</button>
                     <button class="dash-tab-btn" id="btn-visao-cartao" onclick="alternarVisaoDash('cartao')">💳 POR CARTÃO</button>
                 </div>
+                <div class="gc20-dash-tools"><input id="gc20-dash-busca" type="search" placeholder="🔎 Buscar pessoa ou cartão..." oninput="gc20AplicarFiltroPainel()"><select id="gc20-dash-ordem" onchange="gc20AplicarFiltroPainel()"><option value="saldo">Maior saldo / valor</option><option value="nome">Ordem alfabética</option><option value="menor">Menor saldo / valor</option></select></div>
+                <div id="gc20-dash-count" class="gc20-dash-count"></div>
                 <div id="lista-arvore-saldos"></div>
             </div>
         </div>
@@ -3819,6 +3828,27 @@ const gc20ExcluirCheck=excluirLançamentoModal;excluirLançamentoModal=function(
 function gc20Diagnosticar(){const el=document.getElementById('gc20-diagnostico');if(!el)return;const checks=[];checks.push(['Banco local',!!localStorage.getItem(DB_NOME)]);checks.push(['Formato v4',ROOT.versao==='v4']);checks.push(['Schema atualizado',ROOT.schema===SCHEMA_ATUAL]);checks.push(['Listas principais',Array.isArray(db.despesas)&&Array.isArray(db.pagamentos)]);checks.push(['Lixeira disponível',Array.isArray(db.gc20Lixeira)]);checks.push(['Fechamentos disponíveis',Array.isArray(db.gc20Fechamentos)]);checks.push(['IndexedDB',!!window.indexedDB]);checks.push(['Service Worker',!!navigator.serviceWorker]);checks.push(['Conexão com internet',navigator.onLine]);checks.push(['Nuvem configurada',!!urlNuvem()]);const bytes=new Blob([JSON.stringify(ROOT)]).size;el.innerHTML=`<strong>Diagnóstico local — ${new Date().toLocaleString('pt-BR')}</strong><br>${checks.map(x=>`${x[1]?'✓':'⚠'} ${gc20Esc(x[0])}`).join('<br>')}<br><br>Usuário: ${gc20Esc(currentUser?.nome)}<br>Compras: ${db.despesas.length} · Recebimentos: ${db.pagamentos.length}<br>Itens na lixeira: ${db.gc20Lixeira.length}<br>Fechamentos: ${db.gc20Fechamentos.length}<br>Tamanho aproximado do banco: ${(bytes/1024).toFixed(1)} KB<br>Última sincronização local: ${gc20Esc(localStorage.getItem('gc_ultima_verificacao')?new Date(Number(localStorage.getItem('gc_ultima_verificacao'))).toLocaleString('pt-BR'):'não identificada')}<p class="helper">Este diagnóstico verifica o aparelho e a configuração visível. Não comprova a integridade do servidor Google nem a sincronização de outro dispositivo.</p>`;}
 // Atualiza os módulos quando o usuário abre Ajustes e depois do login.
 const gc20MudarTelaOriginal=mudarTela;mudarTela=function(id,titulo){const r=gc20MudarTelaOriginal.apply(this,arguments);if(id==='config')setTimeout(gc20Init,0);return r;};
+
+
+/* GestCard 2.0 — filtros de pesquisa e ordenação do painel, sem alterar os cálculos ou registros */
+function gc20AplicarFiltroPainel(){
+ const host=document.getElementById('lista-arvore-saldos'); if(!host)return;
+ const q=(document.getElementById('gc20-dash-busca')?.value||'').trim().toLocaleLowerCase('pt-BR');
+ const ordem=document.getElementById('gc20-dash-ordem')?.value||'saldo';
+ let all=[...host.children].filter(el=>el.innerText&&el.innerText.trim());
+ all.forEach(el=>el.style.display=(!q||el.innerText.toLocaleLowerCase('pt-BR').includes(q))?'':'none');
+ let items=all.filter(el=>el.classList.contains('tree-card'));
+ if(visaoDashboardAtual==='pessoa'){
+  items=items.filter(el=>el.classList.contains('tree-card'));
+  const valor=el=>{const m=(el.querySelector('.tree-header')?.innerText||'').match(/R\$\s*([\d.]+,\d{2})/);if(!m)return 0;return Number(m[1].replaceAll('.','').replace(',','.'))||0;};
+  items.sort((a,b)=>ordem==='nome'?a.innerText.localeCompare(b.innerText,'pt-BR'):ordem==='menor'?valor(a)-valor(b):valor(b)-valor(a));
+  items.forEach(el=>host.appendChild(el));
+ }
+ const visiveis=all.filter(el=>el.style.display!=='none').length;
+ const count=document.getElementById('gc20-dash-count');if(count)count.textContent=q?`${visiveis} resultado(s) para “${q}”`:visaoDashboardAtual==='pessoa'?`${items.length} pessoa(s) no período`:'Cartões e faturas no período';
+}
+const gc20AtualizarSaldosOriginal=atualizarSaldos;
+atualizarSaldos=function(){gc20AtualizarSaldosOriginal.apply(this,arguments);gc20AplicarFiltroPainel();};
 
 </script>
 </body>
